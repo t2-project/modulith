@@ -30,11 +30,6 @@ public class UIBackendModule {
     }
 
     @Bean
-    public UIBackendService backendService() {
-        return new UIBackendService();
-    }
-
-    @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI().components(new Components()).info(new Info()
                 .title("UIBackend service API")

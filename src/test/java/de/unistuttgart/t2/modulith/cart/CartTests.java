@@ -2,96 +2,78 @@ package de.unistuttgart.t2.modulith.cart;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unistuttgart.t2.modulith.cart.repository.CartItem;
 import de.unistuttgart.t2.modulith.cart.repository.CartRepository;
 import de.unistuttgart.t2.modulith.common.CartContent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Test for the generated endpoints.
- * <p>
- * Set up like this:
- * <ul>
- * <li>Make request to cart endpoints.
- * <li>Assert correctness of reply
- * </ul>
- * This is kind of stupid because the endpoints are generated and I'd assume that generated stuff works as intended.
+ * Test the logic of the cart module using MongoDB embedded database.
  *
  * @author maumau
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestContext.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 @ActiveProfiles("test")
 class CartTests {
 
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
     private int initialSize;
 
+    private CartModule cartModule;
+
+    private CartRepository repository;
+
     @BeforeEach
-    public void populateRepository(@Autowired CartRepository repository) {
+    public void populateRepository(@Autowired CartModule cartModule, @Autowired CartRepository repository) {
+        this.cartModule = cartModule;
+        this.repository = repository;
+
         CartItem emptyCart = new CartItem("foo");
         CartItem filledCart = new CartItem("bar", Map.of("id1", 3, "id2", 4));
         repository.save(emptyCart);
         repository.save(filledCart);
 
         initialSize = repository.findAll().size();
+
+//        cartModule = new CartModule();
     }
 
     @Test
-    public void getEmptyCartTest(@Autowired CartRepository repository)
-        throws JsonMappingException, JsonProcessingException {
+    public void getEmptyCartTest() {
         // make request
-        String response = restTemplate.getForObject("http://localhost:" + port + "/cart/foo", String.class);
+        Optional<CartContent> optionalCartContent = cartModule.getCart("foo");
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(response);
-
-        // assert deserialization
-        CartContent cc = mapper.treeToValue(root.path("content"), CartContent.class);
+        // assert
+        assertTrue(optionalCartContent.isPresent());
+        CartContent cc = optionalCartContent.get();
         assertNotNull(cc);
         assertNotNull(cc.getContent());
         assertTrue(cc.getContent().isEmpty());
     }
 
     @Test
-    public void getFullCartTest(@Autowired CartRepository repository)
+    public void getFullCartTest()
         throws JsonMappingException, JsonProcessingException {
 
         // make request
-        String response = restTemplate.getForObject("http://localhost:" + port + "/cart/bar", String.class);
+        Optional<CartContent> optionalCartContent = cartModule.getCart("bar");
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(response);
-
-        // assert deserialization
-        CartContent cc = mapper.treeToValue(root.path("content"), CartContent.class);
+        // assert object
+        assertTrue(optionalCartContent.isPresent());
+        CartContent cc = optionalCartContent.get();
         assertNotNull(cc);
         assertNotNull(cc.getContent());
         assertFalse(cc.getContent().isEmpty());
 
-        // asser content
+        // assert content
         Map<String, Integer> expected = repository.findById("bar").get().getContent();
         Map<String, Integer> actual = cc.getContent();
 
@@ -102,13 +84,14 @@ class CartTests {
     }
 
     @Test
-    public void putNewCartTest(@Autowired CartRepository repository) {
+    public void putNewCartTest() {
         // make request
         String id = "baz";
         String key = "id3";
         int value = 15;
         CartContent cc = new CartContent(Map.of(key, value));
-        restTemplate.put("http://localhost:" + port + "/cart/" + id, cc);
+
+        cartModule.saveCart(id, cc);
 
         // asser repository
         assertTrue(repository.existsById(id));
@@ -124,13 +107,14 @@ class CartTests {
     }
 
     @Test
-    public void putUpdateCartTest(@Autowired CartRepository repository) {
+    public void putUpdateCartTest() {
         // make request
         String id = "bar";
         String key = "id3";
         int value = 15;
         CartContent cc = new CartContent(Map.of(key, value));
-        restTemplate.put("http://localhost:" + port + "/cart/" + id, cc);
+
+        cartModule.saveCart(id, cc);
 
         assertTrue(repository.existsById(id));
         assertEquals(initialSize, repository.findAll().size());
@@ -145,10 +129,11 @@ class CartTests {
     }
 
     @Test
-    public void deleteCartTest(@Autowired CartRepository repository) {
+    public void deleteCartTest() {
         // make request
         String id = "bar";
-        restTemplate.delete("http://localhost:" + port + "/cart/" + id);
+
+        cartModule.deleteCart(id);
 
         assertFalse(repository.existsById(id));
         assertEquals(initialSize - 1, repository.findAll().size());

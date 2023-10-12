@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 public class UIBackendRequestTest {
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @InjectMocks
     UIBackendService service;

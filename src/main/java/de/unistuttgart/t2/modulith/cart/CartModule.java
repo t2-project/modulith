@@ -30,7 +30,7 @@ public class CartModule {
     }
 
     @Bean
-    public ThreadPoolTaskScheduler threadPoolTaskScheduler(CartRepository cartRepository) {
+    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
         threadPoolTaskScheduler.setPoolSize(5);
         threadPoolTaskScheduler.setThreadNamePrefix("ThreadPoolTaskScheduler");
