@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.modulith.uibackend.supplicants;
+package de.unistuttgart.t2.modulith.uibackend;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.unistuttgart.t2.modulith.common.CartContent;

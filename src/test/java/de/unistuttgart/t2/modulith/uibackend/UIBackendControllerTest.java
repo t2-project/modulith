@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static de.unistuttgart.t2.modulith.uibackend.supplicants.TestData.*;
+import static de.unistuttgart.t2.modulith.uibackend.TestData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;

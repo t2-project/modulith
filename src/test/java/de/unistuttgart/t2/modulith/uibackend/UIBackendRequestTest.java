@@ -8,7 +8,6 @@ import de.unistuttgart.t2.modulith.common.ReservationRequest;
 import de.unistuttgart.t2.modulith.common.SagaRequest;
 import de.unistuttgart.t2.modulith.uibackend.exceptions.OrderNotPlacedException;
 import de.unistuttgart.t2.modulith.uibackend.exceptions.ReservationFailedException;
-import de.unistuttgart.t2.modulith.uibackend.supplicants.TestData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
-import static de.unistuttgart.t2.modulith.uibackend.supplicants.TestData.*;
+import static de.unistuttgart.t2.modulith.uibackend.TestData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 

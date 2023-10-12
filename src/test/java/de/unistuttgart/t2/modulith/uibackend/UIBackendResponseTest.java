@@ -2,7 +2,6 @@ package de.unistuttgart.t2.modulith.uibackend;
 
 import de.unistuttgart.t2.modulith.cart.CartModule;
 import de.unistuttgart.t2.modulith.common.Product;
-import de.unistuttgart.t2.modulith.uibackend.supplicants.TestData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,7 +11,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
-import static de.unistuttgart.t2.modulith.uibackend.supplicants.TestData.*;
+import static de.unistuttgart.t2.modulith.uibackend.TestData.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
