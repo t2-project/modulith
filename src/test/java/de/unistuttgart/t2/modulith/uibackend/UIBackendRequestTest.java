@@ -1,28 +1,27 @@
 package de.unistuttgart.t2.modulith.uibackend;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.unistuttgart.t2.modulith.cart.CartModule;
+import de.unistuttgart.t2.modulith.common.CartContent;
 import de.unistuttgart.t2.modulith.common.ReservationRequest;
 import de.unistuttgart.t2.modulith.common.SagaRequest;
-import de.unistuttgart.t2.modulith.uibackend.supplicants.JSONs;
-import de.unistuttgart.t2.modulith.uibackend.supplicants.TestContext;
+import de.unistuttgart.t2.modulith.uibackend.exceptions.OrderNotPlacedException;
+import de.unistuttgart.t2.modulith.uibackend.exceptions.ReservationFailedException;
+import de.unistuttgart.t2.modulith.uibackend.supplicants.TestData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.web.client.ExpectedCount;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestTemplate;
 
-import static de.unistuttgart.t2.modulith.uibackend.supplicants.JSONs.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static de.unistuttgart.t2.modulith.uibackend.supplicants.TestData.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 /**
  * Test whether UIBackendservice makes the right requests.
@@ -36,153 +35,144 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * @author maumau
  */
 @ExtendWith(MockitoExtension.class)
-@SpringJUnitConfig(TestContext.class)
+//@SpringJUnitConfig(TestContext.class)
 @ActiveProfiles("test")
 public class UIBackendRequestTest {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    @Autowired
+    @InjectMocks
     UIBackendService service;
 
-    @Autowired
-    private RestTemplate template;
+    @Mock
+    CartModule cartModule;
 
-    private MockRestServiceServer mockServer;
+    @Captor
+    ArgumentCaptor<CartContent> cartContentCaptor;
 
+    @Captor
+    ArgumentCaptor<String> sessionIdCaptor;
+    
     @BeforeEach
     public void setUp() {
-        mockServer = MockRestServiceServer.createServer(template);
     }
 
-    @Test
-    public void testConfirmOrder() throws Exception {
+    // TODO Complete UIBackendRequestTest
 
-        SagaRequest request = new SagaRequest(JSONs.sessionId, "cardNumber", "cardOwner", "checksum", 42.0);
+    @Test
+    public void testConfirmOrder() throws JsonProcessingException, OrderNotPlacedException {
+
+        SagaRequest request = new SagaRequest(TestData.sessionId, "cardNumber", "cardOwner", "checksum", 42.0);
         System.out.println(mapper.writeValueAsString(request));
 
         // mock cart response
-        mockServer.expect(ExpectedCount.once(), requestTo(JSONs.cartUrl + JSONs.sessionId))
-            .andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(JSONs.cartResponse(), MediaType.APPLICATION_JSON));
+        when(cartModule.getCart(sessionId)).thenReturn(cartResponse());
 
         // mock inventory response
-        mockServer.expect(ExpectedCount.once(), requestTo(JSONs.inventoryUrl + JSONs.productId))
-            .andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(inventoryResponse(), MediaType.APPLICATION_JSON));
+//        mockServer.expect(ExpectedCount.once(), requestTo(JSONs.inventoryUrl + JSONs.productId))
+//            .andExpect(method(HttpMethod.GET))
+//            .andRespond(withSuccess(inventoryResponse(), MediaType.APPLICATION_JSON));
+        // TODO when inventory then
 
         // what i actually want : verify request to orchestrator
-        mockServer.expect(ExpectedCount.once(), requestTo(JSONs.orchestratorUrl)).andExpect(method(HttpMethod.POST))
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.cardNumber").value("cardNumber"))
-            .andExpect(jsonPath("$.cardOwner").value("cardOwner"))
-            .andExpect(jsonPath("$.checksum").value("checksum"))
-            .andExpect(jsonPath("$.sessionId").value(JSONs.sessionId))
-            .andExpect(jsonPath("$.total").value(42))
-            .andExpect(content().json(mapper.writeValueAsString(request))).andRespond(withStatus(HttpStatus.OK));
-
-        // mock delete cart
-        mockServer.expect(ExpectedCount.once(), requestTo(JSONs.cartUrl + JSONs.sessionId))
-            .andExpect(method(HttpMethod.DELETE))
-            .andRespond(withSuccess());
+//        mockServer.expect(ExpectedCount.once(), requestTo(JSONs.orchestratorUrl)).andExpect(method(HttpMethod.POST))
+//            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//            .andExpect(jsonPath("$.cardNumber").value("cardNumber"))
+//            .andExpect(jsonPath("$.cardOwner").value("cardOwner"))
+//            .andExpect(jsonPath("$.checksum").value("checksum"))
+//            .andExpect(jsonPath("$.sessionId").value(JSONs.sessionId))
+//            .andExpect(jsonPath("$.total").value(42))
+//            .andExpect(content().json(mapper.writeValueAsString(request))).andRespond(withStatus(HttpStatus.OK));
+        // TODO when orchestrator then
 
         // execute
         service.confirmOrder(request.getSessionId(), request.getCardNumber(), request.getCardOwner(),
             request.getChecksum());
-        mockServer.verify();
+
+        verify(cartModule, atLeast(1)).getCart(sessionId);
+        verify(cartModule, times(1)).deleteCart(sessionId);
+//        mockServer.verify();
     }
 
     @Test
-    public void testGetSingleProduct() throws Exception {
+    public void testGetSingleProduct() {
 
-        mockServer.expect(ExpectedCount.once(), requestTo(JSONs.inventoryUrl + JSONs.productId))
-            .andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(inventoryResponse(), MediaType.APPLICATION_JSON));
+//        mockServer.expect(ExpectedCount.once(), requestTo(JSONs.inventoryUrl + JSONs.productId))
+//            .andExpect(method(HttpMethod.GET))
+//            .andRespond(withSuccess(inventoryResponse(), MediaType.APPLICATION_JSON));
+        // TODO when inventory then
 
         // execute
-        service.getSingleProduct(JSONs.productId);
-        mockServer.verify();
+        service.getSingleProduct(TestData.productId);
+//        mockServer.verify();
     }
 
     @Test
-    public void testGetCart() throws Exception {
-
-        mockServer.expect(ExpectedCount.once(), requestTo(JSONs.cartUrl + JSONs.sessionId))
-            .andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(cartResponse(), MediaType.APPLICATION_JSON));
-
-        // execute
-        service.getCartContent(JSONs.sessionId);
-        mockServer.verify();
-    }
-
-    @Test
-    public void testMakeReservation() throws Exception {
+    public void testMakeReservation() throws ReservationFailedException {
         ReservationRequest request = new ReservationRequest(productId, sessionId, 2);
 
-        mockServer.expect(ExpectedCount.once(), requestTo(reservationUrl)).andExpect(method(HttpMethod.POST))
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().json(mapper.writeValueAsString(request)))
-            .andRespond(withSuccess(inventoryResponse(), MediaType.APPLICATION_JSON));
+//        mockServer.expect(ExpectedCount.once(), requestTo(reservationUrl)).andExpect(method(HttpMethod.POST))
+//            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//            .andExpect(content().json(mapper.writeValueAsString(request)))
+//            .andRespond(withSuccess(inventoryResponse(), MediaType.APPLICATION_JSON));
+        // TODO Test when reservation then
 
         // execute
         service.makeReservations(sessionId, productId, 2);
-        mockServer.verify();
+//        mockServer.verify();
     }
 
     @Test
-    public void testGetAllProducts() throws Exception {
+    public void testGetAllProducts() {
 
         // twice = once for products and once for page
-        mockServer.expect(ExpectedCount.twice(), requestTo(inventoryUrl)).andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(inventoryresponseAllProducts(), MediaType.APPLICATION_JSON));
+//        mockServer.expect(ExpectedCount.twice(), requestTo(inventoryUrl)).andExpect(method(HttpMethod.GET))
+//            .andRespond(withSuccess(inventoryResponseAllProducts(), MediaType.APPLICATION_JSON));
+        // TODO Test when inventory then
 
         // execute
         service.getAllProducts();
-        mockServer.verify();
+//        mockServer.verify();
     }
 
     @Test
-    public void testAddItemToCart() throws Exception {
-        mockServer.expect(ExpectedCount.once(), requestTo(cartUrl + sessionId)).andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(cartResponse(), MediaType.APPLICATION_JSON));
-
-        mockServer.expect(ExpectedCount.once(), requestTo(cartUrl + sessionId)).andExpect(method(HttpMethod.PUT))
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().json(updatedCartResponse())).andRespond(withStatus(HttpStatus.OK));
+    public void testAddItemToCart() {
+        when(cartModule.getCart(sessionId)).thenReturn(cartResponse());
 
         // execute
         service.addItemToCart(sessionId, productId, 1);
-        mockServer.verify();
 
+        verify(cartModule, times(1)).saveCart(sessionIdCaptor.capture(), cartContentCaptor.capture());
+        assertEquals(sessionId, sessionIdCaptor.getValue());
+        assertEquals(units + 1, cartContentCaptor.getValue().getContent().get(productId));
     }
 
     @Test
-    public void testDeleteItemFromCart() throws Exception {
-        mockServer.expect(ExpectedCount.once(), requestTo(cartUrl + sessionId)).andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(cartResponse(), MediaType.APPLICATION_JSON));
-
-        mockServer.expect(ExpectedCount.once(), requestTo(cartUrl + sessionId)).andExpect(method(HttpMethod.PUT))
-            .andRespond(withStatus(HttpStatus.OK));
+    public void testDeleteItemFromCart() {
+        when(cartModule.getCart(sessionId)).thenReturn(cartResponse());
 
         // execute
         service.deleteItemFromCart(sessionId, productId, 1);
-        mockServer.verify();
+
+        verify(cartModule, times(1)).saveCart(sessionIdCaptor.capture(), cartContentCaptor.capture());
+        assertEquals(sessionId, sessionIdCaptor.getValue());
+        assertEquals(units - 1, cartContentCaptor.getValue().getContent().get(productId));
     }
 
     @Test
-    public void testGetProductsInCart() throws Exception {
-        mockServer.expect(ExpectedCount.once(), requestTo(cartUrl + sessionId)).andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(cartResponseMulti(), MediaType.APPLICATION_JSON));
+    public void testGetProductsInCart() {
+        when(cartModule.getCart(sessionId)).thenReturn(cartResponseMulti());
 
-        mockServer.expect(ExpectedCount.once(), requestTo(inventoryUrl + productId)).andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(inventoryResponse(), MediaType.APPLICATION_JSON));
-
-        mockServer.expect(ExpectedCount.once(), requestTo(inventoryUrl + anotherproductId))
-            .andExpect(method(HttpMethod.GET))
-            .andRespond(withSuccess(anotherInventoryResponse(), MediaType.APPLICATION_JSON));
+        // TODO Test when inventory then
+//        mockServer.expect(ExpectedCount.once(), requestTo(inventoryUrl + productId)).andExpect(method(HttpMethod.GET))
+//            .andRespond(withSuccess(inventoryResponse(), MediaType.APPLICATION_JSON));
+//        mockServer.expect(ExpectedCount.once(), requestTo(inventoryUrl + anotherproductId))
+//            .andExpect(method(HttpMethod.GET))
+//            .andRespond(withSuccess(anotherInventoryResponse(), MediaType.APPLICATION_JSON));
 
         service.getProductsInCart(sessionId);
-        mockServer.verify();
+
+//        mockServer.verify();
+        verify(cartModule, atLeast(1)).getCart(sessionId);
     }
 }

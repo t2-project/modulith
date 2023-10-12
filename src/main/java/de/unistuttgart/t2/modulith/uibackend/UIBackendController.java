@@ -3,7 +3,6 @@ package de.unistuttgart.t2.modulith.uibackend;
 import de.unistuttgart.t2.modulith.common.OrderRequest;
 import de.unistuttgart.t2.modulith.common.Product;
 import de.unistuttgart.t2.modulith.common.UpdateCartRequest;
-import de.unistuttgart.t2.modulith.uibackend.exceptions.CartInteractionFailedException;
 import de.unistuttgart.t2.modulith.uibackend.exceptions.OrderNotPlacedException;
 import de.unistuttgart.t2.modulith.uibackend.exceptions.ReservationFailedException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,7 +57,7 @@ public class UIBackendController {
      */
     @Operation(summary = "Update items in cart")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject(value = "{\n\"content\": {\n    \"product-id\": 3\n  }\n}")))
-    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Cart updated") })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Cart updated")})
     @PostMapping("/cart/{sessionId}")
     public List<Product> updateCart(@PathVariable String sessionId, @RequestBody UpdateCartRequest updateCartRequest) {
         List<Product> successfullyAddedProducts = new ArrayList<>();
@@ -75,11 +74,12 @@ public class UIBackendController {
                     service.addItemToCart(sessionId, product.getKey(), product.getValue());
                     successfullyAddedProducts.add(addedProduct);
 
-                } catch (ReservationFailedException | CartInteractionFailedException e) {}
+                } catch (ReservationFailedException e) {
+                }
             } else { // product.getValue() < 0
-                try {
-                    service.deleteItemFromCart(sessionId, product.getKey(), product.getValue());
-                } catch (CartInteractionFailedException e) {}
+
+                service.deleteItemFromCart(sessionId, product.getKey(), product.getValue());
+
             }
         }
         return successfullyAddedProducts;
@@ -106,13 +106,13 @@ public class UIBackendController {
      * @throws OrderNotPlacedException if the order could not be placed.
      */
     @Operation(summary = "Order all items in the cart", description = "Order all items in the cart")
-    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Order for items is placed"),
-        @ApiResponse(responseCode = "500", description = "Order could not be placed") })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Order for items is placed"),
+            @ApiResponse(responseCode = "500", description = "Order could not be placed")})
     @PostMapping("/confirm")
     public void confirmOrder(@RequestBody OrderRequest request)
-        throws OrderNotPlacedException {
+            throws OrderNotPlacedException {
         service.confirmOrder(request.getSessionId(), request.getCardNumber(), request.getCardOwner(),
-            request.getChecksum());
+                request.getChecksum());
     }
 
     /**
@@ -121,8 +121,7 @@ public class UIBackendController {
      * @param exception the exception that was thrown
      * @return a response entity with an exceptional message
      */
-    @ExceptionHandler({ OrderNotPlacedException.class, ReservationFailedException.class,
-        CartInteractionFailedException.class })
+    @ExceptionHandler({OrderNotPlacedException.class, ReservationFailedException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<String> handleOrderNotPlacedException(OrderNotPlacedException exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());

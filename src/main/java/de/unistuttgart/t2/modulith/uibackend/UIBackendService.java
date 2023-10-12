@@ -1,23 +1,22 @@
 package de.unistuttgart.t2.modulith.uibackend;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.unistuttgart.t2.modulith.cart.CartModule;
 import de.unistuttgart.t2.modulith.common.CartContent;
 import de.unistuttgart.t2.modulith.common.Product;
 import de.unistuttgart.t2.modulith.common.ReservationRequest;
 import de.unistuttgart.t2.modulith.common.SagaRequest;
-import de.unistuttgart.t2.modulith.uibackend.exceptions.CartInteractionFailedException;
 import de.unistuttgart.t2.modulith.uibackend.exceptions.OrderNotPlacedException;
 import de.unistuttgart.t2.modulith.uibackend.exceptions.ReservationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -25,15 +24,13 @@ import java.util.Optional;
  *
  * @author maumau
  */
+@Service
 public class UIBackendService {
 
     @Autowired
-    RestTemplate template;
+    private CartModule cartModule;
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
-
-    private final ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-            false);
 
     public UIBackendService() {
     }
@@ -79,22 +76,15 @@ public class UIBackendService {
      * @param sessionId identifies the cart to add to
      * @param productId id of product to be added
      * @param units     number of units to be added
-     * @throws CartInteractionFailedException if the request number of unit could not be placed in the cart.
      */
-    public void addItemToCart(String sessionId, String productId, int units) throws CartInteractionFailedException {
-//      String ressourceUrl = cartUrl + sessionId;
-        LOG.debug("put to cart: " + sessionId);
-
-        Optional<CartContent> optCartContent = getCartContent(sessionId);
-
+    public void addItemToCart(String sessionId, String productId, int units) {
+        Optional<CartContent> optCartContent = cartModule.getCart(sessionId);
         if (optCartContent.isPresent()) {
             CartContent cartContent = optCartContent.get();
             cartContent.getContent().put(productId, units + cartContent.getUnits(productId));
-//                template.put(ressourceUrl, cartContent);
-            // TODO cart.put(cartContent)
+            cartModule.saveCart(sessionId, cartContent);
         } else {
-//                template.put(ressourceUrl, new CartContent(Map.of(productId, units)));
-            // TODO cart.put(new CartContent(Map.of(productId, units)));
+            cartModule.saveCart(sessionId, new CartContent(Map.of(productId, units)));
         }
     }
 
@@ -107,17 +97,11 @@ public class UIBackendService {
      * @param sessionId identifies the cart to delete from
      * @param productId id of the product to be deleted
      * @param units     number of units to be deleted
-     * @throws CartInteractionFailedException if anything went wrong while talking to the cart
      */
-    public void deleteItemFromCart(String sessionId, String productId, int units)
-            throws CartInteractionFailedException {
-//        String ressourceUrl = cartUrl + sessionId;
-        LOG.debug("delete to cart: " + sessionId);
+    public void deleteItemFromCart(String sessionId, String productId, int units) {
 
-        Optional<CartContent> optCartContent = getCartContent(sessionId);
-
+        Optional<CartContent> optCartContent = cartModule.getCart(sessionId);
         if (optCartContent.isPresent()) {
-//            try {
             CartContent cartContent = optCartContent.get();
             int remainingUnitsInCart = cartContent.getUnits(productId) + units;
             if (remainingUnitsInCart > 0) {
@@ -125,13 +109,7 @@ public class UIBackendService {
             } else {
                 cartContent.getContent().remove(productId);
             }
-//                Retry.decorateRunnable(retry, () -> template.put(ressourceUrl, cartContent)).run();
-            // TODO cart.put(cartContent);
-//            } catch (RestClientException e) {
-//                LOG.error("Cannot delete {} unit(s) of {} for {}. Exception: {}", units, productId, sessionId, e);
-//                throw new CartInteractionFailedException(
-//                    String.format("Deletion for session %s failed : %s, %d", sessionId, productId, units));
-//            }
+            cartModule.saveCart(sessionId, cartContent);
         }
     }
 
@@ -139,18 +117,9 @@ public class UIBackendService {
      * Delete the entire cart for the given sessionId.
      *
      * @param sessionId identifies the cart content to delete
-     * @throws CartInteractionFailedException if anything went wrong while talking to the cart
      */
-    public void deleteCart(String sessionId) throws CartInteractionFailedException {
-//        String ressourceUrl = cartUrl + sessionId;
-        LOG.debug("delete to cart: " + sessionId);
-
-        try {
-//            template.delete(ressourceUrl);
-            // TODO cart.delete(sessionId);
-        } catch (RestClientException e) {
-            LOG.error("Cannot delete cart.", e);
-        }
+    public void deleteCart(String sessionId) {
+        cartModule.deleteCart(sessionId);
     }
 
     /**
@@ -162,7 +131,7 @@ public class UIBackendService {
     public List<Product> getProductsInCart(String sessionId) {
         List<Product> results = new ArrayList<>();
 
-        Optional<CartContent> optCartContent = getCartContent(sessionId);
+        Optional<CartContent> optCartContent = cartModule.getCart(sessionId);
 
         if (optCartContent.isPresent()) {
             CartContent cartContent = optCartContent.get();
@@ -248,39 +217,7 @@ public class UIBackendService {
             LOG.error("Failed to contact orchestrator for session {}. Exception: {}", sessionId, e);
             throw new OrderNotPlacedException(
                     String.format("No Order placed for session %s. Orchestrator not available. ", sessionId));
-        } catch (CartInteractionFailedException e) {
-            LOG.error("Failed to delete cart for session {}. Exception: {}", sessionId);
         }
-    }
-
-    /**
-     * Get the content of the cart belonging to the given sessionId.
-     * <p>
-     * If there is either no cart content for the given sessionId, or the retrieval of the content failed, an empty
-     * optional is returned.
-     *
-     * @param sessionId the session id of the client whose cart content to retrieve
-     * @return content of cart iff it exists
-     */
-    protected Optional<CartContent> getCartContent(String sessionId) {
-//        String ressourceUrl = cartUrl + sessionId;
-        LOG.debug("get from cart: " + sessionId);
-        // TODO cart.getContent(sessionId)
-//        try {
-//            ResponseEntity<String> response = Retry
-//                .decorateFunction(retry, (String url) -> template.getForEntity(url, String.class))
-//                .apply(ressourceUrl);
-//
-//            JsonNode root = mapper.readTree(response.getBody());
-//            JsonNode name = root.path("content");
-//
-//            return Optional.of(mapper.treeToValue(name, CartContent.class));
-//        } catch (RestClientException e) { // 404 or something like that.
-//            LOG.error("Cannot find any cart content for {}. Exception: {} ", sessionId, e);
-//        } catch (JsonProcessingException e) { // whatever we received, it was no cart content.
-//            LOG.error("Cannot deserialize cart content. Exception: {}", e);
-//        }
-        return Optional.empty();
     }
 
     /**
@@ -327,7 +264,7 @@ public class UIBackendService {
      * @return the total money to pay for products in the cart
      */
     private double getTotal(String sessionId) {
-        CartContent cart = getCartContent(sessionId).orElse(new CartContent());
+        CartContent cart = cartModule.getCart(sessionId).orElse(new CartContent());
 
         double total = 0;
 

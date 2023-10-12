@@ -19,6 +19,7 @@ import java.util.Map;
  */
 public final class CartContent {
 
+    // TODO Delete json annotations
     @JsonProperty("content")
     private Map<String, Integer> content;
 
