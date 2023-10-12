@@ -1,9 +1,5 @@
 package de.unistuttgart.t2.modulith.common;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,15 +15,12 @@ import java.util.Map;
  */
 public final class CartContent {
 
-    // TODO Delete json annotations
-    @JsonProperty("content")
     private Map<String, Integer> content;
 
     public CartContent() {
         this(new HashMap<>());
     }
 
-    @JsonCreator
     public CartContent(Map<String, Integer> content) {
         this.content = content;
     }
@@ -45,7 +38,6 @@ public final class CartContent {
      *
      * @return ids of all products in the cart
      */
-    @JsonIgnore
     public Collection<String> getProductIds() {
         return content.keySet();
     }
@@ -56,7 +48,6 @@ public final class CartContent {
      * @param productId to identify the product
      * @return number of units if the product is in the cart, zero otherwise
      */
-    @JsonIgnore
     public Integer getUnits(String productId) {
         return content.getOrDefault(productId, 0);
     }
