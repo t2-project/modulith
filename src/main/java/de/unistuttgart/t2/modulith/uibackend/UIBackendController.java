@@ -77,9 +77,7 @@ public class UIBackendController {
                 } catch (ReservationFailedException e) {
                 }
             } else { // product.getValue() < 0
-
-                service.deleteItemFromCart(sessionId, product.getKey(), product.getValue());
-
+                service.deleteItemFromCart(sessionId, product.getKey(), Math.abs(product.getValue()));
             }
         }
         return successfullyAddedProducts;
