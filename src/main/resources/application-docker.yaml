@@ -1,0 +1,36 @@
+# Docker profile
+server:
+  port: 8080
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://${MONGO_HOST}:27017/data
+
+t2:
+  cart:
+    TTL: ${T2_CART_TTL}
+    taskRate: ${T2_CART_TASKRATE}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: modulith-backend
+    distribution:
+      percentiles:
+        all: 0.5, 0.75, 0.95, 0.98, 0.99, 0.999, 1.0
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true

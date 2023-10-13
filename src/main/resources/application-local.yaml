@@ -1,0 +1,36 @@
+# Local profile
+server:
+  port: 8081
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/data
+
+t2:
+  cart:
+    TTL: 0
+    taskRate: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: modulith-backend
+    distribution:
+      percentiles:
+        all: 0.5, 0.75, 0.95, 0.98, 0.99, 0.999, 1.0
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
