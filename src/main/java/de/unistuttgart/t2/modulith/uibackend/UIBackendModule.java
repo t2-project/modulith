@@ -4,9 +4,8 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -14,15 +13,11 @@ import org.springframework.web.client.RestTemplate;
  *
  * @author maumau
  */
-@SpringBootApplication
+@Service
 public class UIBackendModule {
 
     @Value("${T2_COMMON_VERSION:0.0.1}")
     private String version;
-
-    public static void main(String[] args) {
-        SpringApplication.run(UIBackendModule.class, args);
-    }
 
     @Bean
     public RestTemplate template() {
