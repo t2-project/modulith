@@ -1,8 +1,5 @@
-spring:
-  data:
+de:
+  flapdoodle:
     mongodb:
-      database: test
-      port: 27017
-  mongodb:
-    embedded:
-      version: 5.0.12
+      embedded:
+        version: 5.0.12

@@ -23,10 +23,10 @@ import java.util.Optional;
 @EnableMongoRepositories(basePackageClasses = CartRepository.class)
 public class CartModule {
 
-    @Autowired
-    CartRepository cartRepository;
+    private final CartRepository cartRepository;
 
-    public CartModule() {
+    public CartModule(@Autowired CartRepository cartRepository) {
+        this.cartRepository = cartRepository;
     }
 
     @Bean

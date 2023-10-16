@@ -16,21 +16,6 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: health, modulith
     health:
       show-details: always
-  metrics:
-    tags:
-      application: modulith-backend
-    distribution:
-      percentiles:
-        all: 0.5, 0.75, 0.95, 0.98, 0.99, 0.999, 1.0
-  health:
-    livenessState:
-      enabled: true
-    readinessState:
-      enabled: true
-  endpoint:
-    health:
-      probes:
-        enabled: true

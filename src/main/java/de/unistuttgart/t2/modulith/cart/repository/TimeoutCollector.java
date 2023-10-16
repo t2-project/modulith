@@ -8,7 +8,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
+
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
@@ -56,7 +58,7 @@ public class TimeoutCollector {
     @PostConstruct
     public void scheduleTask() {
         if (taskRate > 0) {
-            taskScheduler.scheduleAtFixedRate(this::cleanup, taskRate);
+            taskScheduler.scheduleAtFixedRate(this::cleanup, Duration.ofMillis(taskRate));
         }
     }
 
