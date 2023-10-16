@@ -27,12 +27,12 @@ import java.util.Optional;
 @Service
 public class UIBackendService {
 
-    @Autowired
-    private CartModule cartModule;
+    private final CartModule cartModule;
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    public UIBackendService() {
+    public UIBackendService(@Autowired CartModule cartModule) {
+        this.cartModule = cartModule;
     }
 
     /**
