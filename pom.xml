@@ -15,6 +15,9 @@
 	<description>Modulith variant of the T2-Project</description>
 	<properties>
 		<java.version>17</java.version>
+		<spring-modulith.version>1.1.0-SNAPSHOT</spring-modulith.version>
+		<flapdoodle-mongodb.version>4.9.3</flapdoodle-mongodb.version>
+		<springdoc-openapi-ui.version>1.7.0</springdoc-openapi-ui.version>
 	</properties>
 
 	<repositories>
@@ -29,7 +32,7 @@
 			<dependency>
 				<groupId>org.springframework.modulith</groupId>
 				<artifactId>spring-modulith-bom</artifactId>
-				<version>1.1.0-SNAPSHOT</version>
+				<version>${spring-modulith.version}</version>
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
@@ -37,9 +40,12 @@
 	</dependencyManagement>
 
 	<dependencies>
+
+		<!-- Compile dependencies -->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -47,22 +53,30 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webflux</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.7.0</version>
+			<version>${springdoc-openapi-ui.version}</version>
 		</dependency>
+
+		<!-- Runtime dependencies -->
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!--
+		<dependency>
+			<groupId>org.springframework.modulith</groupId>
+			<artifactId>spring-modulith-starter-insight</artifactId>
+			<version>${spring-modulith.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		-->
 
 		<!-- Test dependencies -->
 
@@ -103,11 +117,12 @@
 		</dependency>
 
 		<!-- db for tests -->
+
 		<dependency>
 			<groupId>de.flapdoodle.embed</groupId>
 			<artifactId>de.flapdoodle.embed.mongo.spring27x</artifactId>
 			<scope>test</scope>
-			<version>4.9.3</version>
+			<version>${flapdoodle-mongodb.version}</version>
 		</dependency>
 
 	</dependencies>
