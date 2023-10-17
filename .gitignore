@@ -36,3 +36,4 @@ build/
 **/application.local.properties
 *.swp
 *.log
+measurements/*.csv
