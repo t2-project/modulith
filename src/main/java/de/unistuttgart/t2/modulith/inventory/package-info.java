@@ -1,5 +1,5 @@
 @org.springframework.lang.NonNullApi
 @org.springframework.modulith.ApplicationModule(
-    allowedDependencies = {"inventory"}
+    allowedDependencies = {}
 )
-package de.unistuttgart.t2.modulith.cart;
+package de.unistuttgart.t2.modulith.inventory;
