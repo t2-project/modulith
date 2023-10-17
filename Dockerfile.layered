@@ -1,0 +1,21 @@
+FROM eclipse-temurin:17-jdk as build
+WORKDIR source
+
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+COPY src src
+
+RUN ./mvnw install -DskipTests
+
+RUN java -Djarmode=layertools -jar target/*.jar extract
+
+FROM eclipse-temurin:17-jre
+ENV PORT 8080
+EXPOSE 8080
+WORKDIR application
+COPY --from=build source/dependencies/ ./
+COPY --from=build source/snapshot-dependencies/ ./
+COPY --from=build source/spring-boot-loader/ ./
+COPY --from=build source/application/ ./
+ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
