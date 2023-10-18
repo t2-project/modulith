@@ -61,7 +61,7 @@ public class CartController {
     @Operation(summary = "Update items in cart")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject(value = "{\n\"content\": {\n    \"product-id\": 3\n  }\n}")))
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Cart updated")})
-    @PostMapping( "/{sessionId}")
+    @PostMapping("/{sessionId}")
     public List<Product> updateCart(@PathVariable String sessionId, @RequestBody UpdateCartRequest updateCartRequest) {
         List<Product> successfullyAddedProducts = new ArrayList<>();
 
@@ -70,14 +70,11 @@ public class CartController {
                 continue;
             }
             if (product.getValue() > 0) {
-                try {
-                    // contact inventory first, cause i'd rather have a dangling reservation than a
-                    // products in the cart that are not backed with reservations.
-                    Product addedProduct = inventoryService.makeReservations(sessionId, product.getKey(), product.getValue());
-                    cartService.addItemToCart(sessionId, product.getKey(), product.getValue());
-                    successfullyAddedProducts.add(addedProduct);
-                } catch (ReservationFailedException e) {
-                }
+                // contact inventory first, cause i'd rather have a dangling reservation than a
+                // products in the cart that are not backed with reservations.
+                Product addedProduct = inventoryService.makeReservation(sessionId, product.getKey(), product.getValue());
+                cartService.addItemToCart(sessionId, product.getKey(), product.getValue());
+                successfullyAddedProducts.add(addedProduct);
             } else { // product.getValue() < 0
                 cartService.deleteItemFromCart(sessionId, product.getKey(), Math.abs(product.getValue()));
             }

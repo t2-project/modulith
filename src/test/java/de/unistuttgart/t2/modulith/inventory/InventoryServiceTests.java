@@ -70,7 +70,7 @@ public class InventoryServiceTests {
         // TODO Test when reservation then
 
         // execute
-        Product reservedProduct = inventoryService.makeReservations(sessionId, productId, 2);
+        Product reservedProduct = inventoryService.makeReservation(sessionId, productId, 2);
 
         assertEquals(productId, reservedProduct.getId());
         assertEquals(2, reservedProduct.getUnits());

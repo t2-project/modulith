@@ -1,5 +1,6 @@
 package de.unistuttgart.t2.modulith.inventory;
 
+import de.unistuttgart.t2.modulith.inventory.repository.DataGenerator;
 import de.unistuttgart.t2.modulith.inventory.web.InventoryController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,11 +27,14 @@ public class InventoryControllerTests {
     @Mock
     InventoryService inventoryService;
 
+    @Mock
+    DataGenerator dataGenerator;
+
     InventoryController controller;
 
     @BeforeEach
     public void setUp() {
-        controller = new InventoryController(inventoryService);
+        controller = new InventoryController(inventoryService, dataGenerator);
     }
 
     @Test

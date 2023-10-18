@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class CollectorTests {
 
     @Autowired
-    TimeoutCollector collector;
+    CartTimeoutCollector collector;
 
     @Autowired
     CartRepository repository;

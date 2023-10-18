@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
  * @author maumau
  */
 @Component
-public class TimeoutCollector {
+public class CartTimeoutCollector {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TimeoutCollector.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CartTimeoutCollector.class);
 
     private final long TTL; // seconds
     private final int taskRate; // milliseconds
@@ -44,7 +44,7 @@ public class TimeoutCollector {
      * @param taskRate rate at which the collector checks the repo in milliseconds
      */
     @Autowired
-    public TimeoutCollector(@Value("${t2.cart.TTL:0}") long TTL, @Value("${t2.cart.taskRate:0}") int taskRate) {
+    public CartTimeoutCollector(@Value("${t2.cart.TTL:0}") long TTL, @Value("${t2.cart.taskRate:0}") int taskRate) {
         this.TTL = TTL;
         this.taskRate = taskRate;
     }
