@@ -35,13 +35,13 @@ class CollectorTests {
     }
 
     @Test
-    public void collectAllEntriesTest() throws InterruptedException {
+    public void cleanupCollectsAllEntries() {
         collector.cleanup();
         assertEquals(0, repository.count());
     }
 
     @Test
-    public void collectSomeEntriesTest() throws InterruptedException {
+    public void cleanupCollectsOnlyOldEntries() {
         CartItem item = new CartItem();
         item.setCreationDate(Date.from(Instant.now().plusSeconds(60)));
         repository.save(item);

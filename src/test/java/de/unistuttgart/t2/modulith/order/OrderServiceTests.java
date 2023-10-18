@@ -17,9 +17,8 @@ import static de.unistuttgart.t2.modulith.TestData.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-//@SpringJUnitConfig(TestContext.class)
 @ActiveProfiles("test")
-public class OrderServiceTest {
+public class OrderServiceTests {
 
     @InjectMocks
     OrderService orderService;
@@ -33,7 +32,7 @@ public class OrderServiceTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testConfirmOrder() throws JsonProcessingException, OrderNotPlacedException {
+    public void confirmOrder() throws JsonProcessingException, OrderNotPlacedException {
 
         SagaRequest request = new SagaRequest(TestData.sessionId, "cardNumber", "cardOwner", "checksum", 42.0);
         System.out.println(mapper.writeValueAsString(request));

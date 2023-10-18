@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest
 @ActiveProfiles("test")
-class CartServiceIntegrationTest {
+class CartIntegrationTests {
 
     private int initialSize;
 
@@ -39,12 +39,10 @@ class CartServiceIntegrationTest {
         repository.save(filledCart);
 
         initialSize = repository.findAll().size();
-
-//        cartModule = new CartModule();
     }
 
     @Test
-    public void getEmptyCartTest() {
+    public void getEmptyCart() {
         Optional<CartContent> optionalCartContent = cartService.getCart("foo");
 
         assertTrue(optionalCartContent.isPresent());
@@ -55,7 +53,7 @@ class CartServiceIntegrationTest {
     }
 
     @Test
-    public void getFullCartTest() {
+    public void getFullCart() {
         Optional<CartContent> optionalCartContent = cartService.getCart("bar");
 
         assertTrue(optionalCartContent.isPresent());
@@ -74,7 +72,7 @@ class CartServiceIntegrationTest {
     }
 
     @Test
-    public void addNewCartTest() {
+    public void addNewCart() {
         String id = "baz";
         String key = "id3";
         int value = 15;
@@ -94,7 +92,7 @@ class CartServiceIntegrationTest {
     }
 
     @Test
-    public void addItemsToExistingCartTest() {
+    public void addItemsToExistingCart() {
         String id = "bar";
         String key = "id3";
         int value = 15;
@@ -114,7 +112,7 @@ class CartServiceIntegrationTest {
     }
 
     @Test
-    public void deleteOneItemFromExistingCartTest() {
+    public void deleteOneItemFromExistingCart() {
         String id = "bar";
         String key = "id1";
         int value = 3;
@@ -133,7 +131,7 @@ class CartServiceIntegrationTest {
     }
 
     @Test
-    public void deleteSomeUnitsOfAnItemFromExistingCartTest() {
+    public void deleteSomeUnitsOfAnItemFromExistingCart() {
         String id = "bar";
         String key = "id1";
         int value = 2;
@@ -152,7 +150,7 @@ class CartServiceIntegrationTest {
         assertEquals(1, item.getContent().get(key));    }
 
     @Test
-    public void deleteCartTest() {
+    public void deleteCart() {
         String id = "bar";
 
         cartService.deleteCart(id);

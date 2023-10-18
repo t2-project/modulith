@@ -23,14 +23,13 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
- * Test the logic in the {@link CartController}.
+ * Test the logic of {@link CartController}.
  *
  * @author maumau
  */
 @ExtendWith(MockitoExtension.class)
-//@SpringJUnitConfig(TestContext.class)
 @ActiveProfiles("test")
-public class CartControllerTest {
+public class CartControllerTests {
 
     @Mock
     CartService cartService;
@@ -50,7 +49,9 @@ public class CartControllerTest {
     CartController controller;
 
     @BeforeEach
-    public void setUp() { controller = new CartController(cartService, inventoryService); }
+    public void setUp() {
+        controller = new CartController(cartService, inventoryService);
+    }
 
     @Test
     public void dontChangeCartTest() {
@@ -85,11 +86,11 @@ public class CartControllerTest {
     public void addMultipleItemsToCartTest() throws ReservationFailedException {
 
         Product product1 = productBase(productId, units);
-        Product product2 = productBase(anotherproductId, anotherunits);
+        Product product2 = productBase(anotherProductId, anotherUnits);
         when(inventoryService.makeReservations(sessionId, productId, units)).thenReturn(product1);
-        when(inventoryService.makeReservations(sessionId, anotherproductId, anotherunits)).thenReturn(product2);
+        when(inventoryService.makeReservations(sessionId, anotherProductId, anotherUnits)).thenReturn(product2);
 
-        UpdateCartRequest request = new UpdateCartRequest(Map.of(productId, units, anotherproductId, anotherunits));
+        UpdateCartRequest request = new UpdateCartRequest(Map.of(productId, units, anotherProductId, anotherUnits));
         List<Product> addedProducts = controller.updateCart(sessionId, request);
 
         verify(cartService, times(2)).addItemToCart(anyString(), productIdCaptor.capture(), unitsCaptor.capture());

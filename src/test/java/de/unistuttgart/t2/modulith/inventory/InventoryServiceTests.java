@@ -1,7 +1,6 @@
 package de.unistuttgart.t2.modulith.inventory;
 
 import de.unistuttgart.t2.modulith.TestData;
-import de.unistuttgart.t2.modulith.inventory.web.ReservationRequest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,15 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
 // TODO Enable inventory service tests
 @Disabled
 @ExtendWith(MockitoExtension.class)
-//@SpringJUnitConfig(TestContext.class)
 @ActiveProfiles("test")
-public class InventoryServiceTest {
+public class InventoryServiceTests {
 
     @InjectMocks
     InventoryService inventoryService;
 
     @Test
-    public void getAllProductsTest() {
+    public void getAllProducts() {
         // setup inventory responses
         // TODO Test inventory
 //        ResponseEntity<String> entity = new ResponseEntity<>(inventoryResponseAllProducts(), HttpStatus.OK);
@@ -39,11 +37,11 @@ public class InventoryServiceTest {
         assertNotNull(products);
         assertEquals(2, products.size());
         assertEquals(productId, products.get(0).getId());
-        assertEquals(anotherproductId, products.get(1).getId());
+        assertEquals(anotherProductId, products.get(1).getId());
     }
 
     @Test
-    public void getSingleProductTest() {
+    public void getSingleProduct() {
         // setup inventory responses
         // TODO Test inventory
 //        ResponseEntity<String> entity = new ResponseEntity<>(inventoryResponse(), HttpStatus.OK);
@@ -62,7 +60,7 @@ public class InventoryServiceTest {
     }
 
     @Test
-    public void testMakeReservation() throws ReservationFailedException {
+    public void makeReservation() throws ReservationFailedException {
 //        ReservationRequest request = new ReservationRequest(productId, sessionId, 2);
 
 //        mockServer.expect(ExpectedCount.once(), requestTo(reservationUrl)).andExpect(method(HttpMethod.POST))

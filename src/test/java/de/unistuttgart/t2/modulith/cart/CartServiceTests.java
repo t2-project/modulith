@@ -22,9 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-//@SpringJUnitConfig(TestContext.class)
 @ActiveProfiles("test")
-public class CartServiceTest {
+public class CartServiceTests {
 
     @InjectMocks
     CartService cartService;
@@ -39,7 +38,7 @@ public class CartServiceTest {
     ArgumentCaptor<CartItem> cartItemCaptor;
 
     @Test
-    public void addItemToCartTest() {
+    public void addItemToCart() {
         when(cartRepository.findById(sessionId)).thenReturn(cartItemResponse());
 
         cartService.addItemToCart(sessionId, productId, 1);
@@ -50,7 +49,7 @@ public class CartServiceTest {
     }
 
     @Test
-    public void deleteItemFromCartTest() {
+    public void deleteItemFromCart() {
         when(cartRepository.findById(sessionId)).thenReturn(cartItemResponse());
 
         cartService.deleteItemFromCart(sessionId, productId, 1);
@@ -61,7 +60,7 @@ public class CartServiceTest {
     }
 
     @Test
-    public void getProductsInCartTest() {
+    public void getProductsInCart() {
         when(cartRepository.findById(sessionId)).thenReturn(cartItemResponse());
         when(inventoryService.getSingleProduct(productId)).thenReturn(inventoryResponse());
 
@@ -72,5 +71,4 @@ public class CartServiceTest {
         assertEquals(productId, products.get(0).getId());
         assertEquals(units, products.get(0).getUnits());
     }
-
 }

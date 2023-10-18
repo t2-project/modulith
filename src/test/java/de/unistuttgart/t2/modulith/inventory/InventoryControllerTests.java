@@ -15,14 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 /**
- * Test the logic in the {@link InventoryController}.
+ * Test the logic of {@link InventoryController}.
  *
  * @author maumau
  */
 @ExtendWith(MockitoExtension.class)
-//@SpringJUnitConfig(TestContext.class)
 @ActiveProfiles("test")
-public class InventoryControllerTest {
+public class InventoryControllerTests {
 
     @Mock
     InventoryService inventoryService;
@@ -35,7 +34,7 @@ public class InventoryControllerTest {
     }
 
     @Test
-    public void test() {
+    public void getAllProducts() {
         when(inventoryService.getAllProducts()).thenReturn(inventoryResponseAllProducts());
 
         List<Product> actual = controller.getAllProducts();

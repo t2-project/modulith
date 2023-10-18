@@ -11,12 +11,12 @@ import java.util.*;
  *
  * @author maumau
  */
-public class TestData {
+public final class TestData {
 
     public static String productId = "foo";
     public static int units = 42;
-    public static String anotherproductId = "foo2";
-    public static int anotherunits = 42;
+    public static String anotherProductId = "foo2";
+    public static int anotherUnits = 42;
     public static String sessionId = "bar";
 
     public static Optional<CartContent> cartResponse() {
@@ -28,7 +28,7 @@ public class TestData {
     }
 
     public static Optional<CartContent> cartResponseMulti() {
-        return Optional.of(new CartContent(new HashMap<>(Map.of(productId, units, anotherproductId, anotherunits))));
+        return Optional.of(new CartContent(new HashMap<>(Map.of(productId, units, anotherProductId, anotherUnits))));
     }
 
     public static Optional<CartContent> updatedCartResponse() {

@@ -8,14 +8,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
- * Test the logic in the {@link OrderController}.
+ * Test the logic of {@link OrderController}.
  *
  * @author maumau
  */
 @ExtendWith(MockitoExtension.class)
-//@SpringJUnitConfig(TestContext.class)
 @ActiveProfiles("test")
-public class OrderControllerTest {
+public class OrderControllerTests {
 
     @Mock
     OrderService orderService;
