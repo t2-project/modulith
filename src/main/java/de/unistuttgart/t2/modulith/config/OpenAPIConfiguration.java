@@ -23,8 +23,8 @@ public class OpenAPIConfiguration {
     @Bean
     public io.swagger.v3.oas.models.OpenAPI customOpenAPI() {
         return new io.swagger.v3.oas.models.OpenAPI().components(new Components()).info(new Info()
-                .title("UIBackend service API")
-                .description("API of the T2-Project's UIbackend service.")
+                .title("T2 Modulith API")
+                .description("API of the T2-Project's modulith implementation.")
                 .version(version));
     }
 }
