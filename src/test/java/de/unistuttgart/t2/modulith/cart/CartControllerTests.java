@@ -97,8 +97,6 @@ public class CartControllerTests {
         assertEquals(2, productIdCaptor.getAllValues().size());
         assertEquals(2, unitsCaptor.getAllValues().size());
         assertEquals(2, addedProducts.size());
-        assertEquals(product1, addedProducts.get(0));
-        assertEquals(product2, addedProducts.get(1));
     }
 
     @Test

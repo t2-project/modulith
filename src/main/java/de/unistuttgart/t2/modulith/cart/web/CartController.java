@@ -40,7 +40,7 @@ public class CartController {
      * @return a list of all products in the users cart
      */
     @Operation(summary = "List all items in cart")
-    @GetMapping("/cart/{sessionId}")
+    @GetMapping("/{sessionId}")
     public List<Product> getCart(@PathVariable String sessionId) {
         return cartService.getProductsInCart(sessionId);
     }
@@ -61,7 +61,7 @@ public class CartController {
     @Operation(summary = "Update items in cart")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject(value = "{\n\"content\": {\n    \"product-id\": 3\n  }\n}")))
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Cart updated")})
-    @PostMapping(value = "/{sessionId}", produces = "application/json")
+    @PostMapping( "/{sessionId}")
     public List<Product> updateCart(@PathVariable String sessionId, @RequestBody UpdateCartRequest updateCartRequest) {
         List<Product> successfullyAddedProducts = new ArrayList<>();
 
