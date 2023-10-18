@@ -1,0 +1,55 @@
+version: '3'
+services:
+
+  modulith:
+    container_name: t2-modulith
+    image: t2project/modulith:main
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mongo
+#      - postgres
+    environment:
+      MONGO_HOST: mongo
+      T2_CART_TTL: "0"
+      T2_CART_TASKRATE: "0"
+      INVENTORY_SIZE: "25"
+      T2_INVENTORY_TASKRATE: "0"
+      T2_INVENTORY_TTL: "0"
+      T2_PAYMENT_PROVIDER_DUMMY_URL: http://creditinstitute:8080/pay
+      T2_PAYMENT_PROVIDER_TIMEOUT: 5
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/t2
+      SPRING_PROFILES_ACTIVE: docker
+
+  ui:
+    container_name: t2-ui
+    image: t2project/ui:main
+    ports:
+      - "8086:8080"
+    environment:
+      T2_UIBACKEND_URL: http://modulith:8080/
+
+#  creditinstitute:
+#    container_name: t2-creditinstitute
+#    image: t2project/creditinstitute:main
+#    ports:
+#      - "8087:8080"
+
+  mongo:
+    container_name: t2-mongo
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+
+  postgres:
+    container_name: t2-postgres
+    image: postgres:15.4
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      USE_DB_ID: "true"
