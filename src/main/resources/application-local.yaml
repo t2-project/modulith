@@ -6,9 +6,23 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/data
+  jpa:
+    database: postgresql
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
 
 t2:
   cart:
+    TTL: 0
+    taskRate: 0
+  inventory:
+    size: 25
     TTL: 0
     taskRate: 0
 
@@ -16,6 +30,6 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, modulith
+        include: health
     health:
       show-details: always

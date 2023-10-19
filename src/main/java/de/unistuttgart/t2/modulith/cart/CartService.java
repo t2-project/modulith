@@ -35,14 +35,6 @@ public class CartService {
         this.inventoryService = inventoryService;
     }
 
-    @Bean
-    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
-        ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setPoolSize(5);
-        threadPoolTaskScheduler.setThreadNamePrefix("ThreadPoolTaskScheduler");
-        return threadPoolTaskScheduler;
-    }
-
     /**
      * Get the entire get for the given sessionId.
      *

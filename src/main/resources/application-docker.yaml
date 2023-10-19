@@ -3,14 +3,11 @@ server:
   port: 8080
 
 spring:
-  data:
-    mongodb:
-      uri: mongodb://${MONGO_HOST}:27017/data
-
-t2:
-  cart:
-    TTL: ${T2_CART_TTL}
-    taskRate: ${T2_CART_TASKRATE}
+  jpa:
+    database: postgresql
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
 
 management:
   endpoints:

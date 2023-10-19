@@ -1,0 +1,21 @@
+# Default profile (some values will be overwritten by other profiles)
+spring:
+  data:
+    mongodb:
+      uri: mongodb://${MONGO_HOST}:27017/data
+  jpa:
+    database: postgresql
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+t2:
+  cart:
+    TTL: ${T2_CART_TTL}
+    taskRate: ${T2_CART_TASKRATE}
+  inventory:
+    size: ${INVENTORY_SIZE}
+    TTL: ${T2_INVENTORY_TTL}
+    taskRate: ${T2_INVENTORY_TASKRATE}

@@ -69,7 +69,7 @@ public class CartControllerTests {
     public void addItemToCartTest() throws ReservationFailedException {
 
         Product product = productBase(productId, units);
-        when(inventoryService.makeReservations(sessionId, productId, units)).thenReturn(product);
+        when(inventoryService.makeReservation(sessionId, productId, units)).thenReturn(product);
 
         UpdateCartRequest request = new UpdateCartRequest(Map.of(productId, units));
         List<Product> addedProducts = controller.updateCart(sessionId, request);
@@ -87,8 +87,8 @@ public class CartControllerTests {
 
         Product product1 = productBase(productId, units);
         Product product2 = productBase(anotherProductId, anotherUnits);
-        when(inventoryService.makeReservations(sessionId, productId, units)).thenReturn(product1);
-        when(inventoryService.makeReservations(sessionId, anotherProductId, anotherUnits)).thenReturn(product2);
+        when(inventoryService.makeReservation(sessionId, productId, units)).thenReturn(product1);
+        when(inventoryService.makeReservation(sessionId, anotherProductId, anotherUnits)).thenReturn(product2);
 
         UpdateCartRequest request = new UpdateCartRequest(Map.of(productId, units, anotherProductId, anotherUnits));
         List<Product> addedProducts = controller.updateCart(sessionId, request);
@@ -106,7 +106,7 @@ public class CartControllerTests {
         List<Product> addedProducts = controller.updateCart(sessionId, request);
 
         verify(cartService, times(1)).deleteItemFromCart(sessionIdCaptor.capture(), productIdCaptor.capture(), unitsCaptor.capture());
-        verify(inventoryService, never()).makeReservations(anyString(), anyString(), anyInt());
+        verify(inventoryService, never()).makeReservation(anyString(), anyString(), anyInt());
         assertEquals(sessionId, sessionIdCaptor.getValue());
         assertEquals(productId, productIdCaptor.getValue());
         assertEquals(units, unitsCaptor.getValue());

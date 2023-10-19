@@ -1,34 +1,49 @@
 package de.unistuttgart.t2.modulith.inventory;
 
 import de.unistuttgart.t2.modulith.TestData;
-import org.junit.jupiter.api.Disabled;
+import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
+import de.unistuttgart.t2.modulith.inventory.repository.InventoryProductMapper;
+import de.unistuttgart.t2.modulith.inventory.repository.InventoryRepository;
+import de.unistuttgart.t2.modulith.inventory.repository.ReservationRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Optional;
 
 import static de.unistuttgart.t2.modulith.TestData.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-// TODO Enable inventory service tests
-@Disabled
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class InventoryServiceTests {
 
-    @InjectMocks
+    @Mock
+    InventoryRepository productRepository;
+
+    @Mock
+    ReservationRepository reservationRepository;
+
     InventoryService inventoryService;
+
+    @BeforeEach
+    public void setup() {
+        inventoryService = new InventoryService(productRepository, reservationRepository);
+    }
 
     @Test
     public void getAllProducts() {
-        // setup inventory responses
-        // TODO Test inventory
-//        ResponseEntity<String> entity = new ResponseEntity<>(inventoryResponseAllProducts(), HttpStatus.OK);
-//        Mockito.when(template.getForEntity(JSONs.inventoryUrl, String.class)) // no id, we want ALL.
-//            .thenReturn(entity);
+        // setup inventory response
+        List<Product> allProducts = inventoryResponseAllProducts();
+        List<InventoryItem> inventoryItems = allProducts.stream().map(InventoryProductMapper::toInventoryItem).toList();
+        when(productRepository.findAll()).thenReturn(inventoryItems);
 
         // execute
         List<Product> products = inventoryService.getAllProducts();
@@ -42,10 +57,10 @@ public class InventoryServiceTests {
 
     @Test
     public void getSingleProduct() {
-        // setup inventory responses
-        // TODO Test inventory
-//        ResponseEntity<String> entity = new ResponseEntity<>(inventoryResponse(), HttpStatus.OK);
-//        Mockito.when(template.getForEntity(JSONs.inventoryUrl + JSONs.productId, String.class)).thenReturn(entity);
+        // setup inventory response
+        Optional<Product> productInInventory = inventoryResponse();
+        Optional<InventoryItem> inventoryItem = productInInventory.map(InventoryProductMapper::toInventoryItem);
+        when(productRepository.findById(productId)).thenReturn(inventoryItem);
 
         // execute
         Product product = inventoryService.getSingleProduct(TestData.productId).get();
@@ -60,19 +75,22 @@ public class InventoryServiceTests {
     }
 
     @Test
-    public void makeReservation() throws ReservationFailedException {
-//        ReservationRequest request = new ReservationRequest(productId, sessionId, 2);
+    public void makeReservation() {
+        // setup inventory response
+        Optional<Product> productInInventory = inventoryResponse();
+        Optional<InventoryItem> inventoryItem = productInInventory.map(InventoryProductMapper::toInventoryItem);
+        when(productRepository.findById(productId)).thenReturn(inventoryItem);
 
-//        mockServer.expect(ExpectedCount.once(), requestTo(reservationUrl)).andExpect(method(HttpMethod.POST))
-//            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//            .andExpect(content().json(mapper.writeValueAsString(request)))
-//            .andRespond(withSuccess(inventoryResponse(), MediaType.APPLICATION_JSON));
-        // TODO Test when reservation then
+        InventoryItem inventoryItemWithReservation = productInInventory.map(InventoryProductMapper::toInventoryItem).get();
+        inventoryItemWithReservation.addReservation(sessionId, 2);
+        when(productRepository.save(any())).thenReturn(inventoryItemWithReservation);
 
         // execute
-        Product reservedProduct = inventoryService.makeReservations(sessionId, productId, 2);
+        Product reservedProduct = inventoryService.makeReservation(productId, sessionId, 2);
 
+        // assert
         assertEquals(productId, reservedProduct.getId());
-        assertEquals(2, reservedProduct.getUnits());
+        int expectedAvailableUnits = productInInventory.get().getUnits() - 2;
+        assertEquals(expectedAvailableUnits, reservedProduct.getUnits());
     }
 }

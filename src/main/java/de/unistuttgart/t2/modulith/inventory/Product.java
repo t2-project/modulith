@@ -1,7 +1,9 @@
 package de.unistuttgart.t2.modulith.inventory;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
 
 /**
  * A single product in the store.
