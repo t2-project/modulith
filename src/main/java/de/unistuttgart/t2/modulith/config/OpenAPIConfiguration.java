@@ -15,12 +15,6 @@ public class OpenAPIConfiguration {
     private String version;
 
     @Bean
-    public RestTemplate template() {
-        return new RestTemplate();
-    }
-
-    // TODO: Remove custom open api configuration
-    @Bean
     public io.swagger.v3.oas.models.OpenAPI customOpenAPI() {
         return new io.swagger.v3.oas.models.OpenAPI().components(new Components()).info(new Info()
                 .title("T2 Modulith API")
