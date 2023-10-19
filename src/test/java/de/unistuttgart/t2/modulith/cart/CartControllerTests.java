@@ -72,7 +72,7 @@ public class CartControllerTests {
     public void addItemToCart() throws JsonProcessingException {
 
         Product product = productBase(productId, units);
-        when(inventoryService.makeReservation(sessionId, productId, units)).thenReturn(product);
+        when(inventoryService.makeReservation(productId, sessionId, units)).thenReturn(product);
 
         UpdateCartRequest request = new UpdateCartRequest(Map.of(productId, units));
         System.out.println(mapper.writeValueAsString(request));
@@ -91,8 +91,8 @@ public class CartControllerTests {
 
         Product product1 = productBase(productId, units);
         Product product2 = productBase(anotherProductId, anotherUnits);
-        when(inventoryService.makeReservation(sessionId, productId, units)).thenReturn(product1);
-        when(inventoryService.makeReservation(sessionId, anotherProductId, anotherUnits)).thenReturn(product2);
+        when(inventoryService.makeReservation(productId, sessionId, units)).thenReturn(product1);
+        when(inventoryService.makeReservation(anotherProductId, sessionId, anotherUnits)).thenReturn(product2);
 
         UpdateCartRequest request = new UpdateCartRequest(Map.of(productId, units, anotherProductId, anotherUnits));
         List<Product> addedProducts = controller.updateCart(sessionId, request);
