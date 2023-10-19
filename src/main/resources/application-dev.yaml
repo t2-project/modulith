@@ -25,3 +25,8 @@ t2:
     size: 25
     TTL: 0
     taskRate: 0
+  payment:
+    provider:
+      timeout: 5
+      dummy:
+        url: http://localhost:8087/pay

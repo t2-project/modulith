@@ -24,7 +24,7 @@ public class DeleteReservationJpaTests extends RepositoryTests {
     public void handleSagaAction(@Autowired InventoryService inventoryService) {
         // make reservation
         String key = existingSession1;
-        inventoryService.handleSagaAction(key);
+        inventoryService.commitReservations(key);
 
         // assert things
         assertEquals(2, productRepository.count());

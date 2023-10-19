@@ -19,3 +19,8 @@ t2:
     size: ${INVENTORY_SIZE}
     TTL: ${T2_INVENTORY_TTL}
     taskRate: ${T2_INVENTORY_TASKRATE}
+  payment:
+    provider:
+      timeout: ${T2_PAYMENT_PROVIDER_TIMEOUT}
+      dummy:
+        url: ${T2_PAYMENT_PROVIDER_DUMMY_URL}

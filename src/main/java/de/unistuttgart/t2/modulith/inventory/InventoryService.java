@@ -13,12 +13,12 @@ import java.util.Optional;
 @Transactional
 public class InventoryService {
 
-    private final InventoryRepository productRepository;
+    private final InventoryRepository inventoryRepository;
     private final ReservationRepository reservationRepository;
 
-    public InventoryService(@Autowired InventoryRepository productRepository,
+    public InventoryService(@Autowired InventoryRepository inventoryRepository,
                             @Autowired ReservationRepository reservationRepository) {
-        this.productRepository = productRepository;
+        this.inventoryRepository = inventoryRepository;
         this.reservationRepository = reservationRepository;
     }
 
@@ -28,7 +28,7 @@ public class InventoryService {
      * @return a list of all products in the inventory.
      */
     public List<Product> getAllProducts() {
-        List<InventoryItem> inventoryItems = productRepository.findAll();
+        List<InventoryItem> inventoryItems = inventoryRepository.findAll();
         return inventoryItems.stream().map(InventoryProductMapper::toProduct).toList();
     }
 
@@ -42,7 +42,7 @@ public class InventoryService {
      * @return product with given id if it exists
      */
     public Optional<Product> getSingleProduct(String productId) {
-        Optional<InventoryItem> inventoryItem = productRepository.findById(productId);
+        Optional<InventoryItem> inventoryItem = inventoryRepository.findById(productId);
         return InventoryProductMapper.toProduct(inventoryItem);
     }
 
@@ -51,12 +51,12 @@ public class InventoryService {
      *
      * @param sessionId to identify the reservations to delete
      */
-    public void handleSagaAction(String sessionId) {
-        List<InventoryItem> items = productRepository.findAll();
+    public void commitReservations(String sessionId) {
+        List<InventoryItem> items = inventoryRepository.findAll();
         for (InventoryItem item : items) {
             item.commitReservation(sessionId);
         }
-        productRepository.saveAll(items);
+        inventoryRepository.saveAll(items);
 
         List<Reservation> reservations = reservationRepository.findAll();
         for (Reservation reservation : reservations) {
@@ -72,12 +72,12 @@ public class InventoryService {
      * @param sessionId to identify which reservations to delete
      */
     public void handleSagaCompensation(String sessionId) {
-        List<InventoryItem> items = productRepository.findAll();
+        List<InventoryItem> items = inventoryRepository.findAll();
         for (InventoryItem item : items) {
             item.deleteReservation(sessionId);
 
         }
-        productRepository.saveAll(items);
+        inventoryRepository.saveAll(items);
 
         List<Reservation> reservations = reservationRepository.findAll();
         for (Reservation reservation : reservations) {
@@ -102,11 +102,11 @@ public class InventoryService {
             throw new IllegalArgumentException(
                 "productId : " + productId + ", sessionId : " + sessionId + ", units : " + units);
         }
-        InventoryItem item = productRepository.findById(productId).orElseThrow(
+        InventoryItem item = inventoryRepository.findById(productId).orElseThrow(
             () -> new NoSuchElementException(String.format("product with id %s not found", productId)));
 
         item.addReservation(sessionId, units);
-        InventoryItem savedItem = productRepository.save(item);
+        InventoryItem savedItem = inventoryRepository.save(item);
         return InventoryProductMapper.toProduct(savedItem);
     }
 }

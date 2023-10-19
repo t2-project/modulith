@@ -4,31 +4,76 @@ import de.unistuttgart.t2.modulith.cart.CartContent;
 import de.unistuttgart.t2.modulith.cart.CartService;
 import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import de.unistuttgart.t2.modulith.inventory.Product;
-import de.unistuttgart.t2.modulith.order.web.SagaRequest;
+import de.unistuttgart.t2.modulith.order.repository.OrderItem;
+import de.unistuttgart.t2.modulith.order.repository.OrderRepository;
+import de.unistuttgart.t2.modulith.order.repository.OrderStatus;
+import de.unistuttgart.t2.modulith.payment.PaymentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * creates and updates orders.
+ *
+ * @author maumau
+ */
 @Service
+@EnableMongoRepositories(basePackageClasses = OrderRepository.class)
 public class OrderService {
 
     private final CartService cartService;
 
     private final InventoryService inventoryService;
 
+    private final PaymentService paymentService;
+
+    private final OrderRepository orderRepository;
+
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    public OrderService(@Autowired CartService cartService, @Autowired InventoryService inventoryService) {
+    public OrderService(@Autowired CartService cartService,
+                        @Autowired InventoryService inventoryService,
+                        @Autowired PaymentService paymentService,
+                        @Autowired OrderRepository orderRepository) {
         this.cartService = cartService;
         this.inventoryService = inventoryService;
+        this.paymentService = paymentService;
+        this.orderRepository = orderRepository;
     }
 
+    /**
+     * create a new Order and save it to the repository. the status of the new order is {@link OrderStatus#SUCCESS
+     * SUCCESS}.
+     *
+     * @param sessionId id of session to create order for
+     * @return orderId of created order
+     */
+    public String createOrder(String sessionId) {
 
+        OrderItem item = new OrderItem(sessionId);
+        return orderRepository.save(item).getOrderId();
+    }
+
+    /**
+     * Set the state of an order to {@link OrderStatus#FAILURE FAILURE}. This operation is idempotent, as a order may
+     * never change from {@link OrderStatus#FAILURE FAILURE} to any other status.
+     *
+     * @param orderId id of order that is to be rejected
+     * @throws NoSuchElementException if the id is in the db but retrieval fails anyway.
+     */
+    public void rejectOrder(String orderId) {
+
+        OrderItem item = orderRepository.findById(orderId).get();
+        item.setStatus(OrderStatus.FAILURE);
+        orderRepository.save(item);
+    }
+
+    // TODO implement saga or make it as a transaction
     /**
      * Posts a request to start a transaction to the orchestrator. Attempts to delete the cart of the given sessionId
      * once the orchestrator accepted the request. Nothing happens if the deletion of a cart fails, as the cart service
@@ -42,9 +87,10 @@ public class OrderService {
      */
     public void confirmOrder(String sessionId, String cardNumber, String cardOwner, String checksum)
         throws OrderNotPlacedException {
-        // is it more reasonable to get total from cart service, or is it more
-        // reasonable to pass the total from the front end (where it was displayed and
-        // therefore is known) ??
+
+        // TODO is it more reasonable to get total from cart service?
+        // Or is it more reasonable to pass the total from the front end
+        // (where it was displayed and therefore is known) ??
         double total = getTotal(sessionId);
 
         if (total <= 0) {
@@ -52,25 +98,32 @@ public class OrderService {
                 .format("No Order placed for session %s. Cart is either empty or not available. ", sessionId));
         }
 
-        SagaRequest request = new SagaRequest(sessionId, cardNumber, cardOwner, checksum, total);
+        String orderId = createOrder(sessionId);
+        LOG.info("order {} created for session {}.", orderId, sessionId);
 
-        try {
+        paymentService.doPayment(cardNumber, cardOwner, checksum, total);
+        inventoryService.commitReservations(sessionId);
+        cartService.deleteCart(sessionId);
+
+        LOG.info("deleted cart for session {}.", sessionId);
+
+//        SagaRequest request = new SagaRequest(sessionId, cardNumber, cardOwner, checksum, total);
+//
+//        try {
 //            ResponseEntity<Void> response = Retry
 //                .decorateSupplier(retry, () -> template.postForEntity(orchestratorUrl, request, Void.class)).get();
-            // TODO orchestrator.post(request)
-            ResponseEntity<Void> response = null;
-
+//
 //            LOG.info("orchestrator accepted request for session {} with status code {}.", sessionId,
 //                response.getStatusCode());
-
-            cartService.deleteCart(sessionId);
-            LOG.info("deleted cart for session {}.", sessionId);
-
-        } catch (RestClientException e) {
-            LOG.error("Failed to contact orchestrator for session {}. Exception: {}", sessionId, e);
-            throw new OrderNotPlacedException(
-                String.format("No Order placed for session %s. Orchestrator not available. ", sessionId));
-        }
+//
+//            cartService.deleteCart(sessionId);
+//            LOG.info("deleted cart for session {}.", sessionId);
+//
+//        } catch (RestClientException e) {
+//            LOG.error("Failed to contact orchestrator for session {}. Exception: {}", sessionId, e);
+//            throw new OrderNotPlacedException(
+//                String.format("No Order placed for session %s. Orchestrator not available. ", sessionId));
+//        }
     }
 
     /**
