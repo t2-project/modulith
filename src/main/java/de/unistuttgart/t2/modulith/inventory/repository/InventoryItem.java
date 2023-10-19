@@ -169,7 +169,7 @@ public class InventoryItem {
     }
 
     /**
-     * remove a reservation and decrease units in stock. always use this operation to decrease the the number of unit in
+     * remove a reservation and decrease units in stock. always use this operation to decrease the number of unit in
      * stock.
      *
      * @param sessionId to identify the reservation to be committed

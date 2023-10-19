@@ -2,6 +2,7 @@ package de.unistuttgart.t2.modulith.inventory;
 
 import de.unistuttgart.t2.modulith.inventory.repository.DataGenerator;
 import de.unistuttgart.t2.modulith.inventory.web.InventoryController;
+import de.unistuttgart.t2.modulith.inventory.web.ReservationRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,8 +12,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static de.unistuttgart.t2.modulith.TestData.inventoryResponseAllProducts;
+import static de.unistuttgart.t2.modulith.TestData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 /**
@@ -44,5 +46,19 @@ public class InventoryControllerTests {
         List<Product> actual = controller.getAllProducts();
 
         assertEquals(2, actual.size());
+    }
+
+    @Test
+    public void makeNewReservationTest() {
+        Product product = inventoryResponse().get();
+        when(inventoryService.makeReservation(productId, sessionId, units)).thenReturn(product);
+
+        // make reservation
+        ReservationRequest request = new ReservationRequest(productId, sessionId, units);
+
+        Product actual = controller.addReservation(request);
+
+        assertNotNull(actual);
+        assertEquals(product, actual);
     }
 }

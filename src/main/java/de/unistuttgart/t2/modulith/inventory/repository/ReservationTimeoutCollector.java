@@ -46,7 +46,8 @@ public class ReservationTimeoutCollector {
     @Autowired
     public ReservationTimeoutCollector(@Value("${t2.inventory.TTL:0}") final long TTL,
                                        @Value("${t2.inventory.taskRate:0}") final int taskRate,
-                                       @Autowired final ThreadPoolTaskScheduler taskScheduler, @Autowired final ReservationRepository repository,
+                                       @Autowired final ThreadPoolTaskScheduler taskScheduler,
+                                       @Autowired final ReservationRepository repository,
                                        @Autowired final ProductRepository itemRepository) {
         assert TTL >= 0 && taskRate >= 0 && taskScheduler != null && repository != null && itemRepository != null;
         this.TTL = TTL;
@@ -54,7 +55,6 @@ public class ReservationTimeoutCollector {
         this.taskScheduler = taskScheduler;
         this.repository = repository;
         this.itemRepository = itemRepository;
-
     }
 
     /**

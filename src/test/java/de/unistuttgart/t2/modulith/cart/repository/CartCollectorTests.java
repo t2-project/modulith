@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @SpringBootTest
 @ActiveProfiles("test")
-class CollectorTests {
+class CartCollectorTests {
 
     @Autowired
     CartTimeoutCollector collector;

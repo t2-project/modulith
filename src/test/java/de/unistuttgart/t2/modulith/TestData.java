@@ -53,7 +53,7 @@ public final class TestData {
     }
 
     public static Optional<Product> anotherInventoryResponse() {
-        return Optional.of(new Product(productId, "name2", "description2", 5, 1.0));
+        return Optional.of(new Product(anotherProductId, "name2", "description2", 5, 1.0));
     }
 
     public static List<Product> inventoryResponseAllProducts() {
