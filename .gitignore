@@ -33,6 +33,5 @@ build/
 .vscode/
 
 ### own ###
-**/application.local.properties
 *.swp
 *.log

@@ -1,4 +1,4 @@
-# Local profile
+# Dev profile (databases have to be started locally)
 server:
   port: 8081
 
@@ -25,11 +25,3 @@ t2:
     size: 25
     TTL: 0
     taskRate: 0
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health
-    health:
-      show-details: always
