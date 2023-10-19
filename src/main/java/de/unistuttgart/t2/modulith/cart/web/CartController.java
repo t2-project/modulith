@@ -3,7 +3,6 @@ package de.unistuttgart.t2.modulith.cart.web;
 import de.unistuttgart.t2.modulith.cart.CartService;
 import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import de.unistuttgart.t2.modulith.inventory.Product;
-import de.unistuttgart.t2.modulith.inventory.ReservationFailedException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -26,7 +25,7 @@ import java.util.Map;
 public class CartController {
     private final CartService cartService;
 
-    private InventoryService inventoryService;
+    private final InventoryService inventoryService;
 
     public CartController(@Autowired CartService cartService, @Autowired InventoryService inventoryService) {
         this.cartService = cartService;

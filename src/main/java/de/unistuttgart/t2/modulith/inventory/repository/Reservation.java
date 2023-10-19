@@ -1,6 +1,7 @@
 package de.unistuttgart.t2.modulith.inventory.repository;
 
 import jakarta.persistence.*;
+
 import java.time.Instant;
 import java.util.Date;
 

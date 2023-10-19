@@ -3,7 +3,6 @@ package de.unistuttgart.t2.modulith.inventory.web;
 import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import de.unistuttgart.t2.modulith.inventory.Product;
 import de.unistuttgart.t2.modulith.inventory.repository.DataGenerator;
-import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

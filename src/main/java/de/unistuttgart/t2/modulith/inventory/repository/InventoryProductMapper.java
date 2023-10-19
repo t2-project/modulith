@@ -1,13 +1,7 @@
 package de.unistuttgart.t2.modulith.inventory.repository;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import de.unistuttgart.t2.modulith.inventory.Product;
-import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.List;
 import java.util.Optional;
 
 public final class InventoryProductMapper {
