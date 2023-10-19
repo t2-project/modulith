@@ -86,7 +86,7 @@ public class InventoryServiceTests {
         when(productRepository.save(any())).thenReturn(inventoryItemWithReservation);
 
         // execute
-        Product reservedProduct = inventoryService.makeReservation(productId, sessionId, 2);
+        Product reservedProduct = inventoryService.makeReservation(sessionId, productId, 2);
 
         // assert
         assertEquals(productId, reservedProduct.getId());

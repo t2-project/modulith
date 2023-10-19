@@ -71,7 +71,7 @@ public class CartController {
             if (product.getValue() > 0) {
                 // contact inventory first, cause i'd rather have a dangling reservation than a
                 // products in the cart that are not backed with reservations.
-                Product addedProduct = inventoryService.makeReservation(product.getKey(), sessionId, product.getValue());
+                Product addedProduct = inventoryService.makeReservation(sessionId, product.getKey(), product.getValue());
                 cartService.addItemToCart(sessionId, product.getKey(), product.getValue());
                 successfullyAddedProducts.add(addedProduct);
             } else { // product.getValue() < 0

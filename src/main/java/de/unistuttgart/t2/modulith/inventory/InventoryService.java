@@ -90,14 +90,14 @@ public class InventoryService {
     /**
      * attach a reservation for the given session to the given item.
      *
-     * @param productId products to reserve of
      * @param sessionId user to reserve for
+     * @param productId products to reserve of
      * @param units     amount to reserve
      * @return the item where the reservation was attached
      * @throws NoSuchElementException   if the product does not exist
      * @throws IllegalArgumentException if any parameter is null
      */
-    public Product makeReservation(String productId, String sessionId, int units) throws NoSuchElementException {
+    public Product makeReservation(String sessionId, String productId, int units) throws NoSuchElementException {
         if (productId == null || sessionId == null || units < 0) {
             throw new IllegalArgumentException(
                 "productId : " + productId + ", sessionId : " + sessionId + ", units : " + units);

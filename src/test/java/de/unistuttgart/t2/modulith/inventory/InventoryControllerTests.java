@@ -51,7 +51,7 @@ public class InventoryControllerTests {
     @Test
     public void makeNewReservationTest() {
         Product product = inventoryResponse().get();
-        when(inventoryService.makeReservation(productId, sessionId, units)).thenReturn(product);
+        when(inventoryService.makeReservation(sessionId, productId, units)).thenReturn(product);
 
         // make reservation
         ReservationRequest request = new ReservationRequest(productId, sessionId, units);

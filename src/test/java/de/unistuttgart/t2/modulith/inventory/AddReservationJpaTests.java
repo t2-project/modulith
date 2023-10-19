@@ -32,7 +32,7 @@ public class AddReservationJpaTests extends RepositoryTests {
     public void makeNewReservation(@Autowired InventoryService inventoryService) {
         // make reservation
         String key = "newSessionId";
-        inventoryService.makeReservation(id1, key, 1);
+        inventoryService.makeReservation(key, id1, 1);
 
         // assert things
         assertEquals(2, productRepository.count());
@@ -50,7 +50,7 @@ public class AddReservationJpaTests extends RepositoryTests {
     public void makeNoNewReservationIfUnitsAreZero(@Autowired InventoryService inventoryService) {
         // make reservation
         String key = "newSessionId";
-        inventoryService.makeReservation(id1, key, 0);
+        inventoryService.makeReservation(key, id1, 0);
 
         // assert things
         assertEquals(2, productRepository.count());
@@ -66,7 +66,7 @@ public class AddReservationJpaTests extends RepositoryTests {
     public void increaseReservation(@Autowired InventoryService inventoryService) {
         // make reservation
         String key = existingSession1;
-        inventoryService.makeReservation(id1, key, 1);
+        inventoryService.makeReservation(key, id1, 1);
 
         // assert things
         assertEquals(2, productRepository.count());
@@ -84,7 +84,7 @@ public class AddReservationJpaTests extends RepositoryTests {
     public void reservationIsUnchangedIfUnitsOfNewReservationAreZero(@Autowired InventoryService inventoryService) {
         // make reservation
         String key = existingSession1;
-        inventoryService.makeReservation(id1, key, 0);
+        inventoryService.makeReservation(key, id1, 0);
 
         // assert things
         assertEquals(2, productRepository.count());
@@ -101,35 +101,35 @@ public class AddReservationJpaTests extends RepositoryTests {
     @Test
     public void throwIAEProductIDReservation(@Autowired InventoryService inventoryService) {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            inventoryService.makeReservation(null, existingSession1, 1);
+            inventoryService.makeReservation(existingSession1, null, 1);
         });
     }
 
     @Test
     public void throwIAESessionIDReservation(@Autowired InventoryService inventoryService) {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            inventoryService.makeReservation(id1, null, 1);
+            inventoryService.makeReservation(null, id1, 1);
         });
     }
 
     @Test
     public void throwIAENegativeUnitsReservation(@Autowired InventoryService inventoryService) {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            inventoryService.makeReservation(id1, existingSession1, -1);
+            inventoryService.makeReservation(existingSession1, id1, -1);
         });
     }
 
     @Test
     public void throwIAEUnitsReservation(@Autowired InventoryService inventoryService) {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            inventoryService.makeReservation(id1, existingSession1, 1000);
+            inventoryService.makeReservation(existingSession1, id1, 1000);
         });
     }
 
     @Test
     public void throwNSEEReservation(@Autowired InventoryService inventoryService) {
         Assertions.assertThrows(NoSuchElementException.class, () -> {
-            inventoryService.makeReservation("wrongid", existingSession1, 1);
+            inventoryService.makeReservation(existingSession1, "wrongid", 1);
         });
     }
 }

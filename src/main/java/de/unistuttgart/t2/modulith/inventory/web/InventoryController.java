@@ -40,7 +40,7 @@ public class InventoryController {
     @Operation(summary = "Place a reservation", description = "Place a reservation of a number of units for a certain item for a certain user.")
     @PostMapping("/inventory/reservation")
     public Product addReservation(@RequestBody ReservationRequest body) {
-        return inventoryService.makeReservation(body.getProductId(), body.getSessionId(),
+        return inventoryService.makeReservation(body.getSessionId(), body.getProductId(),
             body.getUnits());
     }
 
