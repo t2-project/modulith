@@ -1,10 +1,11 @@
 package de.unistuttgart.t2.modulith.cart;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unistuttgart.t2.modulith.cart.web.CartController;
 import de.unistuttgart.t2.modulith.cart.web.UpdateCartRequest;
 import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import de.unistuttgart.t2.modulith.inventory.Product;
-import de.unistuttgart.t2.modulith.inventory.ReservationFailedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,13 +49,15 @@ public class CartControllerTests {
 
     CartController controller;
 
+    private ObjectMapper mapper = new ObjectMapper();
+
     @BeforeEach
     public void setUp() {
         controller = new CartController(cartService, inventoryService);
     }
 
     @Test
-    public void dontChangeCartTest() {
+    public void dontChangeCartIfUnitsAreZero() {
 
         CartContent cartContent = new CartContent(Map.of(productId, 0));
 
@@ -66,12 +69,13 @@ public class CartControllerTests {
     }
 
     @Test
-    public void addItemToCartTest() throws ReservationFailedException {
+    public void addItemToCart() throws JsonProcessingException {
 
         Product product = productBase(productId, units);
         when(inventoryService.makeReservation(sessionId, productId, units)).thenReturn(product);
 
         UpdateCartRequest request = new UpdateCartRequest(Map.of(productId, units));
+        System.out.println(mapper.writeValueAsString(request));
         List<Product> addedProducts = controller.updateCart(sessionId, request);
 
         verify(cartService, times(1)).addItemToCart(sessionIdCaptor.capture(), productIdCaptor.capture(), unitsCaptor.capture());
@@ -83,7 +87,7 @@ public class CartControllerTests {
     }
 
     @Test
-    public void addMultipleItemsToCartTest() throws ReservationFailedException {
+    public void addMultipleItemsToCart() {
 
         Product product1 = productBase(productId, units);
         Product product2 = productBase(anotherProductId, anotherUnits);
@@ -100,7 +104,7 @@ public class CartControllerTests {
     }
 
     @Test
-    public void removeItemFromCartTest() throws ReservationFailedException {
+    public void removeItemFromCart() {
 
         UpdateCartRequest request = new UpdateCartRequest(Map.of(productId, -units));
         List<Product> addedProducts = controller.updateCart(sessionId, request);
@@ -111,5 +115,19 @@ public class CartControllerTests {
         assertEquals(productId, productIdCaptor.getValue());
         assertEquals(units, unitsCaptor.getValue());
         assertEquals(0, addedProducts.size(), "Expected that no product was added");
+    }
+
+    @Test
+    public final void updateCartRequestSerializingAndDeserializing() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        UpdateCartRequest original = new UpdateCartRequest(
+            Map.of("c1e359ff-4cd7-4ede-93fb-378aced160e5", 1));
+        String serialized = mapper.writeValueAsString(original);
+        UpdateCartRequest deserialized = mapper.reader()
+            .forType(UpdateCartRequest.class)
+            .readValue(serialized);
+
+        assertEquals(original.getContent(), deserialized.getContent());
     }
 }
