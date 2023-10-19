@@ -1,14 +1,15 @@
+# Default profile (some values will be overwritten by other profiles)
 spring:
   data:
     mongodb:
       uri: mongodb://${MONGO_HOST}:27017/data
   jpa:
-    generate-ddl: true
+    database: postgresql
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
-    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
+    driver-class-name: org.postgresql.Driver
 
 t2:
   cart:

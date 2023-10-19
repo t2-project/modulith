@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class DataGeneratorTests {
 
     @Autowired
-    ProductRepository productRepository;
+    InventoryRepository productRepository;
 
     DataGenerator generator;
 

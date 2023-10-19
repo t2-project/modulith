@@ -3,7 +3,7 @@ package de.unistuttgart.t2.modulith.inventory;
 import de.unistuttgart.t2.modulith.TestData;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryProductMapper;
-import de.unistuttgart.t2.modulith.inventory.repository.ProductRepository;
+import de.unistuttgart.t2.modulith.inventory.repository.InventoryRepository;
 import de.unistuttgart.t2.modulith.inventory.repository.ReservationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 public class InventoryServiceTests {
 
     @Mock
-    ProductRepository productRepository;
+    InventoryRepository productRepository;
 
     @Mock
     ReservationRepository reservationRepository;

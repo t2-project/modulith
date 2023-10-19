@@ -30,7 +30,7 @@ class ReservationCollectorTests {
     @Autowired
     ReservationRepository repository;
     @Autowired
-    ProductRepository productRepository;
+    InventoryRepository productRepository;
 
     @BeforeEach
     public void populateRepository() {

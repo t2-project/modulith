@@ -1,7 +1,7 @@
 package de.unistuttgart.t2.modulith.inventory;
 
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
-import de.unistuttgart.t2.modulith.inventory.repository.ProductRepository;
+import de.unistuttgart.t2.modulith.inventory.repository.InventoryRepository;
 import de.unistuttgart.t2.modulith.inventory.repository.Reservation;
 import de.unistuttgart.t2.modulith.inventory.repository.ReservationRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public abstract class RepositoryTests {
 
     @Autowired
-    ProductRepository productRepository;
+    InventoryRepository productRepository;
 
     @Autowired
     ReservationRepository reservationRepository;

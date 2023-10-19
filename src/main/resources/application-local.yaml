@@ -7,10 +7,12 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/data
   jpa:
-    show-sql: true
+    database: postgresql
     generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
   datasource:
-    url: jdbc:postgresql://localhost:5432/t2
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver

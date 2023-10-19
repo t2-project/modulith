@@ -22,11 +22,11 @@ public class DataGenerator {
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    private final ProductRepository repository;
+    private final InventoryRepository repository;
     private int inventorySize;
     private final Random random = new Random(5);
 
-    public DataGenerator(@Autowired ProductRepository repository, @Value("${t2.inventory.size:0}") int inventorySize) {
+    public DataGenerator(@Autowired InventoryRepository repository, @Value("${t2.inventory.size:0}") int inventorySize) {
         assert (repository != null);
         this.repository = repository;
         this.inventorySize = inventorySize;

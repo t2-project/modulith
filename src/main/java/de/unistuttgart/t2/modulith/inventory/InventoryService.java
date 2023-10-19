@@ -1,15 +1,10 @@
 package de.unistuttgart.t2.modulith.inventory;
 
 import de.unistuttgart.t2.modulith.inventory.repository.*;
-import de.unistuttgart.t2.modulith.inventory.web.ReservationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestClientException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -18,10 +13,10 @@ import java.util.Optional;
 @Transactional
 public class InventoryService {
 
-    private final ProductRepository productRepository;
+    private final InventoryRepository productRepository;
     private final ReservationRepository reservationRepository;
 
-    public InventoryService(@Autowired ProductRepository productRepository,
+    public InventoryService(@Autowired InventoryRepository productRepository,
                             @Autowired ReservationRepository reservationRepository) {
         this.productRepository = productRepository;
         this.reservationRepository = reservationRepository;
