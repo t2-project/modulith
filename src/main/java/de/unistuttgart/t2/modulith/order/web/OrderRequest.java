@@ -1,6 +1,6 @@
 package de.unistuttgart.t2.modulith.order.web;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -16,16 +16,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public final class OrderRequest {
 
     @JsonProperty("cardNumber")
-    private final String cardNumber;
+    private String cardNumber;
     @JsonProperty("cardOwner")
-    private final String cardOwner;
+    private String cardOwner;
     @JsonProperty("checksum")
-    private final String checksum;
+    private String checksum;
     @JsonProperty("sessionId")
-    private final String sessionId;
+    private String sessionId;
 
-    @JsonCreator
+    // Default no-argument constructor
+    public OrderRequest() {
+    }
+
     public OrderRequest(String cardNumber, String cardOwner, String checksum, String sessionId) {
+        this.cardNumber = cardNumber;
+        this.cardOwner = cardOwner;
+        this.checksum = checksum;
+        this.sessionId = sessionId;
+    }
+
+    @JsonAnySetter
+    public void update(String cardNumber, String cardOwner, String checksum, String sessionId) {
         this.cardNumber = cardNumber;
         this.cardOwner = cardOwner;
         this.checksum = checksum;
