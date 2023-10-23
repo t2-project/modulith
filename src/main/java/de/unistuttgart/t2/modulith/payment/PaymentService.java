@@ -1,8 +1,6 @@
 package de.unistuttgart.t2.modulith.payment;
 
 import de.unistuttgart.t2.modulith.payment.internal.PaymentData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -18,8 +16,6 @@ import java.time.Duration;
  */
 @Service
 public class PaymentService {
-
-    private final Logger LOG = LoggerFactory.getLogger(getClass());
 
     @Value("${t2.payment.provider.dummy.url}")
     protected String providerUrl;

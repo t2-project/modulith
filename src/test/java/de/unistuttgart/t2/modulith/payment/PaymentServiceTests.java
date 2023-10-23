@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
@@ -15,23 +16,22 @@ import org.springframework.web.client.RestTemplate;
  */
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
-public class PaymentRequestTest {
+public class PaymentServiceTests {
 
     @Autowired
-    PaymentService service;
+    PaymentService paymentService;
 
     @Autowired
     private RestTemplate template;
 
     private MockRestServiceServer mockServer;
-    private final String testurl = "http://foo.bar/pay";
 
-//    SagaData data = new SagaData("cardNumber", "cardOwner", "checksum", "sessionId", 1234.5);
+    @Value("${t2.payment.provider.dummy.url}")
+    private String providerUrl;
 
     @BeforeEach
     public void setUp() {
         mockServer = MockRestServiceServer.createServer(template);
-        service.providerUrl = testurl;
     }
 
     // TODO Payment tests

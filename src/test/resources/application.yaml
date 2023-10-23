@@ -16,4 +16,4 @@ t2:
     provider:
       timeout: 5
       dummy:
-        url: http://example.com/fakepay
+        url: http://foo.bar/pay

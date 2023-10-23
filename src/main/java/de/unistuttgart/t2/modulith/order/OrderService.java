@@ -106,24 +106,6 @@ public class OrderService {
         cartService.deleteCart(sessionId);
 
         LOG.info("deleted cart for session {}.", sessionId);
-
-//        SagaRequest request = new SagaRequest(sessionId, cardNumber, cardOwner, checksum, total);
-//
-//        try {
-//            ResponseEntity<Void> response = Retry
-//                .decorateSupplier(retry, () -> template.postForEntity(orchestratorUrl, request, Void.class)).get();
-//
-//            LOG.info("orchestrator accepted request for session {} with status code {}.", sessionId,
-//                response.getStatusCode());
-//
-//            cartService.deleteCart(sessionId);
-//            LOG.info("deleted cart for session {}.", sessionId);
-//
-//        } catch (RestClientException e) {
-//            LOG.error("Failed to contact orchestrator for session {}. Exception: {}", sessionId, e);
-//            throw new OrderNotPlacedException(
-//                String.format("No Order placed for session %s. Orchestrator not available. ", sessionId));
-//        }
     }
 
     /**
