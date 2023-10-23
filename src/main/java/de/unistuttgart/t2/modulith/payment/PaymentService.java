@@ -1,7 +1,9 @@
 package de.unistuttgart.t2.modulith.payment;
 
 import de.unistuttgart.t2.modulith.payment.internal.PaymentData;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryConfig;
+import io.github.resilience4j.retry.RetryRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
@@ -25,21 +27,23 @@ public class PaymentService {
 
     private final RestTemplate template;
 
-    @Autowired
-    public PaymentService(RestTemplateBuilder restTemplateBuilder) {
+    // retry stuff
+    RetryConfig config = RetryConfig.custom().maxAttempts(2).build();
+    RetryRegistry registry = RetryRegistry.of(config);
+    Retry retry = registry.retry("paymentRetry");
+
+    public PaymentService() {
+        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
         this.template = restTemplateBuilder.setConnectTimeout(Duration.ofSeconds(timeout))
             .setReadTimeout(Duration.ofSeconds(timeout)).build();
     }
 
-    // retry stuff
-    // TODO Implement retry
-//    RetryConfig config = RetryConfig.custom().maxAttempts(2).build();
-//    RetryRegistry registry = RetryRegistry.of(config);
-//    Retry retry = registry.retry("paymentRetry");
+    public PaymentService(RestTemplate restTemplate) {
+        this.template = restTemplate;
+    }
 
     public void doPayment(String cardNumber, String cardOwner, String checksum, double total) {
         PaymentData paymentData = new PaymentData(cardNumber, cardOwner, checksum, total);
-        // TODO post should be part of a retry
-        template.postForObject(providerUrl, paymentData, Void.class);
+        Retry.decorateSupplier(retry, () -> template.postForObject(providerUrl, paymentData, Void.class)).get();
     }
 }
