@@ -1,31 +1,40 @@
 package de.unistuttgart.t2.modulith.order.web;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Request to order all Items in a users cart.
  * <p>
- * Holds the payment information and the seesionId to identify the user's cart . The products to be ordered will be
+ * Holds the payment information and the sessionId to identify the user's cart. The products to be ordered will be
  * retrieved from the cart service, and the sessionId is in that session object that is always there.
- * <p>
- * Used to communicate from UI to UIBackend.
  *
  * @author maumau
  */
 public final class OrderRequest {
 
     @JsonProperty("cardNumber")
-    private final String cardNumber;
+    private String cardNumber;
     @JsonProperty("cardOwner")
-    private final String cardOwner;
+    private String cardOwner;
     @JsonProperty("checksum")
-    private final String checksum;
+    private String checksum;
     @JsonProperty("sessionId")
-    private final String sessionId;
+    private String sessionId;
 
-    @JsonCreator
+    // Default no-argument constructor
+    public OrderRequest() {
+    }
+
     public OrderRequest(String cardNumber, String cardOwner, String checksum, String sessionId) {
+        this.cardNumber = cardNumber;
+        this.cardOwner = cardOwner;
+        this.checksum = checksum;
+        this.sessionId = sessionId;
+    }
+
+    @JsonAnySetter
+    public void update(String cardNumber, String cardOwner, String checksum, String sessionId) {
         this.cardNumber = cardNumber;
         this.cardOwner = cardOwner;
         this.checksum = checksum;

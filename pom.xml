@@ -18,6 +18,7 @@
 		<spring-modulith.version>1.1.0-SNAPSHOT</spring-modulith.version>
 		<flapdoodle-mongodb.version>4.9.3</flapdoodle-mongodb.version>
 		<springdoc-openapi.version>2.2.0</springdoc-openapi.version>
+		<resilience4j.version>2.1.0</resilience4j.version>
 	</properties>
 
 	<repositories>
@@ -67,6 +68,11 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>${springdoc-openapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-retry</artifactId>
+			<version>${resilience4j.version}</version>
 		</dependency>
 
 		<!-- Runtime dependencies -->

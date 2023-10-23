@@ -24,20 +24,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
       SPRING_PROFILES_ACTIVE: docker
 
-  ui:
-    container_name: t2-ui
-    image: t2project/ui:main
-    ports:
-      - "8086:8080"
-    environment:
-      T2_UIBACKEND_URL: http://modulith:8080/
-
-#  creditinstitute:
-#    container_name: t2-creditinstitute
-#    image: t2project/creditinstitute:main
-#    ports:
-#      - "8087:8080"
-
   mongo:
     container_name: t2-mongo
     image: mongo:5.0
@@ -53,3 +39,19 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       USE_DB_ID: "true"
+
+  ui:
+    container_name: t2-ui
+    image: t2project/ui:main
+    ports:
+      - "8086:8080"
+    environment:
+      T2_UIBACKEND_URL: http://modulith:8080/
+
+  creditinstitute:
+    container_name: t2-creditinstitute
+    image: t2project/creditinstitute:david # TODO Change tag to main
+    ports:
+      - "8087:8080"
+    environment:
+      OPENTRACING_JAEGER_ENABLED: false

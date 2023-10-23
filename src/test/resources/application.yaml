@@ -3,3 +3,17 @@ de:
     mongodb:
       embedded:
         version: 5.0.12
+
+t2:
+  cart:
+    TTL: 0
+    taskRate: 0
+  inventory:
+    size: 25
+    TTL: 0
+    taskRate: 0
+  payment:
+    provider:
+      timeout: 5
+      dummy:
+        url: http://foo.bar/pay

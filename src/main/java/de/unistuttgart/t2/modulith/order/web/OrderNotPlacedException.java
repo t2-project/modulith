@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.modulith.order;
+package de.unistuttgart.t2.modulith.order.web;
 
 /**
  * Indicates that the placement of an order failed.
