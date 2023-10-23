@@ -7,6 +7,7 @@ import de.unistuttgart.t2.modulith.inventory.Product;
 import de.unistuttgart.t2.modulith.order.repository.OrderItem;
 import de.unistuttgart.t2.modulith.order.repository.OrderRepository;
 import de.unistuttgart.t2.modulith.order.repository.OrderStatus;
+import de.unistuttgart.t2.modulith.order.web.OrderNotPlacedException;
 import de.unistuttgart.t2.modulith.payment.PaymentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +74,8 @@ public class OrderService {
         orderRepository.save(item);
     }
 
-    // TODO implement saga or make it as a transaction
+    // TODO implement transaction
+
     /**
      * Posts a request to start a transaction to the orchestrator. Attempts to delete the cart of the given sessionId
      * once the orchestrator accepted the request. Nothing happens if the deletion of a cart fails, as the cart service

@@ -1,7 +1,6 @@
 package de.unistuttgart.t2.modulith.order.web;
 
 import de.unistuttgart.t2.modulith.inventory.ReservationFailedException;
-import de.unistuttgart.t2.modulith.order.OrderNotPlacedException;
 import de.unistuttgart.t2.modulith.order.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

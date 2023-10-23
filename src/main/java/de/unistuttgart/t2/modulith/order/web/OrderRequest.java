@@ -6,10 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Request to order all Items in a users cart.
  * <p>
- * Holds the payment information and the seesionId to identify the user's cart . The products to be ordered will be
+ * Holds the payment information and the sessionId to identify the user's cart. The products to be ordered will be
  * retrieved from the cart service, and the sessionId is in that session object that is always there.
- * <p>
- * Used to communicate from UI to UIBackend.
  *
  * @author maumau
  */
