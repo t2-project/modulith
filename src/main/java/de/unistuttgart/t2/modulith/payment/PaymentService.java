@@ -4,9 +4,12 @@ import de.unistuttgart.t2.modulith.payment.internal.PaymentData;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
@@ -27,6 +30,8 @@ public class PaymentService {
 
     private final RestTemplate template;
 
+    private final Logger LOG = LoggerFactory.getLogger(getClass());
+
     // retry stuff
     RetryConfig config = RetryConfig.custom().maxAttempts(2).build();
     RetryRegistry registry = RetryRegistry.of(config);
@@ -42,8 +47,14 @@ public class PaymentService {
         this.template = restTemplate;
     }
 
-    public void doPayment(String cardNumber, String cardOwner, String checksum, double total) {
-        PaymentData paymentData = new PaymentData(cardNumber, cardOwner, checksum, total);
-        Retry.decorateSupplier(retry, () -> template.postForObject(providerUrl, paymentData, Void.class)).get();
+    public void doPayment(String cardNumber, String cardOwner, String checksum, double total) throws PaymentFailedException {
+        try {
+            PaymentData paymentData = new PaymentData(cardNumber, cardOwner, checksum, total);
+            Retry.decorateSupplier(retry, () -> template.postForObject(providerUrl, paymentData, Void.class)).get();
+        } catch (
+            RestClientException e) {
+            LOG.error(e.getMessage(), e);
+            throw new PaymentFailedException("Payment failed", e);
+        }
     }
 }

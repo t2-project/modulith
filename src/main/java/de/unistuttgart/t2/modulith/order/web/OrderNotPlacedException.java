@@ -1,5 +1,7 @@
 package de.unistuttgart.t2.modulith.order.web;
 
+import java.io.Serial;
+
 /**
  * Indicates that the placement of an order failed.
  *
@@ -7,9 +9,13 @@ package de.unistuttgart.t2.modulith.order.web;
  */
 public final class OrderNotPlacedException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public OrderNotPlacedException(String message) {
         super(message);
     }
-}
+
+    public OrderNotPlacedException(String message, Exception e) {
+        super(message, e);
+    }}

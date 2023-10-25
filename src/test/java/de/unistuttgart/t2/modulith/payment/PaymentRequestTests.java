@@ -10,7 +10,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,13 +48,13 @@ public class PaymentRequestTests {
             .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
 
         // execute
-        assertThrows(HttpServerErrorException.InternalServerError.class, () ->
+        assertThrows(PaymentFailedException.class, () ->
             service.doPayment("cardNumber", "cardOwner", "checksum", 1234.5));
         mockServer.verify();
     }
 
     @Test
-    public void testRequest() {
+    public void testRequest() throws PaymentFailedException {
         mockServer.expect(ExpectedCount.once(), requestTo(testUrl)).andExpect(method(HttpMethod.POST))
             .andRespond(withStatus(HttpStatus.OK));
 

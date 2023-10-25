@@ -5,6 +5,7 @@ import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import de.unistuttgart.t2.modulith.order.repository.OrderItem;
 import de.unistuttgart.t2.modulith.order.repository.OrderRepository;
 import de.unistuttgart.t2.modulith.order.repository.OrderStatus;
+import de.unistuttgart.t2.modulith.order.web.OrderNotPlacedException;
 import de.unistuttgart.t2.modulith.payment.PaymentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,16 +17,16 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static de.unistuttgart.t2.modulith.TestData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 @DataMongoTest
 @ExtendWith(SpringExtension.class)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
-public class OrderIntegrationTests {
-
-    String orderId;
+public class OrderServiceIntegrationTests {
 
     OrderService orderService;
 
@@ -44,8 +45,7 @@ public class OrderIntegrationTests {
     @BeforeEach
     public void setup() {
         this.orderService = new OrderService(cartService, inventoryService, paymentService, orderRepository);
-
-        orderId = orderRepository.save(new OrderItem("sessionId")).getOrderId();
+        orderRepository.deleteAll();
     }
 
     @Test
@@ -64,6 +64,10 @@ public class OrderIntegrationTests {
 
     @Test
     public void rejectOrder() {
+
+        // Setup order repository
+        String orderId = orderRepository.save(new OrderItem("sessionId")).getOrderId();
+
         // execute
         orderService.rejectOrder(orderId);
 
@@ -74,5 +78,24 @@ public class OrderIntegrationTests {
         OrderItem item = orderRepository.findById(orderId).get();
         assertEquals("sessionId", item.getSessionId());
         assertEquals(OrderStatus.FAILURE, item.getStatus());
+    }
+
+    @Test
+    public void confirmOrder() throws OrderNotPlacedException {
+
+        // Setup mocks
+        when(cartService.getCart(sessionId)).thenReturn(cartResponse());
+        when(inventoryService.getSingleProduct(productId)).thenReturn(inventoryResponse());
+
+        // execute
+        String id = orderService.confirmOrder(sessionId, "cardNumber", "cardOwner", "checksum");
+
+        // assert
+        assertTrue(orderRepository.existsById(id));
+        assertTrue(orderRepository.findById(id).isPresent());
+
+        OrderItem item = orderRepository.findById(id).get();
+        assertEquals(sessionId, item.getSessionId());
+        assertEquals(OrderStatus.SUCCESS, item.getStatus());
     }
 }

@@ -8,12 +8,14 @@ import de.unistuttgart.t2.modulith.order.repository.OrderItem;
 import de.unistuttgart.t2.modulith.order.repository.OrderRepository;
 import de.unistuttgart.t2.modulith.order.repository.OrderStatus;
 import de.unistuttgart.t2.modulith.order.web.OrderNotPlacedException;
+import de.unistuttgart.t2.modulith.payment.PaymentFailedException;
 import de.unistuttgart.t2.modulith.payment.PaymentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -77,37 +79,70 @@ public class OrderService {
     // TODO implement transaction
 
     /**
-     * Posts a request to start a transaction to the orchestrator. Attempts to delete the cart of the given sessionId
-     * once the orchestrator accepted the request. Nothing happens if the deletion of a cart fails, as the cart service
-     * supposed to periodically remove out dated cart entries anyway.
+     * Completes the order by creating an order in the database, making the payment, committing the reservation
+     * and finally deleting the cart. Everything, except the deleting of the cart, happens in a transaction.
+     * It is not a problem if there is a problem deleting the cart, as out dated carts are periodically deleted anyway.
      *
      * @param sessionId  identifies the session
      * @param cardNumber part of payment details
      * @param cardOwner  part of payment details
      * @param checksum   part of payment details
+     * @return orderId   identifies the order
      * @throws OrderNotPlacedException if the order to confirm is empty/ would result in a negative sum
      */
-    public void confirmOrder(String sessionId, String cardNumber, String cardOwner, String checksum)
+    @Transactional(rollbackFor = {OrderNotPlacedException.class})
+    public String confirmOrder(String sessionId, String cardNumber, String cardOwner, String checksum)
         throws OrderNotPlacedException {
 
-        // TODO is it more reasonable to get total from cart service?
-        // Or is it more reasonable to pass the total from the front end
-        // (where it was displayed and therefore is known) ??
-        double total = getTotal(sessionId);
-
+        // Calculating total
+        double total;
+        try {
+            // TODO is it more reasonable to get total from cart service?
+            // Or is it more reasonable to pass the total from the front end
+            // (where it was displayed and therefore is known) ??
+            total = getTotal(sessionId);
+        } catch (RuntimeException e) {
+            throw new OrderNotPlacedException(String
+                .format("No order placed for session %s. Calculating total failed.", sessionId), e);
+        }
         if (total <= 0) {
             throw new OrderNotPlacedException(String
-                .format("No Order placed for session %s. Cart is either empty or not available. ", sessionId));
+                .format("No order placed for session %s. Cart is either empty or not available.", sessionId));
         }
 
-        String orderId = createOrder(sessionId);
-        LOG.info("order {} created for session {}.", orderId, sessionId);
+        // Create order
+        String orderId;
+        try {
+            orderId = createOrder(sessionId);
+            LOG.info("order {} created for session {}.", orderId, sessionId);
+        } catch (RuntimeException e) {
+            throw new OrderNotPlacedException(String
+                .format("No order placed for session %s. Creating order failed.", sessionId), e);
+        }
 
-        paymentService.doPayment(cardNumber, cardOwner, checksum, total);
-        inventoryService.commitReservations(sessionId);
-        cartService.deleteCart(sessionId);
+        // Do payment
+        try {
+            paymentService.doPayment(cardNumber, cardOwner, checksum, total);
+        } catch (PaymentFailedException e) {
+            throw new OrderNotPlacedException(String.format("Payment for order %s failed", orderId));
+        }
 
-        LOG.info("deleted cart for session {}.", sessionId);
+        // Commit reservations
+        try {
+            inventoryService.commitReservations(sessionId);
+        } catch (RuntimeException e) {
+            throw new OrderNotPlacedException(String
+                .format("No order placed for session %s. Committing reservations failed.", sessionId), e);
+        }
+
+        // Delete cart
+        try {
+            cartService.deleteCart(sessionId);
+            LOG.info("deleted cart for session {}.", sessionId);
+        } catch (RuntimeException e) {
+            LOG.warn(String.format("Deleting of cart for session %s failed.", sessionId), e);
+        }
+        return orderId;
     }
 
     /**
