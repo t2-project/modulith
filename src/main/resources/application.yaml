@@ -3,6 +3,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://${MONGO_HOST}:27017/data
+      database: data
   jpa:
     database: postgresql
   datasource:

@@ -7,7 +7,7 @@ import java.io.Serial;
  *
  * @author maumau
  */
-public final class OrderNotPlacedException extends Exception {
+public final class OrderNotPlacedException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 1L;

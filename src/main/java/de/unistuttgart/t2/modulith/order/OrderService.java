@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -37,16 +37,20 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
+    private final TransactionTemplate transactionTemplate;
+
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
     public OrderService(@Autowired CartService cartService,
                         @Autowired InventoryService inventoryService,
                         @Autowired PaymentService paymentService,
-                        @Autowired OrderRepository orderRepository) {
+                        @Autowired OrderRepository orderRepository,
+                        @Autowired TransactionTemplate transactionTemplate) {
         this.cartService = cartService;
         this.inventoryService = inventoryService;
         this.paymentService = paymentService;
         this.orderRepository = orderRepository;
+        this.transactionTemplate = transactionTemplate;
     }
 
     /**
@@ -76,8 +80,6 @@ public class OrderService {
         orderRepository.save(item);
     }
 
-    // TODO implement transaction
-
     /**
      * Completes the order by creating an order in the database, making the payment, committing the reservation
      * and finally deleting the cart. Everything, except the deleting of the cart, happens in a transaction.
@@ -87,10 +89,9 @@ public class OrderService {
      * @param cardNumber part of payment details
      * @param cardOwner  part of payment details
      * @param checksum   part of payment details
-     * @return orderId   identifies the order
+     * @return identifies the order
      * @throws OrderNotPlacedException if the order to confirm is empty/ would result in a negative sum
      */
-    @Transactional(rollbackFor = {OrderNotPlacedException.class})
     public String confirmOrder(String sessionId, String cardNumber, String cardOwner, String checksum)
         throws OrderNotPlacedException {
 
@@ -110,39 +111,45 @@ public class OrderService {
                 .format("No order placed for session %s. Cart is either empty or not available.", sessionId));
         }
 
-        // Create order
-        String orderId;
-        try {
-            orderId = createOrder(sessionId);
-            LOG.info("order {} created for session {}.", orderId, sessionId);
-        } catch (RuntimeException e) {
-            throw new OrderNotPlacedException(String
-                .format("No order placed for session %s. Creating order failed.", sessionId), e);
-        }
+        // TODO Make create order a part of the transaction
+        // It is currently not part of the transaction, because the required configuration for the MongoDB is missing.
+        String orderId = createOrder(sessionId);
+        LOG.info("order {} created for session {}.", orderId, sessionId);
 
-        // Do payment
-        try {
-            paymentService.doPayment(cardNumber, cardOwner, checksum, total);
-        } catch (PaymentFailedException e) {
-            throw new OrderNotPlacedException(String.format("Payment for order %s failed", orderId));
-        }
+        // JPA Transaction for payment and committing reservation
+        return transactionTemplate.execute(transactionStatus -> {
 
-        // Commit reservations
-        try {
-            inventoryService.commitReservations(sessionId);
-        } catch (RuntimeException e) {
-            throw new OrderNotPlacedException(String
-                .format("No order placed for session %s. Committing reservations failed.", sessionId), e);
-        }
+            // Commit reservations
+            try {
+                inventoryService.commitReservations(sessionId);
+            } catch (RuntimeException e) {
+                rejectOrder(orderId);
+                transactionStatus.setRollbackOnly();
+                throw new OrderNotPlacedException(
+                    String.format("Committing reservations for order %s of session %s failed. Order is rejected.", orderId, sessionId), e);
+            }
 
-        // Delete cart
-        try {
-            cartService.deleteCart(sessionId);
-            LOG.info("deleted cart for session {}.", sessionId);
-        } catch (RuntimeException e) {
-            LOG.warn(String.format("Deleting of cart for session %s failed.", sessionId), e);
-        }
-        return orderId;
+            // Do payment
+            try {
+                paymentService.doPayment(cardNumber, cardOwner, checksum, total);
+            } catch (PaymentFailedException e) {
+                LOG.warn("Payment failed");
+                rejectOrder(orderId);
+                transactionStatus.setRollbackOnly();
+                throw new OrderNotPlacedException(
+                    String.format("Payment for order %s of session %s failed. Order is rejected.", orderId, sessionId), e);
+            }
+
+            // Delete cart
+            try {
+                cartService.deleteCart(sessionId);
+                LOG.info("deleted cart for session {}.", sessionId);
+            } catch (RuntimeException e) {
+                // Runtime exception is no problem for the transaction, because the cart will be cleared eventually.
+                LOG.warn(String.format("Deleting of cart for session %s failed.", sessionId), e);
+            }
+            return orderId;
+        });
     }
 
     /**

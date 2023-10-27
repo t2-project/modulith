@@ -6,6 +6,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/data
+      database: data
   jpa:
     database: postgresql
     generate-ddl: true

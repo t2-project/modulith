@@ -13,6 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.support.SimpleTransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import static de.unistuttgart.t2.modulith.TestData.*;
 import static org.mockito.Mockito.*;
@@ -36,12 +39,17 @@ public class OrderServiceTests {
     @Mock
     OrderRepository orderRepository;
 
+    @Mock
+    private TransactionTemplate transactionTemplate;
+
     @Test
     public void confirmOrderSucceeds() throws OrderNotPlacedException, PaymentFailedException {
 
         when(cartService.getCart(sessionId)).thenReturn(cartResponse());
         when(inventoryService.getSingleProduct(productId)).thenReturn(inventoryResponse());
         when(orderRepository.save(any())).thenReturn(new OrderItem(sessionId));
+        when(transactionTemplate.execute(any())).thenAnswer(invocation ->
+            invocation.<TransactionCallback<String>>getArgument(0).doInTransaction(new SimpleTransactionStatus()));
 
         orderService.confirmOrder(sessionId, "cardNumber", "cardOwner", "checksum");
 

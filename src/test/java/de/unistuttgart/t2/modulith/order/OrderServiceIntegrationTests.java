@@ -44,7 +44,7 @@ public class OrderServiceIntegrationTests {
 
     @BeforeEach
     public void setup() {
-        this.orderService = new OrderService(cartService, inventoryService, paymentService, orderRepository);
+        this.orderService = new OrderService(cartService, inventoryService, paymentService, orderRepository, new FakeTransactionTemplate());
         orderRepository.deleteAll();
     }
 
