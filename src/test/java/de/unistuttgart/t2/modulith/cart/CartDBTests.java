@@ -2,11 +2,16 @@ package de.unistuttgart.t2.modulith.cart;
 
 import de.unistuttgart.t2.modulith.cart.repository.CartItem;
 import de.unistuttgart.t2.modulith.cart.repository.CartRepository;
+import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Map;
 import java.util.Optional;
@@ -18,20 +23,25 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author maumau
  */
-@SpringBootTest
+@DataMongoTest
+@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
-class CartIntegrationTests {
+class CartDBTests {
 
     private int initialSize;
 
     private CartService cartService;
 
+    @Autowired
     private CartRepository repository;
 
+    @Mock
+    private InventoryService inventoryService;
+
     @BeforeEach
-    public void populateRepository(@Autowired CartService cartService, @Autowired CartRepository repository) {
-        this.cartService = cartService;
-        this.repository = repository;
+    public void populateRepository() {
+        this.cartService = new CartService(repository, inventoryService);
 
         CartItem emptyCart = new CartItem("foo");
         CartItem filledCart = new CartItem("bar", Map.of("id1", 3, "id2", 4));

@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
  * also works with the spring repository interface. thus the manual deletion.)
  *
  * @author maumau
+ * @author davidkopp
  */
 @Component
 public class CartTimeoutCollector {
@@ -31,11 +32,9 @@ public class CartTimeoutCollector {
     private final long TTL; // seconds
     private final int taskRate; // milliseconds
 
-    @Autowired
-    private CartRepository repository;
+    private final CartRepository repository;
 
-    @Autowired
-    private ThreadPoolTaskScheduler taskScheduler;
+    private final ThreadPoolTaskScheduler taskScheduler;
 
     /**
      * Create collector.
@@ -44,7 +43,12 @@ public class CartTimeoutCollector {
      * @param taskRate rate at which the collector checks the repo in milliseconds
      */
     @Autowired
-    public CartTimeoutCollector(@Value("${t2.cart.TTL:0}") long TTL, @Value("${t2.cart.taskRate:0}") int taskRate) {
+    public CartTimeoutCollector(@Autowired CartRepository repository,
+                                @Autowired ThreadPoolTaskScheduler taskScheduler,
+                                @Value("${t2.cart.TTL:0}") long TTL,
+                                @Value("${t2.cart.taskRate:0}") int taskRate) {
+        this.repository = repository;
+        this.taskScheduler = taskScheduler;
         this.TTL = TTL;
         this.taskRate = taskRate;
     }
