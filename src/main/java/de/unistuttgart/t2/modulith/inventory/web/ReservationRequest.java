@@ -5,8 +5,6 @@ package de.unistuttgart.t2.modulith.inventory.web;
  * <p>
  * This request if for reservation of single product. If you want to place reservations on multiple products you have to
  * request one after another.
- * <p>
- * Used to communicate with the inventory service.
  *
  * @author maumau
  */

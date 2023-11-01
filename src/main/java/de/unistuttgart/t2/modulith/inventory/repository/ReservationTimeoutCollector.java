@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
@@ -64,7 +65,7 @@ public class ReservationTimeoutCollector {
     @PostConstruct
     public void schedulePeriodically() {
         if (taskRate > 0) {
-            taskScheduler.scheduleAtFixedRate(this::cleanup, taskRate);
+            taskScheduler.scheduleAtFixedRate(this::cleanup, Duration.ofMillis(taskRate));
         }
     }
 

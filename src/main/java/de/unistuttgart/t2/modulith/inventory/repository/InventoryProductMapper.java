@@ -4,6 +4,11 @@ import de.unistuttgart.t2.modulith.inventory.Product;
 
 import java.util.Optional;
 
+/**
+ * Maps {@code InventoryItem} database entity and {code Product} DTO
+ *
+ * @author davidkopp
+ */
 public final class InventoryProductMapper {
     public static Product toProduct(InventoryItem inventoryItem) {
         return new Product(

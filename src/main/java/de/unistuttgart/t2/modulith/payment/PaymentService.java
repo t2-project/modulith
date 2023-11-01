@@ -1,6 +1,6 @@
 package de.unistuttgart.t2.modulith.payment;
 
-import de.unistuttgart.t2.modulith.payment.internal.PaymentData;
+import de.unistuttgart.t2.modulith.payment.web.PaymentData;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
@@ -18,6 +18,7 @@ import java.time.Duration;
  * Contacts a payment provider, e.g. some credit institute, to execute the payment.
  *
  * @author maumau
+ * @author davidkopp
  */
 @Service
 public class PaymentService {

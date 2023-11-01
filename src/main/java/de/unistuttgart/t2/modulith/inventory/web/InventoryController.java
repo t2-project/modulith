@@ -9,8 +9,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Defines additional endpoints for the inventory. Other endpoints are auto generated.
+ *
+ * @author maumau
+ */
 @RestController
-@RequestMapping
 public class InventoryController {
 
     private final InventoryService inventoryService;
@@ -27,7 +31,6 @@ public class InventoryController {
     @Operation(summary = "List all available products")
     @GetMapping("/products")
     public List<Product> getAllProducts() {
-
         return inventoryService.getAllProducts();
     }
 

@@ -24,6 +24,7 @@ import java.util.Optional;
  * creates and updates orders.
  *
  * @author maumau
+ * @author davidkopp
  */
 @Service
 @EnableMongoRepositories(basePackageClasses = OrderRepository.class)
@@ -98,7 +99,7 @@ public class OrderService {
         // Calculating total
         double total;
         try {
-            // TODO is it more reasonable to get total from cart service?
+            // TODO is it more reasonable to get total from cart module?
             // Or is it more reasonable to pass the total from the front end
             // (where it was displayed and therefore is known) ??
             total = getTotal(sessionId);
@@ -111,7 +112,7 @@ public class OrderService {
                 .format("No order placed for session %s. Cart is either empty or not available.", sessionId));
         }
 
-        // TODO Make create order a part of the transaction
+        // TODO Make create order part of the transaction (MongoDB transaction required)
         // It is currently not part of the transaction, because the required configuration for the MongoDB is missing.
         String orderId = createOrder(sessionId);
         LOG.info("order {} created for session {}.", orderId, sessionId);
@@ -155,9 +156,8 @@ public class OrderService {
     /**
      * Calculates the total of a users cart.
      * <p>
-     * Depends on the cart service to get the cart content and depends on the inventory service to get the price per
-     * unit. If either of them fails, the returned total is 0. This is because the store cannot handle partial orders.
-     * Its either ordering all items in the cart or none.
+     * Depends on the cart module to get the cart content and depends on the inventory module to get the price per
+     * unit.
      *
      * @param sessionId identifies the session to get total for
      * @return the total money to pay for products in the cart

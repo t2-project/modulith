@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * Represents an order.<br>
- * Each oder has a unique {@code orderId} to find it in the repository, a {@code sessionId} to correlate it to other
+ * Each order has a unique {@code orderId} to find it in the repository, a {@code sessionId} to correlate it to other
  * things and a timestamp.
  *
  * @author maumau

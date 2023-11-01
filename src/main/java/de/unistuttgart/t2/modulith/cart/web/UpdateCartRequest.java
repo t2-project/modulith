@@ -11,11 +11,10 @@ import java.util.Map;
 /**
  * Request to update the content of a users cart.
  * <p>
- * An update may increase or decrease the number of items in the cart, depending on whether the the values in the
+ * An update may increase or decrease the number of items in the cart, depending on whether the values in the
  * difference/content map are positive or negative. A negative number implies a decrease of the units of the given
  * product in the cart and a positive number implies an increase thereof.
  * <p>
- * Used to communicate from UI to UIBackend.
  */
 public final class UpdateCartRequest {
 

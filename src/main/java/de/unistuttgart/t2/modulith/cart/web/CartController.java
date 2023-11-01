@@ -18,6 +18,7 @@ import java.util.Map;
 /**
  * Provides the http endpoints of the cart module.
  *
+ * @author maumau
  * @author davidkopp
  */
 @RestController

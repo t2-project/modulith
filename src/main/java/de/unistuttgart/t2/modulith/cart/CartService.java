@@ -19,6 +19,7 @@ import java.util.Optional;
  * Users are distinguished by their session ids.
  *
  * @author maumau
+ * @author davidkopp
  */
 @Service
 @EnableMongoRepositories(basePackageClasses = CartRepository.class)

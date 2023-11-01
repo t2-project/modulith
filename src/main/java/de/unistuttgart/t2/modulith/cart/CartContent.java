@@ -8,8 +8,6 @@ import java.util.Map;
  * The content of a users shopping cart.
  * <p>
  * Holds the productIds of the products in the cart and how many units of each product are in the cart.
- * <p>
- * Used to communicated with the cart service.
  *
  * @author maumau
  */

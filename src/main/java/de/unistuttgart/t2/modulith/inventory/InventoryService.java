@@ -10,6 +10,14 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * Manages the inventory and the reservations.
+ * <p>
+ * Reservations are distinguished by their session ids.
+ *
+ * @author maumau
+ * @author davidkopp
+ */
 @Service
 @Transactional
 @EnableJpaRepositories(basePackageClasses = { InventoryRepository.class, ReservationRepository.class })

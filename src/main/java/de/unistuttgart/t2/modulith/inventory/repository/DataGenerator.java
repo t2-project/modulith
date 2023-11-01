@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Generates new products into the product repository or restocks existing ones. Generation is always triggered after
+ * Generates new products into the inventory repository or restocks existing ones. Generation is always triggered after
  * initialisation.
  * 
  * @author maumau
@@ -33,8 +33,7 @@ public class DataGenerator {
     }
 
     /**
-     * Generates products into the product repository. Also generates cart content and reservations, if the cart service
-     * is available.
+     * Generates products into the inventory repository.
      */
     @PostConstruct
     public void generateProducts() {
@@ -44,17 +43,17 @@ public class DataGenerator {
             return;
         }
 
-        if (inventorySize > PRODUCTNAMES.length) {
-            inventorySize = PRODUCTNAMES.length;
+        if (inventorySize > PRODUCT_NAMES.length) {
+            inventorySize = PRODUCT_NAMES.length;
         }
 
         LOG.info(String.format("repository too small. generate %d new entries.", inventorySize));
 
         for (int i = (int) repository.count(); i < inventorySize; i++) {
-            String name = PRODUCTNAMES[i];
+            String name = PRODUCT_NAMES[i];
             int units = random.nextInt(500) + 42;
             double price = random.nextInt(10) + random.nextDouble();
-            String description = "very nice " + PRODUCTNAMES[i] + " tea";
+            String description = "very nice " + PRODUCT_NAMES[i] + " tea";
 
             InventoryItem product = new InventoryItem(null, name, description, units, price);
 
@@ -63,7 +62,7 @@ public class DataGenerator {
     }
 
     /**
-     * restock products in the repository. at some point all products will be sold out. thus there must be an option the
+     * Restock products in the repository. at some point all products will be sold out. thus there must be an option to
      * restock them.
      */
     @Transactional
@@ -80,7 +79,7 @@ public class DataGenerator {
     }
 
     // Predefined products from original tea store
-    private static final String[] PRODUCTNAMES = { "Earl Grey (loose)", "Assam (loose)", "Darjeeling (loose)",
+    private static final String[] PRODUCT_NAMES = { "Earl Grey (loose)", "Assam (loose)", "Darjeeling (loose)",
                                                    "Frisian Black Tee (loose)", "Anatolian Assam (loose)",
                                                    "Earl Grey (20 bags)", "Assam (20 bags)",
                                                    "Darjeeling (20 bags)", "Ceylon (loose)", "Ceylon (20 bags)",

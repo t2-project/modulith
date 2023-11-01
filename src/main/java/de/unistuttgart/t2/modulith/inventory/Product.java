@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * <li>cart : number of units of the product in the cart
  * </ul>
  * <p>
- * Used to communicate from UI to UIBackend to inventory.
  *
  * @author maumau
  */

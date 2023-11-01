@@ -1,5 +1,7 @@
 package de.unistuttgart.t2.modulith.inventory;
 
+import java.io.Serial;
+
 /**
  * Indicates that placing a reservation for a product failed.
  *
@@ -7,6 +9,7 @@ package de.unistuttgart.t2.modulith.inventory;
  */
 public final class ReservationFailedException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public ReservationFailedException(String message) {
