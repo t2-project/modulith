@@ -1,6 +1,8 @@
 # Default profile (some values will be overwritten by other profiles)
 spring:
   data:
+    rest:
+      detection-strategy: annotated
     mongodb:
       uri: mongodb://${MONGO_HOST}:27017/data
       database: data

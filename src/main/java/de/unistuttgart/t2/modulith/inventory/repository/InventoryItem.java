@@ -1,5 +1,8 @@
 package de.unistuttgart.t2.modulith.inventory.repository;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -20,25 +23,31 @@ public class InventoryItem {
 
     @Id
     @Column(name = "id")
+    @JsonProperty("id")
     @UuidGenerator
     private final String id;
 
     @Column(name = "name")
+    @JsonProperty("name")
     private final String name;
 
     @Column(name = "description")
+    @JsonProperty("description")
     private final String description;
 
     /**
      * number units of this product. never less than the sum of all reservations.
      */
     @Column(name = "units")
+    @JsonProperty("units")
     private int units;
 
     @Column(name = "price")
+    @JsonProperty("price")
     private final double price;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonProperty("reservations")
     private final List<Reservation> reservations;
 
     /**
@@ -52,6 +61,7 @@ public class InventoryItem {
         this(id, name, description, units, price, new ArrayList<>());
     }
 
+    @JsonCreator
     public InventoryItem(String id, String name, String description, int units, double price,
                          List<Reservation> reservations) {
         this.id = id;
@@ -120,6 +130,7 @@ public class InventoryItem {
      * @return number of not yet reserved units of this product
      * @throws IllegalStateException if the reservations are too much.
      */
+    @JsonIgnore
     public int getAvailableUnits() {
         int availableUnits = units - reservations.stream().mapToInt(Reservation::getUnits).sum();
         if (availableUnits < 0) {
