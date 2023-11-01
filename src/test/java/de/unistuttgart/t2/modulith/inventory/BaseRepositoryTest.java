@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 
  * @author maumau
  */
-public abstract class RepositoryTests {
+public abstract class BaseRepositoryTest {
 
     @Autowired
     InventoryRepository productRepository;

@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 /**
  * Periodically checks all reservations and deletes those whose time to life has been exceeded.<br>
- * TODO : ensure that only reservations that are not part of a running saga are deleted
  *
  * @author maumau
  */
@@ -70,11 +69,7 @@ public class ReservationTimeoutCollector {
     }
 
     /**
-     * The actual cleanup.<br>
-     * TODO how do i prevent this from collection 'in progress' sagas?<br>
-     * TODO 'father less' reservations are only caused when orchestrator is down. I could flag the reservations as
-     * 'PENDING' (not yet ordered) 'PROCESSING' (saga runs) or 'DONE' (you may delete) and frequently delete 'DONE',
-     * scarcely delete 'PENDING' (i.e. after cookie death) and report 'PROCESSING' after some time as major error...
+     * The actual cleanup.
      */
     public void cleanup() {
         List<Reservation> items = repository.findAll();

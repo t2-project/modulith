@@ -6,7 +6,6 @@ The T2-Modulith is an implementation of the T2-Project as a monolith, with the g
 
 **To-dos:**
 - move UI component into modulith
-- replace saga pattern with a single transaction
 
 ## Build & Run
 

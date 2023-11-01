@@ -73,7 +73,7 @@ public class InventoryService {
      *
      * @param sessionId to identify which reservations to delete
      */
-    public void handleSagaCompensation(String sessionId) {
+    public void deleteReservations(String sessionId) {
         List<InventoryItem> items = inventoryRepository.findAll();
         for (InventoryItem item : items) {
             item.deleteReservation(sessionId);
