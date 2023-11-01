@@ -2,6 +2,7 @@ package de.unistuttgart.t2.modulith.inventory;
 
 import de.unistuttgart.t2.modulith.inventory.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@EnableJpaRepositories(basePackageClasses = { InventoryRepository.class, ReservationRepository.class })
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
