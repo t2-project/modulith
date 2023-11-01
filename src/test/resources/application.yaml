@@ -11,6 +11,7 @@ spring:
       database: test
   jpa:
     database: h2
+    open-in-view: false
 #    properties:
 #      hibernate:
 #        enable_lazy_load_no_trans: true
