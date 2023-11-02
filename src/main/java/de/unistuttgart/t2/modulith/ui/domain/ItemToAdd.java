@@ -1,7 +1,8 @@
 package de.unistuttgart.t2.modulith.ui.domain;
 
 /**
- * TODO
+ * Definition of the JSP model attribute 'item'.
+ * It is used to add and delete items from the cart.
  *
  * @author maumau
  */

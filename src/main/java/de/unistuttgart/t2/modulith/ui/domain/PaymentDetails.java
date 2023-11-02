@@ -1,7 +1,8 @@
 package de.unistuttgart.t2.modulith.ui.domain;
 
 /**
- * TODO
+ * Definition of the JSP model attribute 'details'.
+ * It is used to complete an order.
  *
  * @author maumau
  */

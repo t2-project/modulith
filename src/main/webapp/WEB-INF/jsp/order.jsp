@@ -1,7 +1,7 @@
 <%@include file="head.jsp"%>
 <%@include file="header.jsp"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <div class="container" id="main">
 	<div class="row">
 		<div class="col-sm-6 col-lg-8">

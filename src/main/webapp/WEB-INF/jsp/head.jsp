@@ -14,6 +14,6 @@
 <title>${title}</title>
 <%-- Bootstrap core CSS --%>
 <link rel="stylesheet" href="<c:url value="/resources/bootstrap/css/bootstrap.min.css"/>" type="text/css" />
-<link rel="StyleSheet" href="<c:url value="/resources/teastore.css"/>" type="text/css" media="screen" />
+<%--<link rel="StyleSheet" href="<c:url value="/resources/teastore.css"/>" type="text/css" media="screen" />--%>
 </head>
 <body>
