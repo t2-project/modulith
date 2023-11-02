@@ -1,18 +1,44 @@
 # T2-Modulith
 
-This project is currently **under active development**.
-
-The T2-Modulith is an implementation of the T2-Project as a monolith, with the goal, to keep the modularity. It uses [Spring Modulith](https://spring.io/projects/spring-modulith) to verify the modular arrangements.
-
-**To-dos:**
-- move UI component into modulith
+The T2-Modulith is an implementation of the T2-Project as a monolith. It has still modular boundaries that are enforced by [Spring Modulith](https://spring.io/projects/spring-modulith).
 
 ## Build & Run
+
+There are different ways on how to build and run the application...
+
+### Just run it
+
+Existing Docker image from [DockerHub](https://hub.docker.com/r/t2project/modulith)) is used.
+
+```sh
+docker compose up
+```
+
+### Build with Maven and Docker
+
+Application gets build by Maven first, then packaged into a Docker image and finally executed.
 
 ```sh
 ./mvnw clean install -DskipTests
 docker build -t t2project/modulith:main .
 docker compose up
+```
+
+### Build inside Docker
+
+A multi-stage Dockerfile is used to build the application and place it into a smaller Docker image used for running it.
+
+```sh
+docker build -t t2project/modulith:main -f Dockerfile.full-build .
+docker compose up
+```
+
+### Run in development mode
+
+Development mode means that you run the Modulith application e.g. in debugging mode using your IDE and only run the dependencies (e.g. databases) with Docker.
+
+```sh
+docker compose -f docker-compose-dev.yml up
 ```
 
 ## Architecture
@@ -45,7 +71,15 @@ However, here the payment module knows only one payment provider and always cont
 
 The default payment provider is the [Credit Institute Service](https://github.com/t2-project/creditinstitute).
 
+### UI Module
+
+The UI module provides a simple website. It is based on the UI of the original [TeaStore](https://github.com/DescartesResearch/TeaStore) and implemented with JSP.
+The UI module communicates with the other modules directly, the REST endpoints provided by the other modules are not used by the UI.
+
 ## HTTP Endpoints
+
+The modules `cart`, `inventory` and `order` provide REST endpoints for their specific domain.
+The JSP-specific http endpoints provided by the `ui` module are not listed here.
 
 **Cart Module:**
 
@@ -228,3 +262,7 @@ Setting either `TTL` or `taskrate` to a value less or equal to zero disables the
 | property                | read from env var | description          |
 |-------------------------|-------------------|----------------------|
 | spring.data.mongodb.uri | MONGO_HOST        | host of the mongo db |
+
+## Technical Notes
+
+The application gets packaged as a war and not as jar, because of the limitations of JSP used for the UI (see Spring Docs about [JSP Limitations](https://docs.spring.io/spring-boot/docs/current/reference/html/web.html#web.servlet.embedded-container.jsp-limitations)).
