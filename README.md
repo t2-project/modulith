@@ -1,14 +1,25 @@
 # T2-Modulith
 
-The T2-Modulith is an implementation of the T2-Project as a monolith. It has still modular boundaries that are enforced by [Spring Modulith](https://spring.io/projects/spring-modulith).
+The T2-Modulith is an implementation of the [T2-Project](https://t2-documentation.readthedocs.io/) as a monolith.
+It has still a modular structure enforced by [Spring Modulith](https://spring.io/projects/spring-modulith).
+
+## Usage
+
+You can use the application either by accessing the UI or by using the HTTP endpoints.
+
+- UI: http://localhost:8081/ui/
+- API: http://localhost:8081/swagger-ui/index.html
+
+On how to use the UI see the usage section of the [T2-Project UI repository](https://github.com/t2-project/ui#usage).
+How to use the API is described below in section [HTTP Endpoints](#http-endpoints).
 
 ## Build & Run
 
-There are different ways on how to build and run the application...
+There are different ways on how to build and run the application. 
 
 ### Just run it
 
-Existing Docker image from [DockerHub](https://hub.docker.com/r/t2project/modulith)) is used.
+Existing Docker image from [DockerHub](https://hub.docker.com/r/t2project/modulith) is used.
 
 ```sh
 docker compose up
@@ -35,11 +46,13 @@ docker compose up
 
 ### Run in development mode
 
-Development mode means that you run the Modulith application e.g. in debugging mode using your IDE and only run the dependencies (e.g. databases) with Docker.
+Development mode means that you run the Modulith application on your own e.g. in debugging mode using your IDE and only run the dependencies (databases and fake credit institute) with Docker.
 
 ```sh
 docker compose -f docker-compose-dev.yml up
 ```
+
+---
 
 ## Architecture
 
@@ -69,12 +82,14 @@ The payment module is responsible for contacting the payment provider.
 In a more real situation, a payment service would contact different payment providers, e.g. paypal or a certain credit institute based on which payment method a user chose.
 However, here the payment module knows only one payment provider and always contact that one.
 
-The default payment provider is the [Credit Institute Service](https://github.com/t2-project/creditinstitute).
+The default payment provider is the fake [Credit Institute Service](https://github.com/t2-project/creditinstitute).
 
 ### UI Module
 
 The UI module provides a simple website. It is based on the UI of the original [TeaStore](https://github.com/DescartesResearch/TeaStore) and implemented with JSP.
-The UI module communicates with the other modules directly, the REST endpoints provided by the other modules are not used by the UI.
+The UI module communicates with the other modules directly by inter-process communication. The REST endpoints provided by the other modules are not used.
+
+---
 
 ## HTTP Endpoints
 
@@ -100,7 +115,7 @@ The JSP-specific http endpoints provided by the `ui` module are not listed here.
 
 ### API Usage Examples
 
-Port is set to 8081.
+Base URL: `http://localhost:8081/`
 
 #### Access the products / inventory
 
@@ -230,9 +245,11 @@ With this, you place an order for the user "foo", with the given payment details
 curl -i -X POST -H "Content-Type:application/json" -d '{"cardNumber":"num","cardOwner":"own","checksum":"sum", "sessionId":"foo"}' http://localhost:8081/confirm
 ```
 
+---
+
 ## Application Properties
 
-`./src/main/resources/application-*.yaml`
+Property files: `./src/main/resources/application-*.yaml`
 
 **T2 configuration:**
 
@@ -263,6 +280,9 @@ Setting either `TTL` or `taskrate` to a value less or equal to zero disables the
 |-------------------------|-------------------|----------------------|
 | spring.data.mongodb.uri | MONGO_HOST        | host of the mongo db |
 
+---
+
 ## Technical Notes
 
-The application gets packaged as a war and not as jar, because of the limitations of JSP used for the UI (see Spring Docs about [JSP Limitations](https://docs.spring.io/spring-boot/docs/current/reference/html/web.html#web.servlet.embedded-container.jsp-limitations)).
+- The application gets packaged as a war and not as jar, because of the limitations of JSP used for the UI (see Spring Docs about [JSP Limitations](https://docs.spring.io/spring-boot/docs/current/reference/html/web.html#web.servlet.embedded-container.jsp-limitations))
+- Default port is set to 8081 to have the same base URL than the [T2-Project UI Backend Service](https://github.com/t2-project/uibackend)
