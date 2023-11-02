@@ -1,6 +1,5 @@
 package de.unistuttgart.t2.modulith.order.web;
 
-import de.unistuttgart.t2.modulith.inventory.ReservationFailedException;
 import de.unistuttgart.t2.modulith.order.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -49,7 +48,7 @@ public class OrderController {
      * @param exception the exception that was thrown
      * @return a response entity with an exceptional message
      */
-    @ExceptionHandler({ OrderNotPlacedException.class, ReservationFailedException.class })
+    @ExceptionHandler({ OrderNotPlacedException.class })
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<String> handleOrderNotPlacedException(OrderNotPlacedException exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
