@@ -21,8 +21,8 @@
 </nav><%-- Bootstrap core JavaScript
     ==================================================
 Placed at the end of the document so the pages load faster --%>
-<script src="<c:url value="/bootstrap/js/jquery.min.js"/>"></script>
-<script src="<c:url value="/bootstrap/js/bootstrap.min.js"/>"></script>
-<script src="<c:url value="/resizingscript.js"/>"></script>
+<script src="<c:url value="/resources/bootstrap/js/jquery.min.js"/>"></script>
+<script src="<c:url value="/resources/bootstrap/js/bootstrap.min.js"/>"></script>
+<script src="<c:url value="/resources/resizingscript.js"/>"></script>
 </body>
 </html>

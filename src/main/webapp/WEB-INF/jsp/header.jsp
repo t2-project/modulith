@@ -1,6 +1,6 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%-- static navbar --%>
 <nav id="headnav" class="navbar navbar-default container">
 	<div class="container-fluid">
@@ -12,7 +12,7 @@
 					class="icon-bar"></span>
 			</button>
 			<a class="navbar-brand" href="<c:url value="/ui/products"/>">
-    <img src="<c:url value="/images/front.png"/>" width="30" height="30" class="d-inline-block align-top" alt="">
+    <img src="<c:url value="/resources/images/front.png"/>" width="30" height="30" class="d-inline-block align-top" alt="">
     T2-Project</a>
 		</div>
 		<div id="navbar" class="navbar-collapse collapse">
