@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.modulith.payment.web;
+package de.unistuttgart.t2.modulith.payment.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

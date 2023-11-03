@@ -1,6 +1,6 @@
 package de.unistuttgart.t2.modulith.payment;
 
-import de.unistuttgart.t2.modulith.payment.web.PaymentData;
+import de.unistuttgart.t2.modulith.payment.domain.PaymentData;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;

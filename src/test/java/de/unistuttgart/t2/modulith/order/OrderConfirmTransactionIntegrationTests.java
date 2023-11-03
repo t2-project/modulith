@@ -9,7 +9,6 @@ import de.unistuttgart.t2.modulith.inventory.repository.InventoryRepository;
 import de.unistuttgart.t2.modulith.inventory.repository.ReservationRepository;
 import de.unistuttgart.t2.modulith.order.repository.OrderRepository;
 import de.unistuttgart.t2.modulith.order.repository.OrderStatus;
-import de.unistuttgart.t2.modulith.order.web.OrderNotPlacedException;
 import de.unistuttgart.t2.modulith.payment.PaymentFailedException;
 import de.unistuttgart.t2.modulith.payment.PaymentService;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,8 +58,7 @@ public class OrderConfirmTransactionIntegrationTests {
 
         // Spying on InventoryService, CartService and OrderService is needed to be able to throw exceptions for specific test cases
         this.inventoryService = spy(new InventoryService(inventoryRepository, reservationRepository));
-        this.cartService = spy(new CartService(cartRepository, inventoryService));
-
+        this.cartService = spy(new CartService(cartRepository));
         this.orderService = spy(new OrderService(cartService, inventoryService, paymentService, orderRepository, transactionManager));
 
         orderRepository.deleteAll();

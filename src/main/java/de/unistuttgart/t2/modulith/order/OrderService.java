@@ -7,7 +7,6 @@ import de.unistuttgart.t2.modulith.inventory.Product;
 import de.unistuttgart.t2.modulith.order.repository.OrderItem;
 import de.unistuttgart.t2.modulith.order.repository.OrderRepository;
 import de.unistuttgart.t2.modulith.order.repository.OrderStatus;
-import de.unistuttgart.t2.modulith.order.web.OrderNotPlacedException;
 import de.unistuttgart.t2.modulith.payment.PaymentFailedException;
 import de.unistuttgart.t2.modulith.payment.PaymentService;
 import org.slf4j.Logger;

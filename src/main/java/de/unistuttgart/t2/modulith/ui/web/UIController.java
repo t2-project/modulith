@@ -1,11 +1,9 @@
 package de.unistuttgart.t2.modulith.ui.web;
 
-import de.unistuttgart.t2.modulith.cart.CartService;
-import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import de.unistuttgart.t2.modulith.inventory.Product;
-import de.unistuttgart.t2.modulith.order.OrderService;
 import de.unistuttgart.t2.modulith.ui.domain.ItemToAdd;
 import de.unistuttgart.t2.modulith.ui.domain.PaymentDetails;
+import de.unistuttgart.t2.modulith.uibackend.UIBackendService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,16 +27,10 @@ import java.util.List;
 public class UIController {
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
-    private final CartService cartService;
-    private final InventoryService inventoryService;
-    private final OrderService orderService;
+    private final UIBackendService uiBackendService;
 
-    public UIController(@Autowired CartService cartService,
-                        @Autowired InventoryService inventoryService,
-                        @Autowired OrderService orderService) {
-        this.cartService = cartService;
-        this.inventoryService = inventoryService;
-        this.orderService = orderService;
+    public UIController(@Autowired UIBackendService uiBackendService) {
+        this.uiBackendService = uiBackendService;
     }
 
     ////// PAGES TO REALLY LOOK AT ///////////
@@ -54,7 +46,7 @@ public class UIController {
         model.addAttribute("title", "Products");
         model.addAttribute("item", new ItemToAdd());
 
-        List<Product> products = inventoryService.getAllProducts();
+        List<Product> products = uiBackendService.getAllProducts();
 
         model.addAttribute("productslist", products);
 
@@ -68,7 +60,7 @@ public class UIController {
 
         LOG.info("SessionID : " + session.getId());
 
-        List<Product> products = cartService.getProductsInCart(session.getId());
+        List<Product> products = uiBackendService.getProductsInCart(session.getId());
 
         model.addAttribute("OrderItems", products);
 
@@ -100,7 +92,7 @@ public class UIController {
         LOG.info("SessionID : " + session.getId());
         LOG.info("Item to Add : " + item.toString());
 
-        cartService.addItemToCart(session.getId(), item.getProductId(), item.getUnits());
+        uiBackendService.addItemToCart(session.getId(), item.getProductId(), item.getUnits());
 
         return "product";
     }
@@ -112,7 +104,7 @@ public class UIController {
         LOG.info("SessionID : " + session.getId());
         LOG.info("Item to Delete : " + item.toString());
 
-        cartService.deleteItemFromCart(session.getId(), item.getProductId(), -1 * item.getUnits());
+        uiBackendService.deleteItemFromCart(session.getId(), item.getProductId(), -1 * item.getUnits());
 
         // TODO redirect : to display deleted products
 
@@ -123,7 +115,7 @@ public class UIController {
     public String confirm(@ModelAttribute("details") PaymentDetails details, Model model, HttpSession session) {
         LOG.info("SessionID : " + session.getId());
 
-        orderService.confirmOrder(session.getId(), details.getCardNumber(), details.getCardOwner(), details.getChecksum());
+        uiBackendService.confirmOrder(session.getId(), details.getCardNumber(), details.getCardOwner(), details.getChecksum());
 
         model.addAttribute("title", "Confirmed");
 

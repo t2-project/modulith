@@ -4,7 +4,6 @@ import de.unistuttgart.t2.modulith.cart.CartService;
 import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import de.unistuttgart.t2.modulith.order.repository.OrderItem;
 import de.unistuttgart.t2.modulith.order.repository.OrderRepository;
-import de.unistuttgart.t2.modulith.order.web.OrderNotPlacedException;
 import de.unistuttgart.t2.modulith.payment.PaymentFailedException;
 import de.unistuttgart.t2.modulith.payment.PaymentService;
 import org.junit.jupiter.api.Test;
