@@ -12,7 +12,6 @@ public class ItemToAdd {
     private int units;
 
     public ItemToAdd() {
-        // TODO Auto-generated constructor stub
     }
 
     public ItemToAdd(String productId, int units) {

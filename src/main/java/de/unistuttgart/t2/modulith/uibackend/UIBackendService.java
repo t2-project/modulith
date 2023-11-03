@@ -71,7 +71,6 @@ public class UIBackendService {
      */
     public void deleteItemFromCart(String sessionId, String productId, int units) {
         cartService.deleteItemFromCart(sessionId, productId, units);
-        // TODO Remove reservations
     }
 
     /**

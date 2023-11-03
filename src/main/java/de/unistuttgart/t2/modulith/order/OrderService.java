@@ -98,9 +98,6 @@ public class OrderService {
         // Calculating total
         double total;
         try {
-            // TODO is it more reasonable to get total from cart module?
-            // Or is it more reasonable to pass the total from the front end
-            // (where it was displayed and therefore is known) ??
             total = getTotal(sessionId);
         } catch (RuntimeException e) {
             throw new OrderNotPlacedException(String
