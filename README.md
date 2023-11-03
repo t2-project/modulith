@@ -136,10 +136,10 @@ Base URL: `http://localhost:8081/`
 
 #### Access the products / inventory
 
-Endpoint to get all products is `GET /products/`:
+Endpoint to get all products is `GET /products`:
 
 ```sh
-curl http://localhost:8081/products/
+curl http://localhost:8081/products
 ```
 
 Response:
