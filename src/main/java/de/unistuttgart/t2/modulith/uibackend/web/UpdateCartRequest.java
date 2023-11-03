@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.modulith.cart.web;
+package de.unistuttgart.t2.modulith.uibackend.web;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;

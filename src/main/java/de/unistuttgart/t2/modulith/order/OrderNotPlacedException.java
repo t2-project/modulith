@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.modulith.order.web;
+package de.unistuttgart.t2.modulith.order;
 
 import java.io.Serial;
 

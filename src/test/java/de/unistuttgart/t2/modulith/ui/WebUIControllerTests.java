@@ -1,9 +1,7 @@
 package de.unistuttgart.t2.modulith.ui;
 
-import de.unistuttgart.t2.modulith.cart.CartService;
-import de.unistuttgart.t2.modulith.inventory.InventoryService;
-import de.unistuttgart.t2.modulith.order.OrderService;
 import de.unistuttgart.t2.modulith.ui.web.UIController;
+import de.unistuttgart.t2.modulith.uibackend.UIBackendService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,11 +24,7 @@ public class WebUIControllerTests {
     private MockMvc mockMvc;
 
     @Mock
-    private CartService cartService;
-    @Mock
-    private InventoryService inventoryService;
-    @Mock
-    private OrderService orderService;
+    private UIBackendService uiBackendService;
 
     @BeforeEach
     public void setup() {
@@ -38,7 +32,7 @@ public class WebUIControllerTests {
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
         viewResolver.setSuffix(".jsp");
 
-        mockMvc = MockMvcBuilders.standaloneSetup(new UIController(cartService, inventoryService, orderService))
+        mockMvc = MockMvcBuilders.standaloneSetup(new UIController(uiBackendService))
             .setViewResolvers(viewResolver)
             .build();
     }

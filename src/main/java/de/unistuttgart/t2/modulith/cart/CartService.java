@@ -2,14 +2,10 @@ package de.unistuttgart.t2.modulith.cart;
 
 import de.unistuttgart.t2.modulith.cart.repository.CartItem;
 import de.unistuttgart.t2.modulith.cart.repository.CartRepository;
-import de.unistuttgart.t2.modulith.inventory.InventoryService;
-import de.unistuttgart.t2.modulith.inventory.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,11 +23,8 @@ public class CartService {
 
     private final CartRepository cartRepository;
 
-    private final InventoryService inventoryService;
-
-    public CartService(@Autowired CartRepository cartRepository, @Autowired InventoryService inventoryService) {
+    public CartService(@Autowired CartRepository cartRepository) {
         this.cartRepository = cartRepository;
-        this.inventoryService = inventoryService;
     }
 
     /**
@@ -49,31 +42,6 @@ public class CartService {
             result = Optional.of(new CartContent(content));
         }
         return result;
-    }
-
-    /**
-     * Get a list of all products in a users cart.
-     *
-     * @param sessionId identifies the cart content to get
-     * @return a list of the product in the cart
-     */
-    public List<Product> getProductsInCart(String sessionId) {
-        List<Product> results = new ArrayList<>();
-
-        Optional<CartContent> optCartContent = getCart(sessionId);
-
-        if (optCartContent.isPresent()) {
-            CartContent cartContent = optCartContent.get();
-
-            for (String productId : cartContent.getProductIds()) {
-                inventoryService.getSingleProduct(productId).ifPresent(p -> {
-                    p.setUnits(cartContent.getUnits(productId));
-                    results.add(p);
-                });
-            }
-        }
-
-        return results;
     }
 
     /**

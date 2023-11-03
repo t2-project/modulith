@@ -1,4 +1,4 @@
 @org.springframework.modulith.ApplicationModule(
-    allowedDependencies = {"cart", "inventory", "order"}
+    allowedDependencies = {"uibackend"}
 )
 package de.unistuttgart.t2.modulith.ui;

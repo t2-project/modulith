@@ -5,16 +5,16 @@ It has still a modular structure enforced by [Spring Modulith](https://spring.io
 
 **Migration from the microservices implementation to the monolith implementation:**
 
-|                        Microservice                        |      Monolith      | Comment                                                                                                                                              |
-|:----------------------------------------------------------:|:------------------:|------------------------------------------------------------------------------------------------------------------------------------------------------|
-|         [Cart](https://github.com/t2-project/cart)         |    Cart Module     |                                                                                                                                                      |
-|    [Inventory](https://github.com/t2-project/inventory)    |  Inventory Module  |                                                                                                                                                      |
-|        [Order](https://github.com/t2-project/order)        |    Order Module    |                                                                                                                                                      |
-|      [Payment](https://github.com/t2-project/payment)      |   Payment Module   |                                                                                                                                                      |
-|           [UI](https://github.com/t2-project/ui)           |     UI Module      |                                                                                                                                                      |
-|   [UI Backend](https://github.com/t2-project/uibackend)    |         ❌          | no API gateway needed anymore<br/> → REST endpoints are now located in the respective domain-specific module                                         |
-| [Orchestrator](https://github.com/t2-project/orchestrator) |         ❌          | Saga Pattern not needed anymore                                                                                                                      |
-|       [common](https://github.com/t2-project/common)       |         ❌          | jar was used by all microservices for inter-service communication<br/> → not relevant anymore; some parts moved to respective domain-specific module |
+|                        Microservice                        |     Monolith      | Comment                                                                                                                                                                                                                                        |
+|:----------------------------------------------------------:|:-----------------:|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|         [Cart](https://github.com/t2-project/cart)         |    Cart Module    |                                                                                                                                                                                                                                                |
+|    [Inventory](https://github.com/t2-project/inventory)    | Inventory Module  |                                                                                                                                                                                                                                                |
+|        [Order](https://github.com/t2-project/order)        |   Order Module    |                                                                                                                                                                                                                                                |
+|      [Payment](https://github.com/t2-project/payment)      |  Payment Module   |                                                                                                                                                                                                                                                |
+|           [UI](https://github.com/t2-project/ui)           |     UI Module     |                                                                                                                                                                                                                                                |
+|   [UI Backend](https://github.com/t2-project/uibackend)    | UI Backend Module |                                                                                                                                                                                                                                                |
+| [Orchestrator](https://github.com/t2-project/orchestrator) |         ❌         | Saga Pattern not needed anymore                                                                                                                                                                                                                |
+|       [common](https://github.com/t2-project/common)       |         ❌         | jar was used by all microservices for inter-service communication<br/> → not relevant anymore; some parts moved to respective domain-specific module; there is now a `config` module that includes configuration relevant for multiple modules |
 
 ## Quick start
 
@@ -69,13 +69,21 @@ docker compose -f docker-compose-dev.yml up
 
 ## Architecture
 
-![Components Diagram created by Spring Modulith](./components-diagram.svg)
+![Components Diagram created by Spring Modulith](./component-diagram.svg)
 
-### Cart Module
+### UI Module
 
-The cart module manages the shopping carts of the T2-Project.
-The content of a user's shopping cart is a map of Strings to Integers.
-Within the context of the T2-Project it contains which products (identified by their id) and how many units there of a users wants to buy.
+The UI module provides a simple website. It is based on the UI of the original [TeaStore](https://github.com/DescartesResearch/TeaStore) and implemented with JSP.
+The UI module communicates with the UI backend module directly by inter-process communication.
+
+### UI Backend Module
+
+The UI backend module acts as an API gateway and interacts with the cart, inventory and order module.
+It provides REST endpoints, but they are not used by the UI.
+
+### Order Module
+
+The order module is responsible for saving orders to the database and handling the completion of orders (trigger payment, committing reservations, deleting cart).
 
 ### Inventory Module
 
@@ -83,10 +91,6 @@ The inventory module is the inventory of the T2-Project.
 It manages the products and reservations.
 
 The products are the teas that the store sells and reservations exist to express that a user plans to buy some units of a product.
-
-### Order Module
-
-The order module is responsible for saving orders to the database and handling the completion of orders (trigger payment, committing reservations, deleting cart).
 
 ### Payment Module
 
@@ -97,34 +101,34 @@ However, here the payment module knows only one payment provider and always cont
 
 The default payment provider is the fake [Credit Institute Service](https://github.com/t2-project/creditinstitute).
 
-### UI Module
+### Cart Module
 
-The UI module provides a simple website. It is based on the UI of the original [TeaStore](https://github.com/DescartesResearch/TeaStore) and implemented with JSP.
-The UI module communicates with the other modules directly by inter-process communication. The REST endpoints provided by the other modules are not used.
+The cart module manages the shopping carts of the T2-Project.
+The content of a user's shopping cart is a map of Strings to Integers.
+Within the context of the T2-Project it contains which products (identified by their id) and how many units there of a users wants to buy.
 
 ---
 
 ## HTTP Endpoints
 
-The modules `cart`, `inventory` and `order` provide REST endpoints for their specific domain.
+The modules `cart` and `inventory` provide REST endpoints for their specific domain. The `UI backend` module provides REST endpoints that represent the actual functionality of the whole application.
 The JSP-specific http endpoints provided by the `ui` module are not listed here.
 
-**Cart Module:**
-
-* `/cart/{id}` GET list of all products in cart of a specific session
-* `/cart/{id}` POST list of products to add/remove to/from cart of a specific session
-
-**Inventory Module:**
+**UI Backend:**
 
 * `/products` GET list of all products in the inventory
-* `/inventory/{id}` : PUT, POST, GET or DELETE the product with productId `id`
-* `/inventory/reservation` : POST to add a new reservation
+* `/cart/{id}` GET or POST products in/to cart with sessionId `id`
+* `/confirm` POST to place an order
+
+**Cart:**
+
+* `/cart/{id}` GET, PUT, POST or DELETE the cart with sessionId `id` (does only manipulate the cart, no reservations are made in the inventory)
+
+**Inventory:**
+
+* `/inventory/{id}` : GET, PUT, POST or DELETE the product with productId `id`
 * `/generate` : GET to generate new products
 * `/restock` : GET to restock all items
-
-**Order Module:**
-
-* `/confirm` POST to place an order
 
 ### API Usage Examples
 
@@ -228,26 +232,6 @@ Response:
 
 ```json
 []
-```
-
-#### Add a Reservation
-
-Reserve 3 units of product "foo" for user "bar" (a product with that id must indeed be in the store):
-
-```sh
-curl -i -X POST -H "Content-Type:application/json" -d '{ "productId" : "foo", "sessionId" : "bar", "units" : 3}' http://localhost:8081/inventory/reservation
-```
-
-If the reservation succeeds, the reply contains the product with `units` being the reserved units.
-
-```json
-{
-    "id":"foo",
-    "name":"Sencha (25 bags)",
-    "description":"very nice Sencha (25 bags) tea",
-    "units":98,
-    "price":0.6923181656954707
-}
 ```
 
 #### Confirm Order

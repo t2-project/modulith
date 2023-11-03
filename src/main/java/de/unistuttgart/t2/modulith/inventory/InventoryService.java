@@ -34,7 +34,7 @@ public class InventoryService {
 
     /**
      * Get a list of all products from the inventory.
-     * <p>
+     *
      * @return a list of all products in the inventory.
      */
     public List<Product> getAllProducts() {

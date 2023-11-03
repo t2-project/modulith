@@ -1,10 +1,7 @@
 package de.unistuttgart.t2.modulith.cart;
 
-import de.unistuttgart.t2.modulith.TestData;
 import de.unistuttgart.t2.modulith.cart.repository.CartItem;
 import de.unistuttgart.t2.modulith.cart.repository.CartRepository;
-import de.unistuttgart.t2.modulith.inventory.InventoryService;
-import de.unistuttgart.t2.modulith.inventory.Product;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -14,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
+import java.util.Optional;
 
 import static de.unistuttgart.t2.modulith.TestData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,9 +27,6 @@ public class CartServiceTests {
 
     @Mock
     CartRepository cartRepository;
-
-    @Mock
-    InventoryService inventoryService;
 
     @Captor
     ArgumentCaptor<CartItem> cartItemCaptor;
@@ -60,15 +54,13 @@ public class CartServiceTests {
     }
 
     @Test
-    public void getProductsInCart() {
+    public void getCart() {
         when(cartRepository.findById(sessionId)).thenReturn(cartItemResponse());
-        when(inventoryService.getSingleProduct(productId)).thenReturn(inventoryResponse());
 
-        List<Product> products = cartService.getProductsInCart(TestData.sessionId);
+        Optional<CartContent> cartContent = cartService.getCart(sessionId);
 
-        assertNotNull(products);
-        assertEquals(1, products.size());
-        assertEquals(productId, products.get(0).getId());
-        assertEquals(units, products.get(0).getUnits());
+        assertNotNull(cartContent);
+        assertEquals(1, cartContent.get().getContent().size());
+        assertEquals(units, cartContent.get().getContent().get(productId));
     }
 }
