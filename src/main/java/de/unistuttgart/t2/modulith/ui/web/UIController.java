@@ -104,7 +104,7 @@ public class UIController {
         LOG.info("SessionID : " + session.getId());
         LOG.info("Item to Delete : " + item.toString());
 
-        uiBackendService.deleteItemFromCart(session.getId(), item.getProductId(), -1 * item.getUnits());
+        uiBackendService.deleteItemFromCart(session.getId(), item.getProductId(), item.getUnits());
 
         // TODO redirect : to display deleted products
 
