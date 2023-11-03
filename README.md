@@ -3,6 +3,27 @@
 The T2-Modulith is an implementation of the [T2-Project](https://t2-documentation.readthedocs.io/) as a monolith.
 It has still a modular structure enforced by [Spring Modulith](https://spring.io/projects/spring-modulith).
 
+**Migration from the microservices implementation to the monolith implementation:**
+
+|                        Microservice                        |      Monolith      | Comment                                                                                                                                              |
+|:----------------------------------------------------------:|:------------------:|------------------------------------------------------------------------------------------------------------------------------------------------------|
+|         [Cart](https://github.com/t2-project/cart)         |    Cart Module     |                                                                                                                                                      |
+|    [Inventory](https://github.com/t2-project/inventory)    |  Inventory Module  |                                                                                                                                                      |
+|        [Order](https://github.com/t2-project/order)        |    Order Module    |                                                                                                                                                      |
+|      [Payment](https://github.com/t2-project/payment)      |   Payment Module   |                                                                                                                                                      |
+|           [UI](https://github.com/t2-project/ui)           |     UI Module      |                                                                                                                                                      |
+|   [UI Backend](https://github.com/t2-project/uibackend)    |         ❌          | no API gateway needed anymore<br/> → REST endpoints are now located in the respective domain-specific module                                         |
+| [Orchestrator](https://github.com/t2-project/orchestrator) |         ❌          | Saga Pattern not needed anymore                                                                                                                      |
+|       [common](https://github.com/t2-project/common)       |         ❌          | jar was used by all microservices for inter-service communication<br/> → not relevant anymore; some parts moved to respective domain-specific module |
+
+## Quick start
+
+You can run T2-Modulith with all dependencies without building anything by using the existing Docker images from [DockerHub](https://hub.docker.com/r/t2project/modulith) and Docker Compose:
+
+```sh
+docker compose up
+```
+
 ## Usage
 
 You can use the application either by accessing the UI or by using the HTTP endpoints.
@@ -16,14 +37,6 @@ How to use the API is described below in section [HTTP Endpoints](#http-endpoint
 ## Build & Run
 
 There are different ways on how to build and run the application. 
-
-### Just run it
-
-Existing Docker image from [DockerHub](https://hub.docker.com/r/t2project/modulith) is used.
-
-```sh
-docker compose up
-```
 
 ### Build with Maven and Docker
 
@@ -56,7 +69,7 @@ docker compose -f docker-compose-dev.yml up
 
 ## Architecture
 
-_TODO: Add image_
+![Components Diagram created by Spring Modulith](./components-diagram.svg)
 
 ### Cart Module
 
