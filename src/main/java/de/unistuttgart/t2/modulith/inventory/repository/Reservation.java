@@ -9,7 +9,7 @@ import java.util.Date;
  * A Reservation of a certain number of units.
  * <p>
  * Reservations have a {@code creationDate} such that they might be killed after they exceeded their time to life.
- * 
+ *
  * @author maumau
  */
 @Entity
@@ -28,7 +28,7 @@ public class Reservation {
     private int units;
 
     @Column(name = "userId")
-    private String userId;
+    private final String userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     public InventoryItem item;
@@ -63,7 +63,7 @@ public class Reservation {
 
     /**
      * increase number of units by 'update' and also renew the creation date.
-     * 
+     *
      * @param update additionally reserved units
      */
     public void updateUnits(int update) {

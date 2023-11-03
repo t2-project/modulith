@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Parent class to all tests that use the repositories. Populates the repositories and offers some helpers for assertion.
- * 
+ *
  * @author maumau
  */
 public abstract class BaseRepositoryTest {
@@ -55,7 +55,7 @@ public abstract class BaseRepositoryTest {
 
     /**
      * get the reservation for the user identified by key.
-     * 
+     *
      * @param actual the reservations, presumably as found in the db
      * @param key    the reservation to look for
      * @return reservation for user identified by key.
@@ -68,7 +68,7 @@ public abstract class BaseRepositoryTest {
 
     /**
      * asserts that there is no reservation for user identified by key within actual.
-     * 
+     *
      * @param actual the reservations, presumably as found in the db
      * @param key    the reservation to look for
      */

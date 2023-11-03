@@ -150,7 +150,8 @@ class CartDBTests {
         assertFalse(item.getContent().isEmpty());
 
         assertTrue(item.getContent().containsKey(key));
-        assertEquals(1, item.getContent().get(key));    }
+        assertEquals(1, item.getContent().get(key));
+    }
 
     @Test
     public void deleteCart() {

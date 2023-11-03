@@ -103,15 +103,15 @@ public class InventoryItemTests {
 
     @Test
     public void equalsInventoryItem() {
-        assertTrue(item.equals(item));
+        assertEquals(item, item);
 
         InventoryItem other = new InventoryItem("id", "name", "description", 15, 0.5);
         other.addReservation(existingSession1, 1);
         other.addReservation(existingSession2, 2);
         other.addReservation(existingSession3, 3);
 
-        assertTrue(item.equals(other));
-        assertTrue(other.equals(item));
+        assertEquals(item, other);
+        assertEquals(other, item);
 
     }
 }

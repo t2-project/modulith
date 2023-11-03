@@ -24,7 +24,8 @@ public class OrderItem {
     /**
      * used (and required) by Spring.
      */
-    public OrderItem() {}
+    public OrderItem() {
+    }
 
     /**
      * Create a new order.<br>

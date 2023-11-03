@@ -18,4 +18,5 @@ public final class OrderNotPlacedException extends RuntimeException {
 
     public OrderNotPlacedException(String message, Exception e) {
         super(message, e);
-    }}
+    }
+}

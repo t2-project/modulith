@@ -20,7 +20,7 @@ import java.util.Optional;
  */
 @Service
 @Transactional
-@EnableJpaRepositories(basePackageClasses = { InventoryRepository.class, ReservationRepository.class })
+@EnableJpaRepositories(basePackageClasses = {InventoryRepository.class, ReservationRepository.class})
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;

@@ -34,7 +34,7 @@ public class PaymentRequestTests {
 
     private MockRestServiceServer mockServer;
 
-    private String testUrl = "http://foo.bar/pay";
+    private final String testUrl = "http://foo.bar/pay";
 
     @BeforeEach
     public void setUp() {

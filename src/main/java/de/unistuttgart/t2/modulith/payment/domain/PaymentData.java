@@ -20,7 +20,8 @@ public class PaymentData {
     @JsonProperty("total")
     private double total;
 
-    public PaymentData() {}
+    public PaymentData() {
+    }
 
     @JsonCreator
     public PaymentData(String cardNumber, String cardOwner, String checksum, double total) {

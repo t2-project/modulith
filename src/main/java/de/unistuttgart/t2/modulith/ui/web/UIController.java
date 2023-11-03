@@ -99,7 +99,7 @@ public class UIController {
 
     @PostMapping("/ui/delete")
     public RedirectView delete(@ModelAttribute("item") ItemToAdd item, RedirectAttributes redirectAttributes,
-        HttpSession session) {
+                               HttpSession session) {
 
         LOG.info("SessionID : " + session.getId());
         LOG.info("Item to Delete : " + item.toString());

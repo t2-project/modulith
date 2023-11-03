@@ -15,7 +15,7 @@ public class TestContext {
 
     @Bean
     public RestTemplate template() {
-        RestTemplateBuilder restTemplateBuilder =  new RestTemplateBuilder();
+        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
         return restTemplateBuilder.setConnectTimeout(Duration.ofSeconds(timeout))
             .setReadTimeout(Duration.ofSeconds(timeout)).build();
     }

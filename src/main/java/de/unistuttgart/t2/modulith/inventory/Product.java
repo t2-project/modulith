@@ -29,12 +29,13 @@ public final class Product {
     @JsonProperty("price")
     private double price;
 
-    public Product() {}
+    public Product() {
+    }
 
     @JsonCreator
     public Product(@JsonProperty("id") String id, @JsonProperty("name") String name,
-        @JsonProperty("description") String description, @JsonProperty("units") int units,
-        @JsonProperty("price") double price) {
+                   @JsonProperty("description") String description, @JsonProperty("units") int units,
+                   @JsonProperty("price") double price) {
         this.id = id;
         this.name = name;
         this.description = description;

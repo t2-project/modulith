@@ -5,4 +5,5 @@ package de.unistuttgart.t2.modulith.config;
  *
  * @author Leon Hofmeister
  */
-public interface BaseScan {}
+public interface BaseScan {
+}

@@ -18,6 +18,7 @@ public final class InventoryProductMapper {
             inventoryItem.getAvailableUnits(), // available units = units in stock - sum of reserved units
             inventoryItem.getPrice());
     }
+
     public static Optional<Product> toProduct(Optional<InventoryItem> optionalInventoryItem) {
         return optionalInventoryItem.map(InventoryProductMapper::toProduct);
     }
