@@ -20,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Map;
 
@@ -32,7 +31,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
-public class OrderConfirmTransactionIntegrationTests {
+public class OrderConfirmIntegrationTests {
 
     private OrderService orderService;
     private CartService cartService;
@@ -49,8 +48,6 @@ public class OrderConfirmTransactionIntegrationTests {
     private InventoryRepository inventoryRepository;
     @Autowired
     private ReservationRepository reservationRepository;
-    @Autowired
-    private TransactionTemplate transactionManager;
 
     private String productId;
 
@@ -60,7 +57,7 @@ public class OrderConfirmTransactionIntegrationTests {
         // Spying on InventoryService, CartService and OrderService is needed to be able to throw exceptions for specific test cases
         this.inventoryService = spy(new InventoryService(inventoryRepository, reservationRepository));
         this.cartService = spy(new CartService(cartRepository));
-        this.orderService = spy(new OrderService(cartService, inventoryService, paymentService, orderRepository, transactionManager));
+        this.orderService = spy(new OrderService(cartService, inventoryService, paymentService, orderRepository));
 
         orderRepository.deleteAll();
         cartRepository.deleteAll();
@@ -94,6 +91,7 @@ public class OrderConfirmTransactionIntegrationTests {
         assertFalse(cartRepository.findById(sessionId).isPresent(), "Expected cart to be deleted");
         assertEquals(0, reservationRepository.findAll().size(), "Expected reservations are committed");
         verify(paymentService, times(1)).doPayment(anyString(), anyString(), anyString(), anyDouble());
+        verify(cartService, times(1)).deleteCart(sessionId);
     }
 
     @Test
@@ -137,7 +135,7 @@ public class OrderConfirmTransactionIntegrationTests {
     }
 
     @Test
-    public void confirmOrder_PaymentFails_RollbackIsExecuted() throws PaymentFailedException {
+    public void confirmOrder_PaymentFails_OrderIsNotPlaced() throws PaymentFailedException {
 
         // setup
         doThrow(new PaymentFailedException("payment failed"))
@@ -155,41 +153,7 @@ public class OrderConfirmTransactionIntegrationTests {
         assertEquals(OrderStatus.FAILURE, orderRepository.findAll().get(0).getStatus(), "Expected order status to be set to FAILURE");
         assertTrue(cartRepository.findById(sessionId).isPresent(), "Expected cart still be in database");
 
-        assertEquals(1, reservationRepository.findAll().size(), "Expected rollback revert committing of reservations");
-        assertEquals(units, inventoryRepository.findById(productId).get().getUnits(), "Expected rollback reset units to original");
-    }
-
-    @Test
-    public void confirmOrder_CommitReservationsFails_OrderIsSetToFailure() throws PaymentFailedException {
-
-        // setup
-        doThrow(new RuntimeException("committing reservations failed")).when(inventoryService).commitReservations(anyString());
-
-        // execute
-        Exception actualException = assertThrows(Exception.class,
-            () -> orderService.confirmOrder(sessionId, "cardNumber", "cardOwner", "checksum"));
-
-        // assert
-        assertNotNull(actualException);
-        assertTrue(actualException.getMessage().contains("reservations"),
-            String.format("Actual exception message: %s", actualException.getMessage()));
-        assertEquals(1, orderRepository.findAll().size(), "Expected order in database");
-        assertEquals(OrderStatus.FAILURE, orderRepository.findAll().get(0).getStatus(), "Expected order status to be set to FAILURE");
-        assertTrue(cartRepository.findById(sessionId).isPresent(), "Expected cart still be in database");
-        assertEquals(1, reservationRepository.findAll().size(), "Expected reservations are still in database");
-        verify(paymentService, never()).doPayment(anyString(), anyString(), anyString(), anyDouble());
-    }
-
-    @Test
-    public void confirmOrder_DeletingCartFails_OrderIsPlacedNevertheless() throws Exception {
-
-        // setup
-        doThrow(new RuntimeException("deleting cart failed")).when(cartService).deleteCart(anyString());
-
-        // execute
-        String id = orderService.confirmOrder(sessionId, "cardNumber", "cardOwner", "checksum");
-
-        // assert
-        assertNotNull(id, "Expected order id was created");
+        assertEquals(1, reservationRepository.findAll().size(), "Expected reservations were not committed");
+        assertEquals(units, inventoryRepository.findById(productId).get().getUnits(), "Expected reservations were not committed");
     }
 }

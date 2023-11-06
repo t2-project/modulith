@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -37,20 +37,16 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
-    private final TransactionTemplate transactionTemplate;
-
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
     public OrderService(@Autowired CartService cartService,
                         @Autowired InventoryService inventoryService,
                         @Autowired PaymentService paymentService,
-                        @Autowired OrderRepository orderRepository,
-                        @Autowired TransactionTemplate transactionTemplate) {
+                        @Autowired OrderRepository orderRepository) {
         this.cartService = cartService;
         this.inventoryService = inventoryService;
         this.paymentService = paymentService;
         this.orderRepository = orderRepository;
-        this.transactionTemplate = transactionTemplate;
     }
 
     /**
@@ -93,6 +89,7 @@ public class OrderService {
      * @throws Exception if the order to confirm is empty, would result in a negative sum
      *                   or if there are any other errors during the placement of the order
      */
+    @Transactional
     public String confirmOrder(String sessionId, String cardNumber, String cardOwner, String checksum) throws Exception {
 
         // Calculating total
@@ -106,46 +103,27 @@ public class OrderService {
             throw new Exception(String.format("No order placed for session %s. Cart is either empty or not available.", sessionId));
         }
 
-        // TODO Make create order part of the transaction (MongoDB transaction required)
-        // It is currently not part of the transaction, because the required configuration for the MongoDB is missing.
         String orderId = createOrder(sessionId);
-        LOG.info("order {} created for session {}.", orderId, sessionId);
+        LOG.info("order {} created for session {}. Waiting for payment...", orderId, sessionId);
 
+        // Do payment
         try {
-            // JPA Transaction for payment and committing reservation
-            transactionTemplate.executeWithoutResult(transactionStatus -> {
-
-                // Commit reservations
-                try {
-                    inventoryService.commitReservations(sessionId);
-                } catch (Exception e) {
-                    rejectOrder(orderId);
-                    throw new RuntimeException(
-                        String.format("Committing reservations for order %s of session %s failed. Order is rejected.", orderId, sessionId), e);
-                }
-
-                // Do payment
-                try {
-                    paymentService.doPayment(cardNumber, cardOwner, checksum, total);
-                } catch (PaymentFailedException e) {
-                    LOG.warn("Payment failed");
-                    rejectOrder(orderId);
-                    throw new RuntimeException(
-                        String.format("Payment for order %s of session %s failed. Order is rejected.", orderId, sessionId), e);
-                }
-
-                // Delete cart
-                try {
-                    cartService.deleteCart(sessionId);
-                    LOG.info("deleted cart for session {}.", sessionId);
-                } catch (Exception e) {
-                    // Exception is no problem for the transaction, because the cart will be cleared eventually.
-                    LOG.warn(String.format("Deleting of cart for session %s failed.", sessionId), e);
-                }
-            });
-        } catch (RuntimeException e) {
-            throw new Exception(e.getMessage());
+            paymentService.doPayment(cardNumber, cardOwner, checksum, total);
+        } catch (PaymentFailedException e) {
+            // TODO Make create order part of the transaction (MongoDB transaction support is currently not configured)
+            rejectOrder(orderId);
+            throw new RuntimeException(
+                String.format("Payment for order %s of session %s failed.", orderId, sessionId), e);
         }
+
+        // Commit reservations
+        inventoryService.commitReservations(sessionId);
+
+        // Delete cart
+        cartService.deleteCart(sessionId);
+
+        LOG.info("order {} executed successfully for session {}.", orderId, sessionId);
+
         return orderId;
     }
 
