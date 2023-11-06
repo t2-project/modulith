@@ -3,6 +3,7 @@ package de.unistuttgart.t2.modulith.inventory.repository;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -147,13 +148,11 @@ public class InventoryItem {
      *
      * @param sessionId      to identify user
      * @param unitsToReserve number of units to reserve
-     * @throws IllegalArgumentException if not enough units available or otherwise illegal arguments
+     * @throws InsufficientUnitsAvailableException if not enough units available
      */
-    public void addReservation(String sessionId, int unitsToReserve) {
+    public void addReservation(String sessionId, int unitsToReserve) throws InsufficientUnitsAvailableException {
         if (unitsToReserve > getAvailableUnits() || unitsToReserve < 0) {
-            throw new IllegalArgumentException(String.format(
-                "illegal amount of units to reserve: tried ro reserve %d units of product %s, but only %d are available",
-                unitsToReserve, id, getAvailableUnits()));
+            throw new InsufficientUnitsAvailableException(id, unitsToReserve, getAvailableUnits());
         }
         if (unitsToReserve == 0) {
             return;

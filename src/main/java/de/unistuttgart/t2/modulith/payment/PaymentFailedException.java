@@ -7,7 +7,7 @@ import java.io.Serial;
  *
  * @author maumau
  */
-public final class PaymentFailedException extends RuntimeException {
+public final class PaymentFailedException extends Exception {
 
     @Serial
     private static final long serialVersionUID = 1L;

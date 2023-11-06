@@ -3,7 +3,9 @@ package de.unistuttgart.t2.modulith.uibackend;
 import de.unistuttgart.t2.modulith.cart.CartService;
 import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import de.unistuttgart.t2.modulith.inventory.Product;
+import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
 import de.unistuttgart.t2.modulith.order.OrderService;
+import de.unistuttgart.t2.modulith.uibackend.exceptions.ReservationFailedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,7 +62,7 @@ public class UIBackendServiceTests {
     }
 
     @Test
-    public void confirmOrder() {
+    public void confirmOrder() throws Exception {
 
         // execute
         service.confirmOrder(sessionId, "cardNumber", "cardOwner", "checksum");
@@ -84,7 +86,7 @@ public class UIBackendServiceTests {
     }
 
     @Test
-    public void addItemToCart() {
+    public void addItemToCart() throws InsufficientUnitsAvailableException, ReservationFailedException {
 
         // setup
         Product product = inventoryResponse().get();

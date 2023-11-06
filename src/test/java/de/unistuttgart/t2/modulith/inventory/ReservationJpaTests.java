@@ -1,5 +1,6 @@
 package de.unistuttgart.t2.modulith.inventory;
 
+import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
 import de.unistuttgart.t2.modulith.inventory.repository.Reservation;
 import org.junit.jupiter.api.Assertions;
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ReservationJpaTests extends BaseRepositoryTest {
 
     @Test
-    public void makeNewReservation(@Autowired InventoryService inventoryService) {
+    public void makeNewReservation(@Autowired InventoryService inventoryService) throws InsufficientUnitsAvailableException {
         // make reservation
         String key = "newSessionId";
         inventoryService.makeReservation(key, id1, 1);
@@ -48,7 +49,7 @@ public class ReservationJpaTests extends BaseRepositoryTest {
     }
 
     @Test
-    public void makeNoNewReservationIfUnitsAreZero(@Autowired InventoryService inventoryService) {
+    public void makeNoNewReservationIfUnitsAreZero(@Autowired InventoryService inventoryService) throws InsufficientUnitsAvailableException {
         // make reservation
         String key = "newSessionId";
         inventoryService.makeReservation(key, id1, 0);
@@ -64,7 +65,7 @@ public class ReservationJpaTests extends BaseRepositoryTest {
     }
 
     @Test
-    public void increaseReservation(@Autowired InventoryService inventoryService) {
+    public void increaseReservation(@Autowired InventoryService inventoryService) throws InsufficientUnitsAvailableException {
         // make reservation
         String key = existingSession1;
         inventoryService.makeReservation(key, id1, 1);
@@ -82,7 +83,7 @@ public class ReservationJpaTests extends BaseRepositoryTest {
     }
 
     @Test
-    public void reservationIsUnchangedIfUnitsOfNewReservationAreZero(@Autowired InventoryService inventoryService) {
+    public void reservationIsUnchangedIfUnitsOfNewReservationAreZero(@Autowired InventoryService inventoryService) throws InsufficientUnitsAvailableException {
         // make reservation
         String key = existingSession1;
         inventoryService.makeReservation(key, id1, 0);
@@ -122,7 +123,7 @@ public class ReservationJpaTests extends BaseRepositoryTest {
 
     @Test
     public void throwIAEUnitsReservation(@Autowired InventoryService inventoryService) {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(InsufficientUnitsAvailableException.class, () -> {
             inventoryService.makeReservation(existingSession1, id1, 1000);
         });
     }

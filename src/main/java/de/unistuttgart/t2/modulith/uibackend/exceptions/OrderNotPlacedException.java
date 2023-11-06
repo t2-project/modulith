@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.modulith.order;
+package de.unistuttgart.t2.modulith.uibackend.exceptions;
 
 import java.io.Serial;
 
@@ -7,7 +7,7 @@ import java.io.Serial;
  *
  * @author maumau
  */
-public final class OrderNotPlacedException extends RuntimeException {
+public final class OrderNotPlacedException extends Exception {
 
     @Serial
     private static final long serialVersionUID = 1L;

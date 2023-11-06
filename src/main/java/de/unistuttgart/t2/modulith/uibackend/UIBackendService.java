@@ -4,7 +4,10 @@ import de.unistuttgart.t2.modulith.cart.CartContent;
 import de.unistuttgart.t2.modulith.cart.CartService;
 import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import de.unistuttgart.t2.modulith.inventory.Product;
+import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
 import de.unistuttgart.t2.modulith.order.OrderService;
+import de.unistuttgart.t2.modulith.uibackend.exceptions.OrderNotPlacedException;
+import de.unistuttgart.t2.modulith.uibackend.exceptions.ReservationFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,11 +53,19 @@ public class UIBackendService {
      * @param productId id of product to be added
      * @param units     number of units to be added (must not be negative)
      * @return successfully added item
+     * @throws ReservationFailedException if there is an error making reservations for the product
      */
-    public Product addItemToCart(String sessionId, String productId, int units) {
+    public Product addItemToCart(String sessionId, String productId, int units) throws ReservationFailedException {
         // contact inventory first, cause i'd rather have a dangling reservation than a
         // products in the cart that are not backed with reservations.
-        Product addedProduct = inventoryService.makeReservation(sessionId, productId, units);
+        Product addedProduct = null;
+        try {
+            addedProduct = inventoryService.makeReservation(sessionId, productId, units);
+        } catch (InsufficientUnitsAvailableException e) {
+            throw new ReservationFailedException(String.format(
+                "Adding item %s with %s units to cart of session %s failed. Reservation in inventory failed.",
+                productId, units, sessionId), e);
+        }
         cartService.addItemToCart(sessionId, productId, units);
         return addedProduct;
     }
@@ -117,7 +128,11 @@ public class UIBackendService {
      * @param cardOwner  part of payment details
      * @param checksum   part of payment details
      */
-    public void confirmOrder(String sessionId, String cardNumber, String cardOwner, String checksum) {
-        orderService.confirmOrder(sessionId, cardNumber, cardOwner, checksum);
+    public void confirmOrder(String sessionId, String cardNumber, String cardOwner, String checksum) throws OrderNotPlacedException {
+        try {
+            orderService.confirmOrder(sessionId, cardNumber, cardOwner, checksum);
+        } catch (Exception e) {
+            throw new OrderNotPlacedException(e.getMessage());
+        }
     }
 }

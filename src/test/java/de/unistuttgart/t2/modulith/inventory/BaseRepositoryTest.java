@@ -1,5 +1,6 @@
 package de.unistuttgart.t2.modulith.inventory;
 
+import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryRepository;
 import de.unistuttgart.t2.modulith.inventory.repository.Reservation;
@@ -36,7 +37,7 @@ public abstract class BaseRepositoryTest {
      * Populate the repositories.
      */
     @BeforeEach
-    void populateRepository() {
+    void populateRepository() throws InsufficientUnitsAvailableException {
         productRepository.deleteAll();
         reservationRepository.deleteAll();
 

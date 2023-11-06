@@ -1,5 +1,6 @@
 package de.unistuttgart.t2.modulith.inventory;
 
+import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
 import de.unistuttgart.t2.modulith.inventory.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -106,8 +107,9 @@ public class InventoryService {
      * @return the item where the reservation was attached
      * @throws NoSuchElementException   if the product does not exist
      * @throws IllegalArgumentException if any parameter is null
+     * @throws InsufficientUnitsAvailableException if not enough units are available
      */
-    public Product makeReservation(String sessionId, String productId, int units) throws NoSuchElementException {
+    public Product makeReservation(String sessionId, String productId, int units) throws NoSuchElementException, InsufficientUnitsAvailableException {
         if (productId == null || sessionId == null || units < 0) {
             throw new IllegalArgumentException(
                 "productId : " + productId + ", sessionId : " + sessionId + ", units : " + units);

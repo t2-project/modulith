@@ -90,22 +90,20 @@ public class OrderService {
      * @param cardOwner  part of payment details
      * @param checksum   part of payment details
      * @return identifies the order
-     * @throws OrderNotPlacedException if the order to confirm is empty/ would result in a negative sum
+     * @throws Exception if the order to confirm is empty, would result in a negative sum
+     *                   or if there are any other errors during the placement of the order
      */
-    public String confirmOrder(String sessionId, String cardNumber, String cardOwner, String checksum)
-        throws OrderNotPlacedException {
+    public String confirmOrder(String sessionId, String cardNumber, String cardOwner, String checksum) throws Exception {
 
         // Calculating total
         double total;
         try {
             total = getTotal(sessionId);
-        } catch (RuntimeException e) {
-            throw new OrderNotPlacedException(String
-                .format("No order placed for session %s. Calculating total failed.", sessionId), e);
+        } catch (Exception e) {
+            throw new Exception(String.format("No order placed for session %s. Calculating total failed.", sessionId), e);
         }
         if (total <= 0) {
-            throw new OrderNotPlacedException(String
-                .format("No order placed for session %s. Cart is either empty or not available.", sessionId));
+            throw new Exception(String.format("No order placed for session %s. Cart is either empty or not available.", sessionId));
         }
 
         // TODO Make create order part of the transaction (MongoDB transaction required)
@@ -113,40 +111,42 @@ public class OrderService {
         String orderId = createOrder(sessionId);
         LOG.info("order {} created for session {}.", orderId, sessionId);
 
-        // JPA Transaction for payment and committing reservation
-        return transactionTemplate.execute(transactionStatus -> {
+        try {
+            // JPA Transaction for payment and committing reservation
+            transactionTemplate.executeWithoutResult(transactionStatus -> {
 
-            // Commit reservations
-            try {
-                inventoryService.commitReservations(sessionId);
-            } catch (RuntimeException e) {
-                rejectOrder(orderId);
-                transactionStatus.setRollbackOnly();
-                throw new OrderNotPlacedException(
-                    String.format("Committing reservations for order %s of session %s failed. Order is rejected.", orderId, sessionId), e);
-            }
+                // Commit reservations
+                try {
+                    inventoryService.commitReservations(sessionId);
+                } catch (Exception e) {
+                    rejectOrder(orderId);
+                    throw new RuntimeException(
+                        String.format("Committing reservations for order %s of session %s failed. Order is rejected.", orderId, sessionId), e);
+                }
 
-            // Do payment
-            try {
-                paymentService.doPayment(cardNumber, cardOwner, checksum, total);
-            } catch (PaymentFailedException e) {
-                LOG.warn("Payment failed");
-                rejectOrder(orderId);
-                transactionStatus.setRollbackOnly();
-                throw new OrderNotPlacedException(
-                    String.format("Payment for order %s of session %s failed. Order is rejected.", orderId, sessionId), e);
-            }
+                // Do payment
+                try {
+                    paymentService.doPayment(cardNumber, cardOwner, checksum, total);
+                } catch (PaymentFailedException e) {
+                    LOG.warn("Payment failed");
+                    rejectOrder(orderId);
+                    throw new RuntimeException(
+                        String.format("Payment for order %s of session %s failed. Order is rejected.", orderId, sessionId), e);
+                }
 
-            // Delete cart
-            try {
-                cartService.deleteCart(sessionId);
-                LOG.info("deleted cart for session {}.", sessionId);
-            } catch (RuntimeException e) {
-                // Runtime exception is no problem for the transaction, because the cart will be cleared eventually.
-                LOG.warn(String.format("Deleting of cart for session %s failed.", sessionId), e);
-            }
-            return orderId;
-        });
+                // Delete cart
+                try {
+                    cartService.deleteCart(sessionId);
+                    LOG.info("deleted cart for session {}.", sessionId);
+                } catch (Exception e) {
+                    // Exception is no problem for the transaction, because the cart will be cleared eventually.
+                    LOG.warn(String.format("Deleting of cart for session %s failed.", sessionId), e);
+                }
+            });
+        } catch (RuntimeException e) {
+            throw new Exception(e.getMessage());
+        }
+        return orderId;
     }
 
     /**

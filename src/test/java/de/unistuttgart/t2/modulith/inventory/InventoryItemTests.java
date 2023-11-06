@@ -1,5 +1,6 @@
 package de.unistuttgart.t2.modulith.inventory;
 
+import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
 import de.unistuttgart.t2.modulith.inventory.repository.Reservation;
 import org.junit.jupiter.api.Assertions;
@@ -18,7 +19,7 @@ public class InventoryItemTests {
     String existingSession3 = "session3";
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws InsufficientUnitsAvailableException {
         item = new InventoryItem("id", "name", "description", 15, 0.5);
         item.addReservation(existingSession1, 1);
         item.addReservation(existingSession2, 2);
@@ -47,21 +48,21 @@ public class InventoryItemTests {
     }
 
     @Test
-    public void addReservationForNewSession() {
+    public void addReservationForNewSession() throws InsufficientUnitsAvailableException {
         item.addReservation("newSession", 2);
         assertEquals(4, item.getReservations().size());
         assertEquals(7, item.getAvailableUnits());
     }
 
     @Test
-    public void updateReservationOfExistingSession() {
+    public void updateReservationOfExistingSession() throws InsufficientUnitsAvailableException {
         item.addReservation(existingSession3, 2);
         assertEquals(3, item.getReservations().size());
         assertEquals(7, item.getAvailableUnits());
     }
 
     @Test
-    public void addReservationWithZeroUnitsForNewSession_StateUnchanged() {
+    public void addReservationWithZeroUnitsForNewSession_StateUnchanged() throws InsufficientUnitsAvailableException {
         item.addReservation("newSession", 0);
         assertEquals(3, item.getReservations().size());
         assertEquals(9, item.getAvailableUnits());
@@ -69,7 +70,7 @@ public class InventoryItemTests {
 
     @Test
     public void addReservationWithTooMuchUnits_exceptionTooMuchUnits_stateUnchanged() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(InsufficientUnitsAvailableException.class, () -> {
             item.addReservation("newSession", 400);
         });
         assertEquals(3, item.getReservations().size());
@@ -78,7 +79,7 @@ public class InventoryItemTests {
 
     @Test
     public void addReservationWithNegativeUnits_exceptionNegativeUnits_stateUnchanged() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(InsufficientUnitsAvailableException.class, () -> {
             item.addReservation("newSession", -4);
         });
         assertEquals(3, item.getReservations().size());
@@ -102,7 +103,7 @@ public class InventoryItemTests {
     }
 
     @Test
-    public void equalsInventoryItem() {
+    public void equalsInventoryItem() throws InsufficientUnitsAvailableException {
         assertEquals(item, item);
 
         InventoryItem other = new InventoryItem("id", "name", "description", 15, 0.5);

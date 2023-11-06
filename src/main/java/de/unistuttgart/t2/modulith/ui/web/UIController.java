@@ -4,6 +4,8 @@ import de.unistuttgart.t2.modulith.inventory.Product;
 import de.unistuttgart.t2.modulith.ui.domain.ItemToAdd;
 import de.unistuttgart.t2.modulith.ui.domain.PaymentDetails;
 import de.unistuttgart.t2.modulith.uibackend.UIBackendService;
+import de.unistuttgart.t2.modulith.uibackend.exceptions.OrderNotPlacedException;
+import de.unistuttgart.t2.modulith.uibackend.exceptions.ReservationFailedException;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,12 +89,19 @@ public class UIController {
     ////////// ACTIONS /////////////
 
     @PostMapping("/ui/add")
-    public String add(@ModelAttribute("item") ItemToAdd item, HttpSession session) {
+    public String add(@ModelAttribute("item") ItemToAdd item, Model model, HttpSession session) {
 
         LOG.info("SessionID : " + session.getId());
         LOG.info("Item to Add : " + item.toString());
 
-        uiBackendService.addItemToCart(session.getId(), item.getProductId(), item.getUnits());
+        try {
+            uiBackendService.addItemToCart(session.getId(), item.getProductId(), item.getUnits());
+        } catch (ReservationFailedException e) {
+            LOG.error("Failed to add item to cart : " + session.getId() + ".\nError message: " + e.getMessage());
+
+            // TODO Display error message in UI
+            model.addAttribute("title", "Error");
+        }
 
         return "product";
     }
@@ -115,9 +124,12 @@ public class UIController {
     public String confirm(@ModelAttribute("details") PaymentDetails details, Model model, HttpSession session) {
         LOG.info("SessionID : " + session.getId());
 
-        uiBackendService.confirmOrder(session.getId(), details.getCardNumber(), details.getCardOwner(), details.getChecksum());
-
-        model.addAttribute("title", "Confirmed");
+        try {
+            uiBackendService.confirmOrder(session.getId(), details.getCardNumber(), details.getCardOwner(), details.getChecksum());
+            model.addAttribute("title", "Confirmed");
+        } catch (OrderNotPlacedException e) {
+            model.addAttribute("title", "Error");
+        }
 
         // TODO : Display confirmation message :) / (or Failure)
 

@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unistuttgart.t2.modulith.cart.CartContent;
 import de.unistuttgart.t2.modulith.inventory.Product;
-import de.unistuttgart.t2.modulith.order.OrderNotPlacedException;
+import de.unistuttgart.t2.modulith.uibackend.exceptions.OrderNotPlacedException;
+import de.unistuttgart.t2.modulith.uibackend.exceptions.ReservationFailedException;
 import de.unistuttgart.t2.modulith.uibackend.web.OrderRequest;
 import de.unistuttgart.t2.modulith.uibackend.web.UIBackendController;
 import de.unistuttgart.t2.modulith.uibackend.web.UpdateCartRequest;
@@ -54,7 +55,7 @@ public class UIBackendControllerTests {
     }
 
     @Test
-    public void dontChangeCartIfUnitsAreZero() {
+    public void dontChangeCartIfUnitsAreZero() throws ReservationFailedException {
 
         CartContent cartContent = new CartContent(Map.of(productId, 0));
 
@@ -66,7 +67,7 @@ public class UIBackendControllerTests {
     }
 
     @Test
-    public void addItemToCart() {
+    public void addItemToCart() throws ReservationFailedException {
 
         UpdateCartRequest request = new UpdateCartRequest(Map.of(productId, units));
         controller.updateCart(sessionId, request);
@@ -78,7 +79,7 @@ public class UIBackendControllerTests {
     }
 
     @Test
-    public void addMultipleItemsToCart() {
+    public void addMultipleItemsToCart() throws ReservationFailedException {
 
         UpdateCartRequest request = new UpdateCartRequest(Map.of(productId, units, anotherProductId, anotherUnits));
         controller.updateCart(sessionId, request);
@@ -89,7 +90,7 @@ public class UIBackendControllerTests {
     }
 
     @Test
-    public void removeItemFromCart() {
+    public void removeItemFromCart() throws ReservationFailedException {
 
         UpdateCartRequest request = new UpdateCartRequest(Map.of(productId, -units));
         List<Product> addedProducts = controller.updateCart(sessionId, request);

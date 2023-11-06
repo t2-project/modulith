@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import static de.unistuttgart.t2.modulith.TestData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,7 +44,8 @@ public class OrderServiceIntegrationTests {
 
     @BeforeEach
     public void setup() {
-        this.orderService = new OrderService(cartService, inventoryService, paymentService, orderRepository, new FakeTransactionTemplate());
+        TransactionTemplate fakeTransactionTemplate = FakeTransactionTemplate.spied();
+        this.orderService = new OrderService(cartService, inventoryService, paymentService, orderRepository, fakeTransactionTemplate);
         orderRepository.deleteAll();
     }
 
@@ -80,7 +82,7 @@ public class OrderServiceIntegrationTests {
     }
 
     @Test
-    public void confirmOrder() throws OrderNotPlacedException {
+    public void confirmOrder() throws Exception {
 
         // Setup mocks
         when(cartService.getCart(sessionId)).thenReturn(cartResponse());

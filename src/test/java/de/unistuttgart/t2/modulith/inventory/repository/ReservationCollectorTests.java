@@ -1,5 +1,6 @@
 package de.unistuttgart.t2.modulith.inventory.repository;
 
+import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +34,7 @@ class ReservationCollectorTests {
     InventoryRepository productRepository;
 
     @BeforeEach
-    public void populateRepository() {
+    public void populateRepository() throws InsufficientUnitsAvailableException {
         repository.deleteAll();
 
         InventoryItem item = new InventoryItem(null, "name", "desc", 100, 1.0);

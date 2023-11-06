@@ -1,6 +1,7 @@
 package de.unistuttgart.t2.modulith.inventory;
 
 import de.unistuttgart.t2.modulith.TestData;
+import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryProductMapper;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryRepository;
@@ -75,7 +76,7 @@ public class InventoryServiceTests {
     }
 
     @Test
-    public void makeReservation() {
+    public void makeReservation() throws InsufficientUnitsAvailableException {
         // setup inventory response
         Optional<Product> productInInventory = inventoryResponse();
         Optional<InventoryItem> inventoryItem = productInInventory.map(InventoryProductMapper::toInventoryItem);

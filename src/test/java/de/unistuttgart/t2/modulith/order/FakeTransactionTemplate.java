@@ -21,5 +21,4 @@ public class FakeTransactionTemplate extends TransactionTemplate {
     public <T> T execute(TransactionCallback<T> action) throws TransactionException {
         return action.doInTransaction(new SimpleTransactionStatus());
     }
-
 }

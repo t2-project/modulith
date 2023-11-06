@@ -1,8 +1,9 @@
 package de.unistuttgart.t2.modulith.uibackend.web;
 
 import de.unistuttgart.t2.modulith.inventory.Product;
-import de.unistuttgart.t2.modulith.order.OrderNotPlacedException;
 import de.unistuttgart.t2.modulith.uibackend.UIBackendService;
+import de.unistuttgart.t2.modulith.uibackend.exceptions.OrderNotPlacedException;
+import de.unistuttgart.t2.modulith.uibackend.exceptions.ReservationFailedException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -57,9 +58,10 @@ public class UIBackendController {
      */
     @Operation(summary = "Update items in cart")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject(value = "{\n\"content\": {\n    \"product-id\": 3\n  }\n}")))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Cart updated")})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Cart updated"),
+        @ApiResponse(responseCode = "500", description = "Cart could not be updated")})
     @PostMapping("/cart/{sessionId}")
-    public List<Product> updateCart(@PathVariable String sessionId, @RequestBody UpdateCartRequest updateCartRequest) {
+    public List<Product> updateCart(@PathVariable String sessionId, @RequestBody UpdateCartRequest updateCartRequest) throws ReservationFailedException {
         List<Product> successfullyAddedProducts = new ArrayList<>();
 
         for (Map.Entry<String, Integer> product : updateCartRequest.getContent().entrySet()) {
@@ -112,7 +114,7 @@ public class UIBackendController {
      * @param exception the exception that was thrown
      * @return a response entity with an exceptional message
      */
-    @ExceptionHandler({OrderNotPlacedException.class})
+    @ExceptionHandler({OrderNotPlacedException.class, ReservationFailedException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<String> handleOrderNotPlacedException(OrderNotPlacedException exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());

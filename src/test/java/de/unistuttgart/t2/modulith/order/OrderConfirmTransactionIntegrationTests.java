@@ -4,6 +4,7 @@ import de.unistuttgart.t2.modulith.cart.CartService;
 import de.unistuttgart.t2.modulith.cart.repository.CartItem;
 import de.unistuttgart.t2.modulith.cart.repository.CartRepository;
 import de.unistuttgart.t2.modulith.inventory.InventoryService;
+import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryRepository;
 import de.unistuttgart.t2.modulith.inventory.repository.ReservationRepository;
@@ -54,7 +55,7 @@ public class OrderConfirmTransactionIntegrationTests {
     private String productId;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws InsufficientUnitsAvailableException {
 
         // Spying on InventoryService, CartService and OrderService is needed to be able to throw exceptions for specific test cases
         this.inventoryService = spy(new InventoryService(inventoryRepository, reservationRepository));
@@ -82,7 +83,7 @@ public class OrderConfirmTransactionIntegrationTests {
     }
 
     @Test
-    public void confirmOrder_Succeeds() throws OrderNotPlacedException, PaymentFailedException {
+    public void confirmOrder_Succeeds() throws Exception {
 
         // execute
         String id = orderService.confirmOrder(
@@ -107,7 +108,6 @@ public class OrderConfirmTransactionIntegrationTests {
 
         // assert
         assertNotNull(actualException);
-        assertEquals(OrderNotPlacedException.class, actualException.getClass());
         assertTrue(actualException.getMessage().contains("total"),
             String.format("Actual exception message: %s", actualException.getMessage()));
         assertEquals(0, orderRepository.findAll().size(), "Expected no order in database");
@@ -128,7 +128,6 @@ public class OrderConfirmTransactionIntegrationTests {
 
         // assert
         assertNotNull(actualException);
-        assertEquals(OrderNotPlacedException.class, actualException.getClass());
         assertTrue(actualException.getMessage().contains("Cart"),
             String.format("Actual exception message: %s", actualException.getMessage()));
         assertEquals(0, orderRepository.findAll().size(), "Expected no order in database");
@@ -150,7 +149,6 @@ public class OrderConfirmTransactionIntegrationTests {
 
         // assert
         assertNotNull(actualException);
-        assertEquals(OrderNotPlacedException.class, actualException.getClass());
         assertTrue(actualException.getMessage().contains("Payment"),
             String.format("Actual exception message: %s", actualException.getMessage()));
         assertEquals(1, orderRepository.findAll().size(), "Expected order in database");
@@ -173,7 +171,6 @@ public class OrderConfirmTransactionIntegrationTests {
 
         // assert
         assertNotNull(actualException);
-        assertEquals(OrderNotPlacedException.class, actualException.getClass());
         assertTrue(actualException.getMessage().contains("reservations"),
             String.format("Actual exception message: %s", actualException.getMessage()));
         assertEquals(1, orderRepository.findAll().size(), "Expected order in database");
@@ -184,7 +181,7 @@ public class OrderConfirmTransactionIntegrationTests {
     }
 
     @Test
-    public void confirmOrder_DeletingCartFails_OrderIsPlacedNevertheless() throws PaymentFailedException {
+    public void confirmOrder_DeletingCartFails_OrderIsPlacedNevertheless() throws Exception {
 
         // setup
         doThrow(new RuntimeException("deleting cart failed")).when(cartService).deleteCart(anyString());
