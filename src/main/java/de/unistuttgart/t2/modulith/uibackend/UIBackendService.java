@@ -63,8 +63,8 @@ public class UIBackendService {
             addedProduct = inventoryService.makeReservation(sessionId, productId, units);
         } catch (InsufficientUnitsAvailableException e) {
             throw new ReservationFailedException(String.format(
-                "Adding item %s with %s units to cart of session %s failed. Reservation in inventory failed.",
-                productId, units, sessionId), e);
+                "Adding item %s with %s units to cart of session %s failed. Reason: %s",
+                productId, units, sessionId, e.getMessage()));
         }
         cartService.addItemToCart(sessionId, productId, units);
         return addedProduct;

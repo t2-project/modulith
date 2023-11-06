@@ -90,10 +90,12 @@ public class UIController {
             uiBackendService.addItemToCart(session.getId(), item.getProductId(), item.getUnits());
         } catch (ReservationFailedException e) {
             LOG.error(e.getMessage());
-
-            // TODO Display error message in UI
-            model.addAttribute("title", "Error");
+            model.addAttribute("messagetitle", "Adding item to cart failed!");
+            model.addAttribute("messageparagraph", e.getMessage());
+            return "error_page";
         }
+
+        model.addAttribute("message", "Adding items to cart was successful!");
 
         return "product";
     }
@@ -105,8 +107,6 @@ public class UIController {
         LOG.debug("Delete item from card: {} | SessionID: {}", item.toString(), session.getId());
 
         uiBackendService.deleteItemFromCart(session.getId(), item.getProductId(), item.getUnits());
-
-        // TODO redirect : to display deleted products
 
         return new RedirectView("/ui/cart", true);
     }
@@ -120,10 +120,13 @@ public class UIController {
             uiBackendService.confirmOrder(session.getId(), details.getCardNumber(), details.getCardOwner(), details.getChecksum());
             model.addAttribute("title", "Confirmed");
         } catch (OrderNotPlacedException e) {
-            model.addAttribute("title", "Error");
+            LOG.error(e.getMessage());
+            model.addAttribute("messagetitle", "Confirm order failed!");
+            model.addAttribute("messageparagraph", e.getMessage());
+            return "error_page";
         }
 
-        // TODO : Display confirmation message :) / (or Failure)
+        model.addAttribute("message", "Order was executed successfully!");
 
         return "category";
     }
