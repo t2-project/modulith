@@ -84,12 +84,12 @@ public class UIController {
     @PostMapping("/add")
     public String add(@ModelAttribute("item") ItemToAdd item, Model model, HttpSession session) {
 
-        LOG.info(String.format("Add item to card: %s | SessionID: %s", item.toString(), session.getId()));
+        LOG.debug("Add item to card: {} | SessionID: {}", item.toString(), session.getId());
 
         try {
             uiBackendService.addItemToCart(session.getId(), item.getProductId(), item.getUnits());
         } catch (ReservationFailedException e) {
-            LOG.error("Failed to add item to cart : " + session.getId() + ".\nError message: " + e.getMessage());
+            LOG.error(e.getMessage());
 
             // TODO Display error message in UI
             model.addAttribute("title", "Error");
@@ -102,7 +102,7 @@ public class UIController {
     public RedirectView delete(@ModelAttribute("item") ItemToAdd item, RedirectAttributes redirectAttributes,
                                HttpSession session) {
 
-        LOG.info(String.format("Delete item from card: %s | SessionID: %s", item.toString(), session.getId()));
+        LOG.debug("Delete item from card: {} | SessionID: {}", item.toString(), session.getId());
 
         uiBackendService.deleteItemFromCart(session.getId(), item.getProductId(), item.getUnits());
 
@@ -114,7 +114,7 @@ public class UIController {
     @PostMapping("/confirm")
     public String confirm(@ModelAttribute("details") PaymentDetails details, Model model, HttpSession session) {
 
-        LOG.info(String.format("Confirm order | SessionID: %s", session.getId()));
+        LOG.debug("Confirm order | SessionID: {}", session.getId());
 
         try {
             uiBackendService.confirmOrder(session.getId(), details.getCardNumber(), details.getCardOwner(), details.getChecksum());

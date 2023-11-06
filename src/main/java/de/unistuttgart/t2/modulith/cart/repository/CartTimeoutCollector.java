@@ -68,7 +68,7 @@ public class CartTimeoutCollector {
     void cleanup() {
         Collection<String> expiredCarts = getExpiredCarts();
         deleteItems(expiredCarts);
-        LOG.info(String.format("deleted %d expired carts", expiredCarts.size()));
+        LOG.info("Deleted {} expired carts", expiredCarts.size());
     }
 
     /**

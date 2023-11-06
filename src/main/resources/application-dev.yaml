@@ -31,3 +31,7 @@ t2:
       timeout: 5
       dummy:
         url: http://localhost:8087/pay
+
+logging:
+  level:
+    de.unistuttgart.t2: DEBUG

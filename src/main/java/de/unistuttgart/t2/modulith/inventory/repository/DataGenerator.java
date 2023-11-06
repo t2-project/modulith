@@ -38,8 +38,7 @@ public class DataGenerator {
     @PostConstruct
     public void generateProducts() {
         if (repository.count() >= inventorySize) {
-            LOG.info(String.format("repository already contains %d entries. not adding new entries.",
-                repository.count()));
+            LOG.info("Repository already contains {} entries. Not adding new entries.", repository.count());
             return;
         }
 
@@ -47,7 +46,7 @@ public class DataGenerator {
             inventorySize = PRODUCT_NAMES.length;
         }
 
-        LOG.info(String.format("repository too small. generate %d new entries.", inventorySize));
+        LOG.info("Repository too small. Generate {} new entries.", inventorySize);
 
         for (int i = (int) repository.count(); i < inventorySize; i++) {
             String name = PRODUCT_NAMES[i];
@@ -75,7 +74,7 @@ public class DataGenerator {
         }
 
         repository.saveAll(items);
-        LOG.info(String.format("Restocked all products to %d", maxUnits));
+        LOG.info("Restocked all products to {}", maxUnits);
     }
 
     // Predefined products from original tea store

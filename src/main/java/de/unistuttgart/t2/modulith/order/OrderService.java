@@ -97,23 +97,24 @@ public class OrderService {
         try {
             total = getTotal(sessionId);
         } catch (Exception e) {
-            throw new Exception(String.format("No order placed for session %s. Calculating total failed.", sessionId), e);
+            throw new Exception(String.format("No order placed for session '%s'. Calculating total failed.", sessionId), e);
         }
         if (total <= 0) {
-            throw new Exception(String.format("No order placed for session %s. Cart is either empty or not available.", sessionId));
+            throw new Exception(String.format("No order placed for session '%s'. Cart is either empty or not available.", sessionId));
         }
 
         String orderId = createOrder(sessionId);
-        LOG.info("order {} created for session {}. Waiting for payment...", orderId, sessionId);
+        LOG.info("Order '{}' created for session '{}'. Waiting for payment...", orderId, sessionId);
 
         // Do payment
         try {
             paymentService.doPayment(cardNumber, cardOwner, checksum, total);
+            LOG.info("Payment of order '{}' was successful!", orderId);
         } catch (PaymentFailedException e) {
             // TODO Make create order part of the transaction (MongoDB transaction support is currently not configured)
             rejectOrder(orderId);
             throw new RuntimeException(
-                String.format("Payment for order %s of session %s failed.", orderId, sessionId), e);
+                String.format("Payment for order '%s' of session '%s' failed.", orderId, sessionId), e);
         }
 
         // Commit reservations
@@ -122,7 +123,7 @@ public class OrderService {
         // Delete cart
         cartService.deleteCart(sessionId);
 
-        LOG.info("order {} executed successfully for session {}.", orderId, sessionId);
+        LOG.info("Order '{}' executed successfully for session '{}'.", orderId, sessionId);
 
         return orderId;
     }

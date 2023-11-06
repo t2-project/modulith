@@ -79,7 +79,7 @@ public class ReservationTimeoutCollector {
         Collection<Reservation> expiredReservations =
             items.stream().filter(r -> r.getCreationDate().before(latestDateAlive)).collect(Collectors.toSet());
 
-        LOG.info(String.format("found %d expired reservations", expiredReservations.size()));
+        LOG.info("Found {} expired reservations", expiredReservations.size());
 
         deleteAtItems(expiredReservations);
         repository.deleteAll(expiredReservations);
