@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Defines endpoints for the DataGenerator.
@@ -25,7 +26,7 @@ public class DataGeneratorController {
      */
     @Operation(summary = "Populate the store with new products")
     @GetMapping("/generate")
-    public void generateData() {
+    public @ResponseBody void generateData() {
         dataGenerator.generateProducts();
     }
 
@@ -34,7 +35,7 @@ public class DataGeneratorController {
      */
     @Operation(summary = "Restock units of the store's products")
     @GetMapping("/restock")
-    public void restock() {
+    public @ResponseBody void restock() {
         dataGenerator.restockProducts();
     }
 }
