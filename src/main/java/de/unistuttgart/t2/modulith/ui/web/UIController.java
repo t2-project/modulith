@@ -6,6 +6,7 @@ import de.unistuttgart.t2.modulith.ui.domain.PaymentDetails;
 import de.unistuttgart.t2.modulith.uibackend.UIBackendService;
 import de.unistuttgart.t2.modulith.uibackend.exceptions.OrderNotPlacedException;
 import de.unistuttgart.t2.modulith.uibackend.exceptions.ReservationFailedException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,8 +63,6 @@ public class UIController {
         model.addAttribute("title", "Cart");
         model.addAttribute("item", new ItemToAdd());
 
-        LOG.info("SessionID : " + session.getId());
-
         List<Product> products = uiBackendService.getProductsInCart(session.getId());
 
         model.addAttribute("OrderItems", products);
@@ -85,8 +84,7 @@ public class UIController {
     @PostMapping("/add")
     public String add(@ModelAttribute("item") ItemToAdd item, Model model, HttpSession session) {
 
-        LOG.info("SessionID : " + session.getId());
-        LOG.info("Item to Add : " + item.toString());
+        LOG.info(String.format("Add item to card: %s | SessionID: %s", item.toString(), session.getId()));
 
         try {
             uiBackendService.addItemToCart(session.getId(), item.getProductId(), item.getUnits());
@@ -104,8 +102,7 @@ public class UIController {
     public RedirectView delete(@ModelAttribute("item") ItemToAdd item, RedirectAttributes redirectAttributes,
                                HttpSession session) {
 
-        LOG.info("SessionID : " + session.getId());
-        LOG.info("Item to Delete : " + item.toString());
+        LOG.info(String.format("Delete item from card: %s | SessionID: %s", item.toString(), session.getId()));
 
         uiBackendService.deleteItemFromCart(session.getId(), item.getProductId(), item.getUnits());
 
@@ -116,7 +113,8 @@ public class UIController {
 
     @PostMapping("/confirm")
     public String confirm(@ModelAttribute("details") PaymentDetails details, Model model, HttpSession session) {
-        LOG.info("SessionID : " + session.getId());
+
+        LOG.info(String.format("Confirm order | SessionID: %s", session.getId()));
 
         try {
             uiBackendService.confirmOrder(session.getId(), details.getCardNumber(), details.getCardOwner(), details.getChecksum());
@@ -134,7 +132,9 @@ public class UIController {
     ////////// UNDEFINED /////////////
 
     @RequestMapping("/**")
-    public String error(Model model) {
+    public String error(Model model, HttpServletRequest request) {
+
+        LOG.warn("Unknown UI path requested: " + request.getRequestURI());
 
         model.addAttribute("title", "Error");
 
