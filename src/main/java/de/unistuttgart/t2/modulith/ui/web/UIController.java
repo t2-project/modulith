@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -26,6 +27,7 @@ import java.util.List;
  * @author maumau
  */
 @Controller
+@RequestMapping("/ui")
 public class UIController {
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
@@ -37,13 +39,13 @@ public class UIController {
 
     ////// PAGES TO REALLY LOOK AT ///////////
 
-    @GetMapping("/ui/")
+    @GetMapping({"", "/"})
     public String index(Model model) {
         model.addAttribute("title", "T2-Project");
         return "index";
     }
 
-    @GetMapping("/ui/products")
+    @GetMapping("/products")
     public String products(Model model) {
         model.addAttribute("title", "Products");
         model.addAttribute("item", new ItemToAdd());
@@ -55,7 +57,7 @@ public class UIController {
         return "category";
     }
 
-    @GetMapping("/ui/cart")
+    @GetMapping("/cart")
     public String cart(Model model, HttpSession session) {
         model.addAttribute("title", "Cart");
         model.addAttribute("item", new ItemToAdd());
@@ -69,7 +71,7 @@ public class UIController {
         return "cart";
     }
 
-    @GetMapping("/ui/confirm")
+    @GetMapping("/confirm")
     public String confirm(Model model, HttpSession session) {
 
         model.addAttribute("title", "Confirm");
@@ -78,17 +80,9 @@ public class UIController {
         return "order";
     }
 
-    @GetMapping("/error")
-    public String error(Model model, HttpSession session) {
-
-        model.addAttribute("title", "Error");
-
-        return "error_page";
-    }
-
     ////////// ACTIONS /////////////
 
-    @PostMapping("/ui/add")
+    @PostMapping("/add")
     public String add(@ModelAttribute("item") ItemToAdd item, Model model, HttpSession session) {
 
         LOG.info("SessionID : " + session.getId());
@@ -106,7 +100,7 @@ public class UIController {
         return "product";
     }
 
-    @PostMapping("/ui/delete")
+    @PostMapping("/delete")
     public RedirectView delete(@ModelAttribute("item") ItemToAdd item, RedirectAttributes redirectAttributes,
                                HttpSession session) {
 
@@ -120,7 +114,7 @@ public class UIController {
         return new RedirectView("/ui/cart", true);
     }
 
-    @PostMapping("/ui/confirm")
+    @PostMapping("/confirm")
     public String confirm(@ModelAttribute("details") PaymentDetails details, Model model, HttpSession session) {
         LOG.info("SessionID : " + session.getId());
 
@@ -134,5 +128,16 @@ public class UIController {
         // TODO : Display confirmation message :) / (or Failure)
 
         return "category";
+    }
+
+
+    ////////// UNDEFINED /////////////
+
+    @RequestMapping("/**")
+    public String error(Model model) {
+
+        model.addAttribute("title", "Error");
+
+        return "error_page";
     }
 }
