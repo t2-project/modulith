@@ -95,6 +95,22 @@ public class OrderConfirmIntegrationTests {
     }
 
     @Test
+    public void confirmOrder_CalledMultipleTimes_ErrorIsThrown() throws Exception {
+
+        // execute first time
+        orderService.confirmOrder(
+            sessionId, "cardNumber", "cardOwner", "checksum");
+        // execute second time → exception is expected, because cart is empty
+        assertThrows(Exception.class, () -> orderService.confirmOrder(
+            sessionId, "cardNumber", "cardOwner", "checksum"));
+
+        // assert
+        verify(paymentService, atMostOnce()).doPayment(anyString(), anyString(), anyString(), anyDouble());
+        verify(inventoryService, atMostOnce()).commitReservations(sessionId);
+        verify(cartService, atMostOnce()).deleteCart(sessionId);
+    }
+
+    @Test
     public void confirmOrder_CalculatingTotalFails_OrderIsNotPlaced() throws PaymentFailedException {
 
         // setup
@@ -135,7 +151,7 @@ public class OrderConfirmIntegrationTests {
     }
 
     @Test
-    public void confirmOrder_PaymentFails_OrderIsNotPlaced() throws PaymentFailedException {
+    public void confirmOrder_PaymentFails_OrderIsNotPlacedAndReservationsAreDeleted() throws PaymentFailedException {
 
         // setup
         doThrow(new PaymentFailedException("payment failed"))

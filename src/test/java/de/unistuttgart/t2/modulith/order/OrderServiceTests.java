@@ -43,7 +43,7 @@ public class OrderServiceTests {
 
         orderService.confirmOrder(sessionId, "cardNumber", "cardOwner", "checksum");
 
-        verify(cartService, atLeast(1)).getCart(sessionId);
+        verify(cartService, times(1)).getCart(sessionId);
         verify(paymentService, times(1)).doPayment(anyString(), anyString(), anyString(), anyDouble());
         verify(inventoryService, times(1)).commitReservations(sessionId);
         verify(cartService, times(1)).deleteCart(sessionId);

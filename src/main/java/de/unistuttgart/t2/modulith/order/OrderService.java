@@ -14,13 +14,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
- * creates and updates orders.
+ * Creates and updates orders.
  *
  * @author maumau
  * @author davidkopp
@@ -78,8 +77,11 @@ public class OrderService {
 
     /**
      * Completes the order by creating an order in the database, making the payment, committing the reservation
-     * and finally deleting the cart. Everything, except the deleting of the cart, happens in a transaction.
-     * It is not a problem if there is a problem deleting the cart, as out dated carts are periodically deleted anyway.
+     * and finally deleting the cart.
+     * The method is not marked as transactional on purpose! MongoDB's transaction support is not configured yet,
+     * so the create order operation would be not transactional anyway.
+     * However, if the payment fails, the order gets rejected. In case of a payment failure, the cart and reservations
+     * are not deleted so that a new order attempt can be made.
      *
      * @param sessionId  identifies the session
      * @param cardNumber part of payment details
@@ -89,7 +91,6 @@ public class OrderService {
      * @throws Exception if the order to confirm is empty, would result in a negative sum
      *                   or if there are any other errors during the placement of the order
      */
-    @Transactional
     public String confirmOrder(String sessionId, String cardNumber, String cardOwner, String checksum) throws Exception {
 
         // Calculating total
@@ -111,7 +112,7 @@ public class OrderService {
             paymentService.doPayment(cardNumber, cardOwner, checksum, total);
             LOG.info("Payment of order '{}' was successful!", orderId);
         } catch (PaymentFailedException e) {
-            // TODO Make create order part of the transaction (MongoDB transaction support is currently not configured)
+            LOG.error("Payment of order '{}' failed! Rejecting order. Caused by: {}", orderId, e.getMessage());
             rejectOrder(orderId);
             throw new RuntimeException(
                 String.format("Payment for order '%s' of session '%s' failed.", orderId, sessionId), e);
