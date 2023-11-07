@@ -3,7 +3,7 @@ package de.unistuttgart.t2.modulith.uibackend;
 import de.unistuttgart.t2.modulith.cart.CartService;
 import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import de.unistuttgart.t2.modulith.inventory.Product;
-import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
+import de.unistuttgart.t2.modulith.inventory.InsufficientUnitsAvailableException;
 import de.unistuttgart.t2.modulith.order.OrderService;
 import de.unistuttgart.t2.modulith.uibackend.exceptions.ReservationFailedException;
 import org.junit.jupiter.api.BeforeEach;

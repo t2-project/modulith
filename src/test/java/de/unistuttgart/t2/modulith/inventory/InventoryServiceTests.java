@@ -1,7 +1,6 @@
 package de.unistuttgart.t2.modulith.inventory;
 
 import de.unistuttgart.t2.modulith.TestData;
-import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryProductMapper;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryRepository;

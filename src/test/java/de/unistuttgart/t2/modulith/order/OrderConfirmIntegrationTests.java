@@ -4,7 +4,7 @@ import de.unistuttgart.t2.modulith.cart.CartService;
 import de.unistuttgart.t2.modulith.cart.repository.CartItem;
 import de.unistuttgart.t2.modulith.cart.repository.CartRepository;
 import de.unistuttgart.t2.modulith.inventory.InventoryService;
-import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
+import de.unistuttgart.t2.modulith.inventory.InsufficientUnitsAvailableException;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryRepository;
 import de.unistuttgart.t2.modulith.inventory.repository.ReservationRepository;

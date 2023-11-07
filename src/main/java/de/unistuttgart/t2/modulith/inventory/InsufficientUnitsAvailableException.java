@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.modulith.inventory.exceptions;
+package de.unistuttgart.t2.modulith.inventory;
 
 import java.io.Serial;
 

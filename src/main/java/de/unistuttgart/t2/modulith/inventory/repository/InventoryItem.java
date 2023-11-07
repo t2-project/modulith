@@ -3,7 +3,7 @@ package de.unistuttgart.t2.modulith.inventory.repository;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
+import de.unistuttgart.t2.modulith.inventory.InsufficientUnitsAvailableException;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 

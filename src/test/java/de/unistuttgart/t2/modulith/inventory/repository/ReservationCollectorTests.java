@@ -1,6 +1,6 @@
 package de.unistuttgart.t2.modulith.inventory.repository;
 
-import de.unistuttgart.t2.modulith.inventory.exceptions.InsufficientUnitsAvailableException;
+import de.unistuttgart.t2.modulith.inventory.InsufficientUnitsAvailableException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
