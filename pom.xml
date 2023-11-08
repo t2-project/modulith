@@ -11,7 +11,7 @@
 	<groupId>de.unistuttgart.t2</groupId>
 	<artifactId>modulith</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>modulith</name>
+	<name>T2-Modulith</name>
 	<description>Modulith variant of the T2-Project</description>
 	<packaging>war</packaging>
 	<properties>
@@ -160,6 +160,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>t2-modulith</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
