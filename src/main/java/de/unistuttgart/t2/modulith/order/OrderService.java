@@ -112,7 +112,7 @@ public class OrderService {
             paymentService.doPayment(cardNumber, cardOwner, checksum, total);
             LOG.info("Payment of order '{}' was successful!", orderId);
         } catch (PaymentFailedException e) {
-            LOG.error("Payment of order '{}' failed! Rejecting order. Caused by: {}", orderId, e.getMessage());
+            LOG.error("Payment of order '{}' failed! Rejecting order.", orderId);
             rejectOrder(orderId);
             throw new RuntimeException(
                 String.format("Payment for order '%s' of session '%s' failed.", orderId, sessionId), e);

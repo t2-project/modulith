@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,8 @@ import java.util.Map;
 public class UIBackendController {
 
     private final UIBackendService service;
+
+    private final Logger LOG = LoggerFactory.getLogger(getClass());
 
     public UIBackendController(@Autowired UIBackendService service) {
         this.service = service;
@@ -117,6 +121,7 @@ public class UIBackendController {
     @ExceptionHandler({OrderNotPlacedException.class, ReservationFailedException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<String> handleCustomException(Exception exception) {
+        LOG.error("Internal server error. Caused by: {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
     }
 }

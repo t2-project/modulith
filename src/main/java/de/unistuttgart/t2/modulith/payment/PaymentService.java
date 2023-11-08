@@ -52,9 +52,8 @@ public class PaymentService {
         try {
             PaymentData paymentData = new PaymentData(cardNumber, cardOwner, checksum, total);
             Retry.decorateSupplier(retry, () -> template.postForObject(providerUrl, paymentData, Void.class)).get();
-        } catch (
-            RestClientException e) {
-            LOG.error(e.getMessage(), e);
+        } catch (RestClientException e) {
+            LOG.error("Payment failed! Error: {}", e.getMessage());
             throw new PaymentFailedException("Payment failed", e);
         }
     }
