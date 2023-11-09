@@ -244,10 +244,10 @@ Add product with id `foo` with 3 units to cart of session with id `bar`:
 curl -i -X POST -H "Content-Type:application/json" -d '{"content":{"foo":3}}'  http://localhost:8081/cart/bar
 ```
 
-Response (`units` are the remaining available units):
+Response (successfully added items):
 
 ```json
-[{"id":"foo","name":"Darjeeling (loose)","description":"very nice Darjeeling (loose) tea","units":261,"price":1.6977123432245298}]
+[{"id":"foo","name":"Darjeeling (loose)","description":"very nice Darjeeling (loose) tea","units":3,"price":1.6977123432245298}]
 ```
 
 Remove product with id `foo` from cart of session with id `bar`:
@@ -256,7 +256,7 @@ Remove product with id `foo` from cart of session with id `bar`:
 curl -i -X POST -H "Content-Type:application/json" -d '{"content":{"foo":-3}}'  http://localhost:8081/cart/bar
 ```
 
-Response:
+Response (empty, because it only includes added items, not removed items):
 
 ```json
 []

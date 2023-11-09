@@ -90,23 +90,24 @@ public class UIBackendServiceTests {
 
         // setup
         Product product = inventoryResponse().get();
-        when(inventoryService.makeReservation(sessionId, productId, units)).thenReturn(product);
+        when(inventoryService.makeReservation(sessionId, productId, 3)).thenReturn(product);
 
         // execute
-        Product result = service.addItemToCart(sessionId, productId, units);
+        Product result = service.addItemToCart(sessionId, productId, 3);
 
         // assert
         verify(cartService).addItemToCart(sessionIdCaptor.capture(), productIdCaptor.capture(), unitsCaptor.capture());
         assertEquals(sessionId, sessionIdCaptor.getValue());
         assertEquals(productId, productIdCaptor.getValue());
-        assertEquals(units, unitsCaptor.getValue());
+        assertEquals(3, unitsCaptor.getValue());
 
         verify(inventoryService).makeReservation(sessionIdCaptor.capture(), productIdCaptor.capture(), unitsCaptor.capture());
         assertEquals(sessionId, sessionIdCaptor.getValue());
         assertEquals(productId, productIdCaptor.getValue());
-        assertEquals(units, unitsCaptor.getValue());
+        assertEquals(3, unitsCaptor.getValue());
 
-        assertEquals(product, result);
+        assertEquals(product.getId(), result.getId());
+        assertEquals(3, result.getUnits());
     }
 
     @Test
