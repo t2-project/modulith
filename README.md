@@ -154,6 +154,8 @@ The JSP-specific http endpoints provided by the `ui` module are not listed here.
 
 Base URL: `http://localhost:8081/`
 
+In the examples we are using `foo` as the product id and `bar` as the session id. In reality, a product id looks like that: `449e25eb-1605-4a27-b337-60118cf59f71` 
+
 #### Access the products / inventory
 
 Endpoint to get all products is `GET /products`:
@@ -166,9 +168,9 @@ Response:
 
 ```json5
 [
-    {"id":"609a96a806573c12ed34479f","name":"Earl Grey (loose)","description":"very nice Earl Grey (loose) tea","units":529,"price":2.088258409676226},
+    {"id":"3a2b20be-2582-47c6-9524-41b5922dbb2c","name":"Earl Grey (loose)","description":"very nice Earl Grey (loose) tea","units":529,"price":2.088258409676226},
 // [...]
-    {"id":"609a96a906573c12ed3447ad","name":"Sencha (25 bags)","description":"very nice Sencha (25 bags) tea","units":101,"price":0.6923181656954707}
+    {"id":"89854456-15e0-4ab1-aa0c-aa41915a988c","name":"Sencha (25 bags)","description":"very nice Sencha (25 bags) tea","units":101,"price":0.6923181656954707}
 ]
 ```
 
@@ -219,13 +221,19 @@ curl http://localhost:8081/generate
 The cart is linked to a session id. Request to get the cart for the session id `bar`:
 
 ```sh
-curl -b keks http://localhost:8081/cart/bar
+curl http://localhost:8081/cart/bar
 ```
 
-Response:
+Response if cart is empty:
 
 ```json
-[{"id":"609a96a906573c12ed3447a8","name":"Ceylon (20 bags)","description":"very nice Ceylon (20 bags) tea","units":13,"price":3.593564279221348}]
+[]
+```
+
+Response if cart includes one product with 3 units:
+
+```json
+[{"id":"foo","name":"Darjeeling (loose)","description":"very nice Darjeeling (loose) tea","units":3,"price":1.6977123432245298}]
 ```
 
 #### Update the cart
@@ -236,10 +244,10 @@ Add product with id `foo` with 3 units to cart of session with id `bar`:
 curl -i -X POST -H "Content-Type:application/json" -d '{"content":{"foo":3}}'  http://localhost:8081/cart/bar
 ```
 
-Response:
+Response (`units` are the remaining available units):
 
 ```json
-[{"id":"foo","name":"Darjeeling (loose)","description":"very nice Darjeeling (loose) tea","units":2147483644,"price":1.6977123432245298}]
+[{"id":"foo","name":"Darjeeling (loose)","description":"very nice Darjeeling (loose) tea","units":261,"price":1.6977123432245298}]
 ```
 
 Remove product with id `foo` from cart of session with id `bar`:
@@ -256,10 +264,10 @@ Response:
 
 #### Confirm Order
 
-With this, you place an order for the user "foo", with the given payment details.
+With this, you place an order for the user "bar", with the given payment details.
 
 ```sh
-curl -i -X POST -H "Content-Type:application/json" -d '{"cardNumber":"num","cardOwner":"own","checksum":"sum", "sessionId":"foo"}' http://localhost:8081/confirm
+curl -i -X POST -H "Content-Type:application/json" -d '{"cardNumber":"num","cardOwner":"own","checksum":"sum", "sessionId":"bar"}' http://localhost:8081/confirm
 ```
 
 ---
