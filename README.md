@@ -137,7 +137,8 @@ The JSP-specific http endpoints provided by the `ui` module are not listed here.
 **UI Backend:**
 
 * `/products` GET list of all products in the inventory
-* `/cart/{id}` GET or POST products in/to cart with sessionId `id`
+* `/cart/{id}` GET list of all products in cart of a specific session
+* `/cart/{id}` POST list of products to add/update/delete in/from cart of a specific session
 * `/confirm` POST to place an order
 
 **Cart:**
@@ -154,7 +155,7 @@ The JSP-specific http endpoints provided by the `ui` module are not listed here.
 
 Base URL: `http://localhost:8081/`
 
-In the examples we are using `foo` as the product id and `bar` as the session id. In reality, a product id looks like that: `449e25eb-1605-4a27-b337-60118cf59f71` 
+In the examples we are using `<productId>` and `{sessionId}` as placeholders. You have to replace them with real values. The session id can be arbitrary string, the product id has to match a product that is actually in your inventory.
 
 #### Access the products / inventory
 
@@ -176,10 +177,10 @@ Response:
 
 There are more REST endpoints automatically provided by Spring Data to access inventory items...
 
-An explanatory request to get the inventory item with id "foo":
+An explanatory request to get a specific inventory item with id `<productId>`:
 
 ```sh
-curl http://localhost:8081/inventory/foo
+curl http://localhost:8081/inventory/<productId>
 ```
 
 Response:
@@ -193,10 +194,10 @@ Response:
   "reservations" : [ ],
   "_links" : {
     "self" : {
-      "href" : "http://localhost:8081/inventory/foo"
+      "href" : "http://localhost:8081/inventory/<productId>"
     },
     "inventory" : {
-      "href" : "http://localhost:8081/inventory/foo"
+      "href" : "http://localhost:8081/inventory/<productId>"
     }
   }
 }
@@ -218,10 +219,11 @@ curl http://localhost:8081/generate
 
 #### Get the products in your cart
 
-The cart is linked to a session id. Request to get the cart for the session id `bar`:
+The cart is linked to a session id. 
+Request to get the cart for the session id `{sessionId}`:
 
 ```sh
-curl http://localhost:8081/cart/bar
+curl http://localhost:8081/cart/{sessionId}
 ```
 
 Response if cart is empty:
@@ -233,41 +235,43 @@ Response if cart is empty:
 Response if cart includes one product with 3 units:
 
 ```json
-[{"id":"foo","name":"Darjeeling (loose)","description":"very nice Darjeeling (loose) tea","units":3,"price":1.6977123432245298}]
+[{"id":"<productId>","name":"Darjeeling (loose)","description":"very nice Darjeeling (loose) tea","units":3,"price":1.6977123432245298}]
 ```
 
 #### Update the cart
 
-Add product with id `foo` with 3 units to cart of session with id `bar`:
+Add product with id `<productId>` with 3 units to cart of session with id `{sessionId}`:
 
 ```sh
-curl -i -X POST -H "Content-Type:application/json" -d '{"content":{"foo":3}}'  http://localhost:8081/cart/bar
+curl -i -X POST -H "Content-Type:application/json" -d '{"content":{"<productId>":3}}' http://localhost:8081/cart/{sessionId}
 ```
 
 Response (successfully added items):
 
 ```json
-[{"id":"foo","name":"Darjeeling (loose)","description":"very nice Darjeeling (loose) tea","units":3,"price":1.6977123432245298}]
+[{"id":"<productId>","name":"Darjeeling (loose)","description":"very nice Darjeeling (loose) tea","units":3,"price":1.6977123432245298}]
 ```
 
-Remove product with id `foo` from cart of session with id `bar`:
+Remove product with id `<productId>` from cart of session with id `{sessionId}`:
 
 ```sh
-curl -i -X POST -H "Content-Type:application/json" -d '{"content":{"foo":-3}}'  http://localhost:8081/cart/bar
+curl -i -X POST -H "Content-Type:application/json" -d '{"content":{"<productId>":-3}}'  http://localhost:8081/cart/{sessionId}
 ```
 
-Response (empty, because it only includes added items, not removed items):
+Response:
 
 ```json
 []
 ```
 
+The response is empty, because it only includes added items, not removed items.
+
 #### Confirm Order
 
-With this, you place an order for the user "bar", with the given payment details.
+With this, you place an order for the session `{sessionId}`, with the given payment details.
 
 ```sh
-curl -i -X POST -H "Content-Type:application/json" -d '{"cardNumber":"num","cardOwner":"own","checksum":"sum", "sessionId":"bar"}' http://localhost:8081/confirm
+curl -i -X POST -H "Content-Type:application/json" -d '{"cardNumber":"num","cardOwner":"own","checksum":"sum", "sessionId":"{sessionId}"}' http://localhost:8081/confirm
 ```
 
 ---
