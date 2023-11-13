@@ -28,6 +28,7 @@ t2:
     taskRate: 0
   payment:
     provider:
+      enabled: true
       timeout: 5
       dummy:
         url: http://localhost:8087/pay

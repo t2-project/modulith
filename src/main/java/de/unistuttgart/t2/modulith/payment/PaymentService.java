@@ -26,8 +26,11 @@ public class PaymentService {
     @Value("${t2.payment.provider.dummy.url}")
     protected String providerUrl;
 
-    @Value("${t2.payment.provider.timeout:10}")
+    @Value("${t2.payment.provider.timeout:5}")
     public int timeout;
+
+    @Value("${t2.payment.provider.enabled:true}")
+    protected boolean enabled;
 
     private final RestTemplate template;
 
@@ -49,6 +52,11 @@ public class PaymentService {
     }
 
     public void doPayment(String cardNumber, String cardOwner, String checksum, double total) throws PaymentFailedException {
+        if(!enabled) {
+            LOG.info("Connecting to payment provider is disabled.");
+            return;
+        }
+
         try {
             PaymentData paymentData = new PaymentData(cardNumber, cardOwner, checksum, total);
             Retry.decorateSupplier(retry, () -> template.postForObject(providerUrl, paymentData, Void.class)).get();

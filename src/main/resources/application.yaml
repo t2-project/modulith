@@ -25,6 +25,7 @@ t2:
     taskRate: ${T2_INVENTORY_TASKRATE}
   payment:
     provider:
+      enabled: ${T2_PAYMENT_PROVIDER_ENABLED}
       timeout: ${T2_PAYMENT_PROVIDER_TIMEOUT}
       dummy:
         url: ${T2_PAYMENT_PROVIDER_DUMMY_URL}

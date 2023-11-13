@@ -18,6 +18,7 @@ services:
       T2_INVENTORY_TTL: "0"
       T2_PAYMENT_PROVIDER_DUMMY_URL: http://creditinstitute:8080/pay
       T2_PAYMENT_PROVIDER_TIMEOUT: 5
+      T2_PAYMENT_PROVIDER_ENABLED: true
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres

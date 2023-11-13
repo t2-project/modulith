@@ -284,13 +284,14 @@ Property files: `./src/main/resources/application-*.yaml`
 
 | property                      | read from env var             | description                                                                                     |
 |-------------------------------|-------------------------------|-------------------------------------------------------------------------------------------------|
-| t2.cart.TTL		                 | T2_CART_TTL                   | time to live of items in cart (in seconds)                                                      |
+| t2.cart.TTL	                  | T2_CART_TTL                   | time to live of items in cart (in seconds)                                                      |
 | t2.cart.taskRate	             | T2_CART_TASKRATE              | rate at which the cart checks for items that exceeded their TTL (in milliseconds)               |
 | t2.inventory.size             | INVENTORY_SIZE                | number of items to be generated into the inventory repository on start up                       |
 | t2.inventory.TTL              | T2_INVENTORY_TTL              | time to live of reservations (in seconds)                                                       |
 | t2.inventory.taskRate         | T2_INVENTORY_TASKRATE         | rate at which the inventory checks for reservations that exceeded their TTL (in milliseconds).  |
-| t2.payment.provider.dummy.url | T2_PAYMENT_PROVIDER_DUMMY_URL | url of the payment provider.                                                                    |
+| t2.payment.provider.enabled   | T2_PAYMENT_PROVIDER_ENABLED   | boolean value, defaults to true. if false, no connection to payment provider is made.           |
 | t2.payment.provider.timeout   | T2_PAYMENT_PROVIDER_TIMEOUT   | timeout in seconds. the payment service waits this long for an reply from the payment provider. |
+| t2.payment.provider.dummy.url | T2_PAYMENT_PROVIDER_DUMMY_URL | url of the payment provider.                                                                    |
 
 Setting either `TTL` or `taskrate` to a value less or equal to zero disables the collection of expired entries (cart module and inventory module).
 
