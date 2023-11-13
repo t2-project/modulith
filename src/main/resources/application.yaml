@@ -13,19 +13,19 @@ spring:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
-    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
 
 t2:
   cart:
-    TTL: ${T2_CART_TTL}
-    taskRate: ${T2_CART_TASKRATE}
+    TTL: ${T2_CART_TTL:0}
+    taskRate: ${T2_CART_TASKRATE:0}
   inventory:
-    size: ${INVENTORY_SIZE}
-    TTL: ${T2_INVENTORY_TTL}
-    taskRate: ${T2_INVENTORY_TASKRATE}
+    size: ${INVENTORY_SIZE:0}
+    TTL: ${T2_INVENTORY_TTL:0}
+    taskRate: ${T2_INVENTORY_TASKRATE:0}
   payment:
     provider:
-      enabled: ${T2_PAYMENT_PROVIDER_ENABLED}
-      timeout: ${T2_PAYMENT_PROVIDER_TIMEOUT}
+      enabled: ${T2_PAYMENT_PROVIDER_ENABLED:true}
+      timeout: ${T2_PAYMENT_PROVIDER_TIMEOUT:5}
       dummy:
         url: ${T2_PAYMENT_PROVIDER_DUMMY_URL}
