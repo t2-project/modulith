@@ -1,0 +1,35 @@
+# Simple → Run without credit institute, payment is disabled
+version: "3"
+services:
+  modulith:
+    container_name: t2-modulith
+    image: t2project/modulith:main
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mongo
+      - postgres
+    environment:
+      MONGO_HOST: mongo
+      INVENTORY_SIZE: "25"
+      T2_PAYMENT_PROVIDER_ENABLED: false
+      T2_PAYMENT_PROVIDER_DUMMY_URL: http://dummy
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+      SPRING_PROFILES_ACTIVE: docker
+
+  mongo:
+    container_name: t2-mongo
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+
+  postgres:
+    container_name: t2-postgres
+    image: postgres:15.4
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
