@@ -1,4 +1,5 @@
-FROM eclipse-temurin:17-jdk as build
+# We using focal (Ubuntu 20.04) because only there the unit tests with embedded MongoDB are working
+FROM eclipse-temurin:17-jdk-focal as build
 WORKDIR /workspace/app
 
 COPY mvnw .
@@ -6,7 +7,7 @@ COPY .mvn .mvn
 COPY pom.xml .
 COPY src src
 
-RUN ./mvnw install -DskipTests
+RUN ./mvnw install
 
 FROM eclipse-temurin:17-jre
 WORKDIR /workspace/app
