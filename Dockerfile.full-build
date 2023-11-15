@@ -1,19 +1,25 @@
 # We using focal (Ubuntu 20.04) because only there the unit tests with embedded MongoDB are working
 FROM eclipse-temurin:17-jdk-focal as build
-WORKDIR /workspace/app
+
+WORKDIR /tmp
 
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
+
+RUN --mount=type=cache,target=/root/.m2 \
+    ./mvnw -B dependency:resolve-plugins dependency:resolve
+
 COPY src src
 
-RUN ./mvnw install
+RUN --mount=type=cache,target=/root/.m2 \
+    ./mvnw -B clean package
 
 FROM eclipse-temurin:17-jre
 WORKDIR /workspace/app
 ENV PORT 8080
 EXPOSE 8080
 
-COPY --from=build /workspace/app/target/*.war /workspace/app/app.war
+COPY --from=build /tmp/target/*.war /workspace/app/app.war
 
 ENTRYPOINT exec java $JAVA_OPTS -jar app.war
