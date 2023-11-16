@@ -1,0 +1,33 @@
+# Profile for Green Metrics Tool (GMT)
+server:
+  port: 8080
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://${MONGO_HOST}:27017/data
+      database: data
+  jpa:
+    database: postgresql
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:5432/postgres
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+t2:
+  cart:
+    TTL: 0
+    taskRate: 0
+  inventory:
+    size: 25
+    TTL: 0
+    taskRate: 0
+  payment:
+    provider:
+      enabled: false
+      dummy:
+        url: http://dummy
