@@ -1,15 +1,25 @@
 # T2-Modulith
 
 The T2-Modulith is an implementation of the [T2-Project](https://t2-documentation.readthedocs.io/) as a monolith.
-It has still a modular structure enforced by [Spring Modulith](https://spring.io/projects/spring-modulith).
+It has still a modular structure enforced by [Spring Modulith](https://spring.io/projects/spring-modulith). Therefore, we call it *T2-Modulith*.
+
+You can find more information about the migration from the microservices implementation to a monolithic implementation in the [Architecture documentation](https://t2-documentation.readthedocs.io/en/latest/monolith/arch.html).
 
 ## Build and Run
 
-Refer to the [Documentation](https://t2-documentation.readthedocs.io/en/latest/monolith/deploy.html) on how to build, run or deploy and use the T2-Modulith application.
+Refer to the [Deployment documentation](https://t2-documentation.readthedocs.io/en/latest/monolith/deploy.html) on how to build, run or deploy the T2-Modulith application.
+
+## Usage
+
+Refer to the [Usage documentation](https://t2-documentation.readthedocs.io/en/latest/monolith/use.html) on how to use the T2-Modulith application. There are two ways: via the UI or via the HTTP API endpoints.
 
 ## Application Properties
 
-Property files: `./src/main/resources/application-*.yaml`
+You can configure many properties used at start and during runtime of the T2-Modulith application.
+
+There are different property files located at `./src/main/resources/application-*.yaml`.
+
+Depending on your active Spring profiles, different property files are used. See e.g. documentation section [Run in development mode](https://t2-documentation.readthedocs.io/en/latest/monolith/deploy.html#run-in-development-mode) on how to use the profile `dev`.
 
 **T2 configuration:**
 
