@@ -35,3 +35,5 @@ build/
 ### own ###
 *.swp
 *.log
+**/report
+results.*
