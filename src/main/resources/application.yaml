@@ -1,4 +1,8 @@
 # Default profile (some values will be overwritten by other profiles)
+info:
+  app:
+    version: '@project.version@'
+
 spring:
   data:
     rest:
