@@ -11,7 +11,7 @@ spring:
     database: postgresql
     generate-ddl: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST}:5432/postgres
     username: postgres
