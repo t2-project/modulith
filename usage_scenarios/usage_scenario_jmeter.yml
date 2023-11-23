@@ -1,54 +1,53 @@
 ---
-name: One order with 3 products and 30-60 sec think time in between
+name: One order with 3 products and think time in between
 author: David Kopp
 description: Measure the energy consumption of a realistic use case scenario of the T2-Project application.
 
-compose-file: !include compose.yml
+# compose-file: !include compose.yml
 
 services:
-  # modulith:
-  # This command is needed, cause the container needs a bootup time to work
-  # setup-commands:
-  #   - sleep 15
+  modulith:
+    image: t2project/modulith:main
+    depends_on:
+      - mongo
+      - postgres
+    environment:
+      MONGO_HOST: mongo
+      POSTGRES_HOST: postgres
+      SPRING_PROFILES_ACTIVE: gmt
+    networks:
+      - t2-network
+    # log-stdout: true
+  mongo:
+    image: mongo:5.0
+    networks:
+      - t2-network
+  postgres:
+    image: postgres:15.4
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - t2-network
   jmeter:
-    container_name: jmeter
     image: t2project/jmeter:5.6.2
-    # cmd: sh
     environment:
       JVM_XMN: 100 # maximum nursery size
       JVM_XMS: 250 # initial heap size
       JVM_XMX: 500 # maximum heap size
     networks:
       - t2-network
-    # setup-commands:
-    #   - cp /tmp/repo/usage_scenarios/jmeter/t2-project-fixed-single.jmx /test-plan.jmx
-    # volumes:
-    #   - ./jmeter:/tests
+    # log-stdout: true
+
+networks:
+  t2-network:
 
 flow:
-  - name: Test if endpoint is available
-    container: jmeter
-    commands:
-      - type: console
-        command: curl -i http://modulith:8080/products
-        read-notes-stdout: true
-  - name: ls /tmp/repo/
-    container: jmeter
-    commands:
-      - type: console
-        command: ls -la /tmp/repo/
-        read-notes-stdout: true
   - name: T2 standard use case scenario
     container: jmeter
     commands:
       - type: console
-        command: jmeter \
-          -Jhostname=t2-modulith \
-          -Jport=8080 \
-          -JnumUser=10 \
-          -JrampUp=2 \
-          -JthinkTimeTimeout=3000 \
-          -JthinkTimeRange=3000 \
-          -n -t /tmp/repo/usage_scenarios/jmeter/t2-project-fixed-single.jmx
+        command: jmeter -Jhostname=modulith -Jport=8080 -JnumUser=1 -JrampUp=1 -JthinkTimeTimeout=2000 -JthinkTimeRange=2000 -n -t /tmp/repo/jmeter/t2-project-fixed-single-logging.jmx
         note: Execute JMeter test plan
+        log-stdout: true
         read-notes-stdout: true
