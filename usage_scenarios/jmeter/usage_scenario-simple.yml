@@ -1,7 +1,7 @@
 ---
-name: One order with 3 products and think time in between
+name: Single user orders one product
 author: David Kopp
-description: Measure the energy consumption of a realistic use case scenario of the T2-Project application.
+description: Measure the energy consumption of a use case scenario of the T2-Project application. One user checks out the inventory, thinks for 1-2 sec, adds one random product to cart and finally confirms the order.
 
 compose-file: !include compose.yml
 
