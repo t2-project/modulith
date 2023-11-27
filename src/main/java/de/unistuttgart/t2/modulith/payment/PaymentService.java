@@ -51,9 +51,14 @@ public class PaymentService {
         this.template = restTemplate;
     }
 
+    /**
+     * Contact some payment provider to execute the payment. The call might either timeout, or the payment itself might
+     * fail, or it is successful.
+     */
     public void doPayment(String cardNumber, String cardOwner, String checksum, double total) throws PaymentFailedException {
         if(!enabled) {
-            LOG.info("Connecting to payment provider is disabled.");
+            LOG.warn("Connecting to payment provider is disabled by configuration for testing purposes! " +
+                "Returning as payment was successful.");
             return;
         }
 
