@@ -3,51 +3,19 @@ name: One order with 3 products and think time in between
 author: David Kopp
 description: Measure the energy consumption of a realistic use case scenario of the T2-Project application.
 
-# compose-file: !include compose.yml
+compose-file: !include compose.yml
 
-services:
-  modulith:
-    image: t2project/modulith:main
-    depends_on:
-      - mongo
-      - postgres
-    environment:
-      MONGO_HOST: mongo
-      POSTGRES_HOST: postgres
-      SPRING_PROFILES_ACTIVE: gmt
-    networks:
-      - t2-network
-    # log-stdout: true
-  mongo:
-    image: mongo:5.0
-    networks:
-      - t2-network
-  postgres:
-    image: postgres:15.4
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    networks:
-      - t2-network
-  jmeter:
-    image: t2project/jmeter:5.6.2
-    environment:
-      JVM_XMN: 100 # maximum nursery size
-      JVM_XMS: 250 # initial heap size
-      JVM_XMX: 500 # maximum heap size
-    networks:
-      - t2-network
-    # log-stdout: true
-
-networks:
-  t2-network:
+sci:
+  R_d: order
+  # One order consists of three sequential requests: get inventory, add product to cart, confirm order
 
 flow:
   - name: T2 standard use case scenario
     container: jmeter
     commands:
       - type: console
-        command: jmeter -Jhostname=modulith -Jport=8080 -JnumUser=1 -JrampUp=1 -JthinkTimeTimeout=2000 -JthinkTimeRange=2000 -n -t /tmp/repo/jmeter/t2-project-fixed-single-logging.jmx
+        command: jmeter -Jhostname=modulith -Jport=8080 -JnumUser=1 -JrampUp=1 -JthinkTimeTimeout=1000 -JthinkTimeRange=1000 -n -t /tmp/repo/jmeter/t2-project-single-order-one-product.jmx
         note: Execute JMeter test plan
         log-stdout: true
         read-notes-stdout: true
+        read-sci-stdout: true

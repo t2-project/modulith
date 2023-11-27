@@ -2,7 +2,6 @@
 version: "2"
 services:
   modulith:
-    container_name: t2-modulith
     image: t2project/modulith:main
     depends_on:
       - mongo
@@ -14,16 +13,22 @@ services:
     networks:
       - t2-network
   mongo:
-    container_name: t2-mongo
     image: mongo:5.0
     networks:
       - t2-network
   postgres:
-    container_name: t2-postgres
     image: postgres:15.4
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    networks:
+      - t2-network
+  jmeter:
+    image: t2project/jmeter:5.6.2
+    environment:
+      JVM_XMN: 100 # maximum nursery size
+      JVM_XMS: 250 # initial heap size
+      JVM_XMX: 500 # maximum heap size
     networks:
       - t2-network
 
