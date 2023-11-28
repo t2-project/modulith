@@ -126,7 +126,11 @@ log.info(&quot;${currentTimeMicroseconds} ${note}&quot;)
 def minThinkTime = Integer.parseInt(vars.get(&quot;think_time_timeout&quot;))
 def maxThinkTime = minThinkTime + Integer.parseInt(vars.get(&quot;think_time_range&quot;))
 
-log.info(&quot;${currentTimeMicroseconds} thinking ${minThinkTime} – ${maxThinkTime} ms&quot;)
+if (minThinkTime == maxThinkTime) {
+	log.info(&quot;${currentTimeMicroseconds} think time ${minThinkTime} ms&quot;)
+} else {
+	log.info(&quot;${currentTimeMicroseconds} think time ${minThinkTime} - ${maxThinkTime} ms&quot;)
+}
 </stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
         </JSR223Sampler>
