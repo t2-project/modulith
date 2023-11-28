@@ -10,7 +10,7 @@ flow:
     container: jmeter
     commands:
       - type: console
-        command: jmeter -Jhostname=modulith -Jport=8080 -JnumUser=100 -JrampUp=5 -JthinkTimeTimeout=5000 -JthinkTimeRange=5000 -n -t /tmp/repo/t2-project-single-order-three-products-without-logging.jmx
+        command: jmeter -Jhostname=modulith -Jport=8080 -JnumUser=100 -JrampUp=5 -JthinkTimeTimeout=30000 -JthinkTimeRange=30000 -n -t /tmp/repo/t2-project-single-order-three-products-without-logging.jmx
         note: Execute JMeter test plan
         log-stdout: true
         read-notes-stdout: true
