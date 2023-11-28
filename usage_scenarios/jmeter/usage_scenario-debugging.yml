@@ -1,0 +1,25 @@
+---
+name: Minimal Scenario - logging enabled
+author: David Kopp
+description: Logging is enabled for the modulith and jmeter container
+
+compose-file: !include compose.yml
+
+services:
+  modulith:
+    log-stdout: true
+    log-stderr: true
+  jmeter:
+    log-stdout: true
+    log-stderr: true
+
+flow:
+  - name: Minimal Scenario with logging
+    container: jmeter
+    commands:
+      - type: console
+        command: jmeter -Jhostname=modulith -Jport=8080 -JnumUser=1 -JrampUp=1 -JthinkTimeTimeout=1000 -JthinkTimeRange=0 -n -t /tmp/repo/t2-project-single-order-one-product.jmx
+        note: Execute JMeter test plan
+        log-stdout: true
+        log-stderr: true
+        read-notes-stdout: true
