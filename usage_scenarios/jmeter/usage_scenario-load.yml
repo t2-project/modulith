@@ -1,12 +1,12 @@
 ---
-name: Load test with 100 users
+name: Load Test - 100 users, 1 order with 3 products each
 author: David Kopp
 description: Measure the energy consumption of a load test scenario. Each user checks out the inventory, think for 5-10 sec, add a random product to cart (3 times) and finally confirms the order.
 
 compose-file: !include compose.yml
 
 flow:
-  - name: T2 standard use case scenario
+  - name: Load Test
     container: jmeter
     commands:
       - type: console

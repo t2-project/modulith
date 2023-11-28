@@ -1,0 +1,21 @@
+---
+name: Minimal Scenario - single user orders one product
+author: David Kopp
+description: Measure the energy consumption of a minimal use case scenario of the T2-Project application. One user checks out the inventory, thinks for 1 sec, adds one random product to cart and finally confirms the order.
+
+compose-file: !include compose.yml
+
+sci:
+  R_d: order
+  # One order consists of three sequential requests: get inventory, add product to cart, confirm order
+
+flow:
+  - name: Minimal Scenario
+    container: jmeter
+    commands:
+      - type: console
+        command: jmeter -Jhostname=modulith -Jport=8080 -JnumUser=1 -JrampUp=1 -JthinkTimeTimeout=1000 -JthinkTimeRange=0 -n -t /tmp/repo/t2-project-single-order-one-product.jmx
+        note: Execute JMeter test plan
+        log-stdout: true
+        read-notes-stdout: true
+        read-sci-stdout: true
