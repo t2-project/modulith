@@ -13,6 +13,8 @@ Refer to the [Deployment documentation](https://t2-documentation.readthedocs.io/
 
 Refer to the [Usage documentation](https://t2-documentation.readthedocs.io/en/latest/monolith/use.html) on how to use the T2-Modulith application. There are two ways: via the UI or via the HTTP API endpoints.
 
+Some *usage scenarios* are defined as yaml files in the subdirectory [./usage_scenarios](./usage_scenarios/README.md)`. They are used for energy measurements.
+
 ## Application Properties
 
 You can configure many properties used at start and during runtime of the T2-Modulith application.
@@ -25,8 +27,8 @@ Depending on your active Spring profiles, different property files are used. See
 
 | property                      | read from env var             | description                                                                                     |
 |-------------------------------|-------------------------------|-------------------------------------------------------------------------------------------------|
-| t2.cart.TTL	                  | T2_CART_TTL                   | time to live of items in cart (in seconds)                                                      |
-| t2.cart.taskRate	             | T2_CART_TASKRATE              | rate at which the cart checks for items that exceeded their TTL (in milliseconds)               |
+| t2.cart.TTL                   | T2_CART_TTL                   | time to live of items in cart (in seconds)                                                      |
+| t2.cart.taskRate              | T2_CART_TASKRATE              | rate at which the cart checks for items that exceeded their TTL (in milliseconds)               |
 | t2.inventory.size             | T2_INVENTORY_SIZE                | number of items to be generated into the inventory repository on start up                       |
 | t2.inventory.TTL              | T2_INVENTORY_TTL              | time to live of reservations (in seconds)                                                       |
 | t2.inventory.taskRate         | T2_INVENTORY_TASKRATE         | rate at which the inventory checks for reservations that exceeded their TTL (in milliseconds).  |
