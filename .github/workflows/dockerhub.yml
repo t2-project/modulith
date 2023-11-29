@@ -5,6 +5,7 @@ on:
       - main
     paths-ignore:
       - '**.md'
+      - 'usage_scenarios/*'
 
 jobs:
   dockerhub:
