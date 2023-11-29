@@ -12,6 +12,14 @@ services:
   jmeter:
     log-stdout: true
     log-stderr: true
+  postgres:
+    log-stdout: true
+    setup-commands:
+      - sleep 10 # required, cause the container needs a boot up time to work
+  mongo:
+    log-stdout: true
+    setup-commands:
+      - sleep 10 # required, cause the container needs a boot up time to work
 
 flow:
   - name: Minimal Scenario with logging
