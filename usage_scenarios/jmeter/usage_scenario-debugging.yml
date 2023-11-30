@@ -14,12 +14,12 @@ services:
     log-stderr: true
   postgres:
     log-stdout: true
+    log-stderr: true
     setup-commands:
-      - sleep 10 # required, cause the container needs a boot up time to work
+       - sleep 5 # required, cause the container needs a boot up time to work
   mongo:
     log-stdout: true
-    setup-commands:
-      - sleep 10 # required, cause the container needs a boot up time to work
+    log-stderr: true
 
 flow:
   - name: Minimal Scenario with logging

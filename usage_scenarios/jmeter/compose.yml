@@ -1,6 +1,17 @@
 ---
 version: "2"
 services:
+  postgres:
+    image: postgres:15.4
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - t2-network
+  mongo:
+    image: mongo:5.0
+    networks:
+      - t2-network
   modulith:
     image: t2project/modulith:main
     depends_on:
@@ -10,17 +21,6 @@ services:
       MONGO_HOST: mongo
       POSTGRES_HOST: postgres
       SPRING_PROFILES_ACTIVE: gmt
-    networks:
-      - t2-network
-  mongo:
-    image: mongo:5.0
-    networks:
-      - t2-network
-  postgres:
-    image: postgres:15.4
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
     networks:
       - t2-network
   jmeter:
