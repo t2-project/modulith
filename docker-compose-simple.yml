@@ -11,13 +11,8 @@ services:
       - postgres
     environment:
       MONGO_HOST: mongo
-      T2_INVENTORY_SIZE: "25"
-      T2_PAYMENT_PROVIDER_ENABLED: false
-      T2_PAYMENT_PROVIDER_DUMMY_URL: http://dummy
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
-      SPRING_PROFILES_ACTIVE: docker
+      POSTGRES_HOST: postgres
+      SPRING_PROFILES_ACTIVE: simple
 
   mongo:
     container_name: t2-mongo

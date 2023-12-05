@@ -1,4 +1,4 @@
-# Profile for Green Metrics Tool (GMT)
+# Profile for simple test executions (e.g. without credit institute)
 server:
   port: 8080
 
