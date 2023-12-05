@@ -11,7 +11,6 @@ spring:
       uri: mongodb://${MONGO_HOST}:27017/data
       database: data
   jpa:
-    database: postgresql
     open-in-view: false
   datasource:
     url: ${SPRING_DATASOURCE_URL}
