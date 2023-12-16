@@ -18,6 +18,10 @@ public final class TestData {
     public static String anotherProductId = "foo2";
     public static int anotherUnits = 42;
     public static String sessionId = "bar";
+    private static final double price = 1.0;
+    private static final double anotherPrice = 2.0;
+    public static double totalOfCart = units * price;
+    public static double totalOfCartMulti = (units * price) + (anotherUnits * anotherPrice);
 
     public static Optional<CartContent> cartResponse() {
         return Optional.of(new CartContent(new HashMap<>(Map.of(productId, units))));
@@ -45,15 +49,15 @@ public final class TestData {
     }
 
     public static Product productBase(String productId, int units) {
-        return new Product(productId, "name", "description", units, 1.0);
+        return new Product(productId, "name", "description", units, price);
     }
 
     public static Optional<Product> inventoryResponse() {
-        return Optional.of(new Product(productId, "name", "description", 5, 1.0));
+        return Optional.of(new Product(productId, "name", "description", 5, price));
     }
 
     public static Optional<Product> anotherInventoryResponse() {
-        return Optional.of(new Product(anotherProductId, "name2", "description2", 5, 1.0));
+        return Optional.of(new Product(anotherProductId, "name2", "description2", 5, anotherPrice));
     }
 
     public static List<Product> inventoryResponseAllProducts() {

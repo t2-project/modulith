@@ -1,9 +1,10 @@
 package de.unistuttgart.t2.modulith.order;
 
-import de.unistuttgart.t2.modulith.cart.CartContent;
 import de.unistuttgart.t2.modulith.cart.CartService;
 import de.unistuttgart.t2.modulith.inventory.InventoryService;
-import de.unistuttgart.t2.modulith.inventory.Product;
+import de.unistuttgart.t2.modulith.order.calculation.ComputeIntensiveTotalCalculator;
+import de.unistuttgart.t2.modulith.order.calculation.SimpleTotalCalculator;
+import de.unistuttgart.t2.modulith.order.calculation.ITotalCalculator;
 import de.unistuttgart.t2.modulith.order.repository.OrderItem;
 import de.unistuttgart.t2.modulith.order.repository.OrderRepository;
 import de.unistuttgart.t2.modulith.order.repository.OrderStatus;
@@ -12,11 +13,11 @@ import de.unistuttgart.t2.modulith.payment.PaymentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 /**
  * Creates and updates orders.
@@ -36,16 +37,41 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
+    private final ITotalCalculator totalCalculator;
+
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    public OrderService(@Autowired CartService cartService,
-                        @Autowired InventoryService inventoryService,
-                        @Autowired PaymentService paymentService,
-                        @Autowired OrderRepository orderRepository) {
+    public OrderService(CartService cartService,
+                        InventoryService inventoryService,
+                        PaymentService paymentService,
+                        OrderRepository orderRepository) {
         this.cartService = cartService;
         this.inventoryService = inventoryService;
         this.paymentService = paymentService;
         this.orderRepository = orderRepository;
+
+        this.totalCalculator = new SimpleTotalCalculator(cartService, inventoryService);
+    }
+
+    @Autowired
+    public OrderService(@Autowired CartService cartService,
+                        @Autowired InventoryService inventoryService,
+                        @Autowired PaymentService paymentService,
+                        @Autowired OrderRepository orderRepository,
+                        @Value("${t2.order.simulateComputeIntensiveTask.enabled}") boolean simulateComputeIntensiveTask,
+                        @Value("${t2.order.simulateComputeIntensiveTask.iterations}") int simulateComputeIntensiveTaskIterations) {
+        this.cartService = cartService;
+        this.inventoryService = inventoryService;
+        this.paymentService = paymentService;
+        this.orderRepository = orderRepository;
+
+        if (!simulateComputeIntensiveTask) {
+            this.totalCalculator = new SimpleTotalCalculator(cartService, inventoryService);
+        } else {
+            this.totalCalculator = new ComputeIntensiveTotalCalculator(cartService, inventoryService, simulateComputeIntensiveTaskIterations);
+            LOG.warn("Simulate compute intensive task enabled! Order total will be calculated {} times.",
+                simulateComputeIntensiveTaskIterations);
+        }
     }
 
     /**
@@ -96,7 +122,7 @@ public class OrderService {
         // Calculating total
         double total;
         try {
-            total = getTotal(sessionId);
+            total = totalCalculator.calculate(sessionId);
         } catch (Exception e) {
             throw new Exception(String.format("No order placed for session '%s'. Calculating total failed.", sessionId), e);
         }
@@ -127,29 +153,5 @@ public class OrderService {
         LOG.info("Order '{}' executed successfully for session '{}'.", orderId, sessionId);
 
         return orderId;
-    }
-
-    /**
-     * Calculates the total of a users cart.
-     * <p>
-     * Depends on the cart module to get the cart content and depends on the inventory module to get the price per
-     * unit.
-     *
-     * @param sessionId identifies the session to get total for
-     * @return the total money to pay for products in the cart
-     */
-    private double getTotal(String sessionId) {
-        CartContent cart = cartService.getCart(sessionId).orElse(new CartContent());
-
-        double total = 0;
-
-        for (String productId : cart.getProductIds()) {
-            Optional<Product> product = inventoryService.getSingleProduct(productId);
-            if (product.isEmpty()) {
-                return 0;
-            }
-            total += product.get().getPrice() * cart.getUnits(productId);
-        }
-        return total;
     }
 }
