@@ -32,3 +32,7 @@ t2:
       timeout: ${T2_PAYMENT_PROVIDER_TIMEOUT:5}
       dummy:
         url: ${T2_PAYMENT_PROVIDER_DUMMY_URL}
+  order:
+    simulateComputeIntensiveTask:
+      enabled: ${T2_SIMULATE_COMPUTE_INTENSIVE_TASK_ENABLED:false}
+      iterations: ${T2_SIMULATE_COMPUTE_INTENSIVE_TASK_ITERATIONS:1000000000}
