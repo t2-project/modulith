@@ -16,7 +16,7 @@ services:
 
   mongo:
     container_name: t2-mongo
-    image: mongo:5.0
+    image: bitnami/mongodb:7.0
     ports:
       - "27017:27017"
 

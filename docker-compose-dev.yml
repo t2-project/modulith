@@ -4,7 +4,7 @@ services:
 
   mongo:
     container_name: t2-mongo
-    image: mongo:5.0
+    image: bitnami/mongodb:7.0
     ports:
       - "27017:27017"
 
@@ -16,7 +16,6 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      USE_DB_ID: "true"
 
   creditinstitute:
     container_name: t2-creditinstitute
