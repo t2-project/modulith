@@ -10,7 +10,7 @@ services:
 
   postgres:
     container_name: t2-postgres
-    image: postgres:15.4
+    image: postgres:12.17
     ports:
       - "5432:5432"
     environment:
