@@ -45,7 +45,7 @@ services:
 
   creditinstitute:
     container_name: t2-creditinstitute
-    image: t2project/creditinstitute:david # TODO Change tag to main
+    image: t2project/creditinstitute:main
     ports:
       - "8087:8080"
     environment:
