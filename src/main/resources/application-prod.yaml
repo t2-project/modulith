@@ -1,4 +1,4 @@
-# Docker profile
+# Prod profile (e.g. for a deployment with Docker Compose or K8s)
 server:
   port: 8080
 
