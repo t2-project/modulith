@@ -40,7 +40,7 @@ spec:
           ports:
             - containerPort: 5432
           volumeMounts:
-            - name: datadir
+            - name: postgres-storage
               mountPath: /var/lib/postgresql/data
               subPath: postgres
             - name: postgres-config
@@ -64,7 +64,7 @@ spec:
               path: postgresql.conf
   volumeClaimTemplates:
   - metadata:
-      name: datadir
+      name: postgres-storage
     spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
