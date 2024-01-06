@@ -2,13 +2,18 @@ package de.unistuttgart.t2.modulith.uibackend;
 
 import de.unistuttgart.t2.modulith.cart.CartContent;
 import de.unistuttgart.t2.modulith.cart.CartService;
+import de.unistuttgart.t2.modulith.computation_simulator.ComputationSimulatorService;
+import de.unistuttgart.t2.modulith.inventory.InsufficientUnitsAvailableException;
 import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import de.unistuttgart.t2.modulith.inventory.Product;
-import de.unistuttgart.t2.modulith.inventory.InsufficientUnitsAvailableException;
 import de.unistuttgart.t2.modulith.order.OrderService;
 import de.unistuttgart.t2.modulith.uibackend.exceptions.OrderNotPlacedException;
 import de.unistuttgart.t2.modulith.uibackend.exceptions.ReservationFailedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,20 +24,45 @@ import java.util.Optional;
  * Manages interaction with other modules.
  *
  * @author maumau
+ * @author davidkopp
  */
 @Service
 public class UIBackendService {
 
+    private final Logger LOG = LoggerFactory.getLogger(getClass());
+
     private final CartService cartService;
     private final InventoryService inventoryService;
     private final OrderService orderService;
+    private final boolean enableComputeIntensiveSimulation;
+    private ComputationSimulatorService computationSimulatorService;
 
-    public UIBackendService(@Autowired CartService cartService,
-                            @Autowired InventoryService inventoryService,
-                            @Autowired OrderService orderService) {
+    @Autowired
+    public UIBackendService(CartService cartService,
+                            InventoryService inventoryService,
+                            OrderService orderService,
+                            @Value("${t2.computation-simulator.enabled}") boolean enableComputeIntensiveSimulation) {
         this.cartService = cartService;
         this.inventoryService = inventoryService;
         this.orderService = orderService;
+        this.enableComputeIntensiveSimulation = enableComputeIntensiveSimulation;
+
+        if (enableComputeIntensiveSimulation) {
+            LOG.warn("Simulate compute intensive task enabled! It will be executed when an order gets confirmed.");
+        }
+    }
+
+    public UIBackendService(CartService cartService, InventoryService inventoryService, OrderService orderService) {
+        this.cartService = cartService;
+        this.inventoryService = inventoryService;
+        this.orderService = orderService;
+        this.enableComputeIntensiveSimulation = false;
+    }
+
+    @Lazy
+    @Autowired
+    public void setComputationSimulatorService(ComputationSimulatorService computationSimulatorService) {
+        this.computationSimulatorService = computationSimulatorService;
     }
 
     /**
@@ -135,5 +165,20 @@ public class UIBackendService {
         } catch (Exception e) {
             throw new OrderNotPlacedException(e.getMessage());
         }
+
+        if (enableComputeIntensiveSimulation) {
+            simulateComputeIntensiveTask(sessionId);
+        }
+    }
+
+    /**
+     * Calls the computation simulator to simulate a compute intensive scenario.
+     * This method is blocking and waits until the computation is finished!
+     */
+    private void simulateComputeIntensiveTask(String sessionId) {
+        LOG.info("Start simulation of an intensive computation task ... Session: {}", sessionId);
+        // Returns the duration in milliseconds that the calculation took
+        Double duration = computationSimulatorService.doCompute();
+        LOG.info("Finished simulation of an intensive computation task. Duration: {} ms, Session: {}", duration, sessionId);
     }
 }

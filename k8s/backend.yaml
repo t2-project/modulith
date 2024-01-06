@@ -59,9 +59,9 @@ spec:
               value: http://creditinstitute-cs/pay
             - name: T2_PAYMENT_PROVIDER_TIMEOUT
               value: "5"
-            - name: T2_SIMULATE_COMPUTE_INTENSIVE_TASK_ENABLED
+            - name: T2_COMPUTATION_SIMULATOR_ENABLED
               value: "FALSE"
-            - name: T2_SIMULATE_COMPUTE_INTENSIVE_TASK_ITERATIONS
+            - name: T2_COMPUTATION_SIMULATOR_PI_TOTAL_POINTS
               value: "1000000000"
           image: t2project/modulith:main
           ports:

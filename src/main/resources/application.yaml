@@ -32,7 +32,7 @@ t2:
       timeout: ${T2_PAYMENT_PROVIDER_TIMEOUT:5}
       dummy:
         url: ${T2_PAYMENT_PROVIDER_DUMMY_URL}
-  order:
-    simulateComputeIntensiveTask:
-      enabled: ${T2_SIMULATE_COMPUTE_INTENSIVE_TASK_ENABLED:false}
-      iterations: ${T2_SIMULATE_COMPUTE_INTENSIVE_TASK_ITERATIONS:1000000000}
+  computation-simulator:
+    enabled: ${T2_COMPUTATION_SIMULATOR_ENABLED:false}
+    pi:
+      totalPoints: ${T2_COMPUTATION_SIMULATOR_PI_TOTAL_POINTS:100000000} # 100000000 → ~5 sec; 1000000000 → ~1 min

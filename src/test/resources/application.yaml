@@ -42,7 +42,7 @@ t2:
       timeout: 5
       dummy:
         url: http://foo.bar/pay
-  order:
-    simulateComputeIntensiveTask:
-      enabled: false
-      iterations: 1
+  computation-simulator:
+    enabled: false
+    pi:
+      totalPoints: 1000

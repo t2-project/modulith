@@ -31,6 +31,10 @@ t2:
       timeout: 5
       dummy:
         url: http://localhost:8087/pay
+  computation-simulator:
+    enabled: false
+    pi:
+      totalPoints: 100000000 # 100000000 → ~5 sec; 1000000000 → ~1 min
 
 logging:
   level:

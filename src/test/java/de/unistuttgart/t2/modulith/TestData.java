@@ -20,8 +20,6 @@ public final class TestData {
     public static String sessionId = "bar";
     private static final double price = 1.0;
     private static final double anotherPrice = 2.0;
-    public static double totalOfCart = units * price;
-    public static double totalOfCartMulti = (units * price) + (anotherUnits * anotherPrice);
 
     public static Optional<CartContent> cartResponse() {
         return Optional.of(new CartContent(new HashMap<>(Map.of(productId, units))));
