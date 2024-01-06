@@ -6,6 +6,7 @@ import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
@@ -23,17 +24,9 @@ import java.time.Duration;
 @Service
 public class PaymentService {
 
-    @Value("${t2.payment.provider.dummy.url}")
-    protected String providerUrl;
-
-    @Value("${t2.payment.provider.timeout:5}")
-    public int timeout;
-
-    @Value("${t2.payment.provider.enabled:true}")
-    protected boolean enabled;
-
+    private final boolean enabled;
+    private final String providerUrl;
     private final RestTemplate template;
-
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
     // retry stuff
@@ -41,13 +34,21 @@ public class PaymentService {
     RetryRegistry registry = RetryRegistry.of(config);
     Retry retry = registry.retry("paymentRetry");
 
-    public PaymentService() {
+    @Autowired
+    public PaymentService(@Value("${t2.payment.provider.enabled:true}") boolean enabled,
+                          @Value("${t2.payment.provider.dummy.url}") String providerUrl,
+                          @Value("${t2.payment.provider.timeout:5}") int timeout) {
+        this.enabled = enabled;
+        this.providerUrl = providerUrl;
+
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
         this.template = restTemplateBuilder.setConnectTimeout(Duration.ofSeconds(timeout))
             .setReadTimeout(Duration.ofSeconds(timeout)).build();
     }
 
-    public PaymentService(RestTemplate restTemplate) {
+    public PaymentService(String providerUrl, RestTemplate restTemplate) {
+        this.enabled = true;
+        this.providerUrl = providerUrl;
         this.template = restTemplate;
     }
 
@@ -56,7 +57,7 @@ public class PaymentService {
      * fail, or it is successful.
      */
     public void doPayment(String cardNumber, String cardOwner, String checksum, double total) throws PaymentFailedException {
-        if(!enabled) {
+        if (!enabled) {
             LOG.warn("Connecting to payment provider is disabled by configuration for testing purposes! " +
                 "Returning as payment was successful.");
             return;

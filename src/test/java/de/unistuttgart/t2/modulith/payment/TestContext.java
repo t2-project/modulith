@@ -11,7 +11,9 @@ import java.time.Duration;
 @Configuration
 public class TestContext {
 
-    public int timeout = 5;
+    public static final int timeout = 5;
+
+    public static final String testUrl = "http://foo.bar/pay";
 
     @Bean
     public RestTemplate template() {
@@ -22,6 +24,6 @@ public class TestContext {
 
     @Bean
     public PaymentService service(@Autowired RestTemplate restTemplate) {
-        return new PaymentService(restTemplate);
+        return new PaymentService(testUrl, restTemplate);
     }
 }

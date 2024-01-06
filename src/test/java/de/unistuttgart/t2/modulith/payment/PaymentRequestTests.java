@@ -12,6 +12,7 @@ import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
+import static de.unistuttgart.t2.modulith.payment.TestContext.testUrl;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -34,12 +35,9 @@ public class PaymentRequestTests {
 
     private MockRestServiceServer mockServer;
 
-    private final String testUrl = "http://foo.bar/pay";
-
     @BeforeEach
     public void setUp() {
         mockServer = MockRestServiceServer.createServer(template);
-        service.providerUrl = testUrl;
     }
 
     @Test
