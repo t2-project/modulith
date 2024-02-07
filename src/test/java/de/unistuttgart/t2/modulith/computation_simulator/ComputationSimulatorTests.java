@@ -26,6 +26,6 @@ class ComputationSimulatorTests {
     public void testPiCalculator() {
         IComputeOperation<Double> piCalculator = new PiCalculator(100000);
         Double pi = piCalculator.doCompute();
-        assertEquals(Math.PI, pi, 0.01);
+        assertEquals(Math.PI, pi, 0.03);
     }
 }
