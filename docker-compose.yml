@@ -48,4 +48,5 @@ services:
     ports:
       - "8087:8080"
     environment:
-      OPENTRACING_JAEGER_ENABLED: false
+      T2_JAEGER_ENABLED: "FALSE"
+      T2_JAEGER_HOST: localhost
