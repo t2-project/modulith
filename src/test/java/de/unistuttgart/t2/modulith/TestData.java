@@ -54,6 +54,11 @@ public final class TestData {
         return Optional.of(new Product(productId, "name", "description", 5, price));
     }
 
+    public static List<Product> inventoryResponseOneProductInList() {
+        Product product1 = inventoryResponse().get();
+        return new ArrayList<>(List.of(product1));
+    }
+
     public static Optional<Product> anotherInventoryResponse() {
         return Optional.of(new Product(anotherProductId, "name2", "description2", 5, anotherPrice));
     }

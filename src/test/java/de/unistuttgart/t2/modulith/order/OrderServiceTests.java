@@ -42,7 +42,7 @@ public class OrderServiceTests {
     public void confirmOrderSucceeds() throws Exception {
 
         when(cartService.getCart(sessionId)).thenReturn(cartResponse());
-        when(inventoryService.getSingleProduct(productId)).thenReturn(inventoryResponse());
+        when(inventoryService.getProducts(anyCollection())).thenReturn(inventoryResponseOneProductInList());
         when(orderRepository.save(any())).thenReturn(new OrderItem(sessionId));
 
         orderService.confirmOrder(sessionId, "cardNumber", "cardOwner", "checksum");

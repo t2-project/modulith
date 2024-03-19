@@ -75,6 +75,24 @@ public class InventoryServiceTests {
     }
 
     @Test
+    public void getProducts() {
+        // setup inventory response
+        List<Product> allProducts = inventoryResponseAllProducts();
+        List<InventoryItem> inventoryItems = allProducts.stream().map(InventoryProductMapper::toInventoryItem).toList();
+        List<String> ids = inventoryItems.stream().map(InventoryItem::getId).toList();
+        when(productRepository.findAllById(ids)).thenReturn(inventoryItems);
+
+        // execute
+        List<Product> products = inventoryService.getProducts(ids);
+
+        // assert
+        assertNotNull(products);
+        assertEquals(2, products.size());
+        assertEquals(productId, products.get(0).getId());
+        assertEquals(anotherProductId, products.get(1).getId());
+    }
+
+    @Test
     public void makeReservation() throws InsufficientUnitsAvailableException {
         // setup inventory response
         Optional<Product> productInInventory = inventoryResponse();

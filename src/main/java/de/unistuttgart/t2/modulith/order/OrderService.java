@@ -15,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 /**
  * Creates and updates orders.
@@ -132,23 +132,18 @@ public class OrderService {
     /**
      * Calculates the total of a users cart.
      * <p>
-     * Depends on the cart module to get the cart content and depends on the inventory module to get the price per
-     * unit.
+     * Depends on the cart module to get the cart content and
+     * depends on the inventory module to get the price for each product.
      *
      * @param sessionId identifies the session to get total for
      * @return the total money to pay for products in the cart
      */
     private double getTotal(String sessionId) {
         CartContent cart = cartService.getCart(sessionId).orElse(new CartContent());
-
         double total = 0;
-
-        for (String productId : cart.getProductIds()) {
-            Optional<Product> product = inventoryService.getSingleProduct(productId);
-            if (product.isEmpty()) {
-                return 0;
-            }
-            total += product.get().getPrice() * cart.getUnits(productId);
+        List<Product> products = inventoryService.getProducts(cart.getProductIds());
+        for (Product product : products) {
+            total += product.getPrice() * cart.getUnits(product.getId());
         }
         return total;
     }

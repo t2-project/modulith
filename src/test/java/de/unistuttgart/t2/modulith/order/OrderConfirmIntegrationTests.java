@@ -3,8 +3,8 @@ package de.unistuttgart.t2.modulith.order;
 import de.unistuttgart.t2.modulith.cart.CartService;
 import de.unistuttgart.t2.modulith.cart.repository.CartItem;
 import de.unistuttgart.t2.modulith.cart.repository.CartRepository;
-import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import de.unistuttgart.t2.modulith.inventory.InsufficientUnitsAvailableException;
+import de.unistuttgart.t2.modulith.inventory.InventoryService;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryRepository;
 import de.unistuttgart.t2.modulith.inventory.repository.ReservationRepository;
@@ -114,7 +114,7 @@ public class OrderConfirmIntegrationTests {
     public void confirmOrder_CalculatingTotalFails_OrderIsNotPlaced() throws PaymentFailedException {
 
         // setup
-        when(inventoryService.getSingleProduct(productId)).thenThrow(new RuntimeException("runtime error"));
+        when(inventoryService.getProducts(anyCollection())).thenThrow(new RuntimeException("runtime error"));
 
         // execute
         Exception actualException = assertThrows(Exception.class,

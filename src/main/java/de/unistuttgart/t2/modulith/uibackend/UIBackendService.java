@@ -138,11 +138,10 @@ public class UIBackendService {
         if (cart.isPresent()) {
             CartContent cartContent = cart.get();
 
-            for (String productId : cartContent.getProductIds()) {
-                inventoryService.getSingleProduct(productId).ifPresent(p -> {
-                    p.setUnits(cartContent.getUnits(productId));
-                    results.add(p);
-                });
+            List<Product> products = inventoryService.getProducts(cartContent.getProductIds());
+            for (Product product : products) {
+                product.setUnits(cartContent.getUnits(product.getId()));
+                results.add(product);
             }
         }
 

@@ -127,7 +127,8 @@ public class UIBackendServiceTests {
     public void getProductsInCart() {
         // setup
         when(cartService.getCart(sessionId)).thenReturn(cartResponse());
-        when(inventoryService.getSingleProduct(productId)).thenReturn(inventoryResponse());
+        when(inventoryService.getProducts(cartResponse().get().getProductIds()))
+            .thenReturn(inventoryResponseOneProductInList());
 
         // execute
         List<Product> result = service.getProductsInCart(sessionId);

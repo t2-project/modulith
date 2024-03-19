@@ -6,9 +6,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Manages the inventory and the reservations.
@@ -54,6 +52,20 @@ public class InventoryService {
     public Optional<Product> getSingleProduct(String productId) {
         Optional<InventoryItem> inventoryItem = inventoryRepository.findById(productId);
         return InventoryProductMapper.toProduct(inventoryItem);
+    }
+
+    /**
+     * Get the products with the given productIds from the inventory.
+     * <p>
+     * If there are either no products with the given sessionId, or the retrieval of the products failed, an empty collection
+     * is returned.
+     *
+     * @param productIds collection of product ids to be retrieved
+     * @return products if product ids exists
+     */
+    public List<Product> getProducts(Collection<String> productIds) {
+        List<InventoryItem> inventoryItems = inventoryRepository.findAllById(productIds);
+        return inventoryItems.stream().map(InventoryProductMapper::toProduct).toList();
     }
 
     /**

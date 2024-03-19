@@ -84,7 +84,8 @@ public class OrderDBTests {
 
         // Setup mocks
         when(cartService.getCart(sessionId)).thenReturn(cartResponse());
-        when(inventoryService.getSingleProduct(productId)).thenReturn(inventoryResponse());
+        when(inventoryService.getProducts(cartResponse().get().getProductIds()))
+            .thenReturn(inventoryResponseOneProductInList());
 
         // execute
         String id = orderService.confirmOrder(sessionId, "cardNumber", "cardOwner", "checksum");
