@@ -39,3 +39,4 @@ t2:
 logging:
   level:
     de.unistuttgart.t2: DEBUG
+    org.hibernate.SQL: DEBUG

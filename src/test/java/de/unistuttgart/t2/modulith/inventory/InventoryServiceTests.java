@@ -4,7 +4,6 @@ import de.unistuttgart.t2.modulith.TestData;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryProductMapper;
 import de.unistuttgart.t2.modulith.inventory.repository.InventoryRepository;
-import de.unistuttgart.t2.modulith.inventory.repository.ReservationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,14 +27,11 @@ public class InventoryServiceTests {
     @Mock
     InventoryRepository productRepository;
 
-    @Mock
-    ReservationRepository reservationRepository;
-
     InventoryService inventoryService;
 
     @BeforeEach
     public void setup() {
-        inventoryService = new InventoryService(productRepository, reservationRepository);
+        inventoryService = new InventoryService(productRepository);
     }
 
     @Test

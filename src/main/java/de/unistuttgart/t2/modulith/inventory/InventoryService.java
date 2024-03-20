@@ -1,12 +1,18 @@
 package de.unistuttgart.t2.modulith.inventory;
 
-import de.unistuttgart.t2.modulith.inventory.repository.*;
+import de.unistuttgart.t2.modulith.inventory.repository.InventoryItem;
+import de.unistuttgart.t2.modulith.inventory.repository.InventoryProductMapper;
+import de.unistuttgart.t2.modulith.inventory.repository.InventoryRepository;
+import de.unistuttgart.t2.modulith.inventory.repository.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * Manages the inventory and the reservations.
@@ -22,12 +28,9 @@ import java.util.*;
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
-    private final ReservationRepository reservationRepository;
 
-    public InventoryService(@Autowired InventoryRepository inventoryRepository,
-                            @Autowired ReservationRepository reservationRepository) {
+    public InventoryService(@Autowired InventoryRepository inventoryRepository) {
         this.inventoryRepository = inventoryRepository;
-        this.reservationRepository = reservationRepository;
     }
 
     /**
@@ -79,13 +82,6 @@ public class InventoryService {
             item.commitReservation(sessionId);
         }
         inventoryRepository.saveAll(items);
-
-        List<Reservation> reservations = reservationRepository.findAll();
-        for (Reservation reservation : reservations) {
-            if (reservation.getUserId().equals(sessionId)) {
-                reservationRepository.delete(reservation);
-            }
-        }
     }
 
     /**
@@ -97,16 +93,8 @@ public class InventoryService {
         List<InventoryItem> items = inventoryRepository.findAll();
         for (InventoryItem item : items) {
             item.deleteReservation(sessionId);
-
         }
         inventoryRepository.saveAll(items);
-
-        List<Reservation> reservations = reservationRepository.findAll();
-        for (Reservation reservation : reservations) {
-            if (reservation.getUserId().equals(sessionId)) {
-                reservationRepository.delete(reservation);
-            }
-        }
     }
 
     /**

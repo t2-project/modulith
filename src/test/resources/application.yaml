@@ -26,6 +26,9 @@ spring:
 logging:
   level:
     ROOT: INFO
+    org.hibernate.SQL: DEBUG
+    de.unistuttgart.t2.modulith: DEBUG
+
 #    org.springframework.orm.jpa: TRACE
 #    org.springframework.transaction: TRACE
 

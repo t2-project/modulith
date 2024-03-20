@@ -55,13 +55,12 @@ public class OrderConfirmIntegrationTests {
     public void setup() throws InsufficientUnitsAvailableException {
 
         // Spying on InventoryService, CartService and OrderService is needed to be able to throw exceptions for specific test cases
-        this.inventoryService = spy(new InventoryService(inventoryRepository, reservationRepository));
+        this.inventoryService = spy(new InventoryService(inventoryRepository));
         this.cartService = spy(new CartService(cartRepository));
         this.orderService = spy(new OrderService(cartService, inventoryService, paymentService, orderRepository));
 
         orderRepository.deleteAll();
         cartRepository.deleteAll();
-        reservationRepository.deleteAll();
         inventoryRepository.deleteAll();
 
         InventoryItem savedInventoryItem = inventoryRepository.save(
