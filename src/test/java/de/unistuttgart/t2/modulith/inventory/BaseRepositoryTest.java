@@ -37,16 +37,14 @@ public abstract class BaseRepositoryTest {
      */
     @BeforeEach
     void populateRepository() throws InsufficientUnitsAvailableException {
-        productRepository.deleteAll();
-        reservationRepository.deleteAll();
 
-        InventoryItem item1 = new InventoryItem("id1", "name1", "description1", 15, 0.5);
+        InventoryItem item1 = new InventoryItem(null, "name1", "description1", 15, 0.5);
 
         item1.addReservation(existingSession1, 1);
         item1.addReservation(existingSession2, 2);
         item1.addReservation(existingSession3, 3);
 
-        InventoryItem item2 = new InventoryItem("id2", "name2", "description2", 200, 1.5);
+        InventoryItem item2 = new InventoryItem(null, "name2", "description2", 200, 1.5);
         item2.addReservation(existingSession1, 4);
 
         id1 = productRepository.save(item1).getId();
