@@ -37,13 +37,14 @@ public class DataGenerator {
      */
     @PostConstruct
     public void generateProducts() {
+        if (inventorySize > PRODUCT_NAMES.length) {
+            LOG.info("Inventory size is configured to be {}, but only {} products are available.", inventorySize, PRODUCT_NAMES.length);
+            inventorySize = PRODUCT_NAMES.length;
+        }
+
         if (repository.count() >= inventorySize) {
             LOG.info("Repository already contains {} entries. Not adding new entries.", repository.count());
             return;
-        }
-
-        if (inventorySize > PRODUCT_NAMES.length) {
-            inventorySize = PRODUCT_NAMES.length;
         }
 
         LOG.info("Repository too small. Generate {} new entries.", inventorySize);
