@@ -26,7 +26,7 @@ public class DataGeneratorTests {
 
     @BeforeEach
     public void setup() {
-        generator = new DataGenerator(productRepository, 10);
+        generator = new DataGenerator(productRepository, 10, true);
         productRepository.deleteAll();
     }
 
@@ -50,7 +50,7 @@ public class DataGeneratorTests {
         generator.generateProducts();
         assertEquals(10, productRepository.count());
 
-        generator = new DataGenerator(productRepository, 15);
+        generator = new DataGenerator(productRepository, 15, false);
         generator.generateProducts();
 
         assertEquals(15, productRepository.count());
@@ -62,7 +62,7 @@ public class DataGeneratorTests {
         generator.generateProducts();
         assertEquals(10, productRepository.count());
 
-        generator = new DataGenerator(productRepository, 5);
+        generator = new DataGenerator(productRepository, 5, false);
         generator.generateProducts();
 
         assertEquals(10, productRepository.count());

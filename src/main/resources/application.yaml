@@ -42,6 +42,7 @@ t2:
     size: ${T2_INVENTORY_SIZE:0}
     TTL: ${T2_INVENTORY_TTL:0}
     taskRate: ${T2_INVENTORY_TASKRATE:0}
+    setUnitsToMax: ${T2_INVENTORY_SET_UNITS_TO_MAX:false}
   payment:
     provider:
       enabled: ${T2_PAYMENT_PROVIDER_ENABLED:true}

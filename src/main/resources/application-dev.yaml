@@ -25,6 +25,7 @@ t2:
     size: 25
     TTL: 0
     taskRate: 0
+    setUnitsToMax: false
   payment:
     provider:
       enabled: true

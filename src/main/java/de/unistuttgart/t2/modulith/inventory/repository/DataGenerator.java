@@ -24,12 +24,16 @@ public class DataGenerator {
 
     private final InventoryRepository repository;
     private int inventorySize;
+    private final boolean setUnitsToMax;
     private final Random random = new Random(5);
 
-    public DataGenerator(@Autowired InventoryRepository repository, @Value("${t2.inventory.size:0}") int inventorySize) {
+    public DataGenerator(@Autowired InventoryRepository repository,
+                         @Value("${t2.inventory.size:0}") int inventorySize,
+                         @Value("${t2.inventory.setUnitsToMax:false}") boolean setUnitsToMax) {
         assert (repository != null);
         this.repository = repository;
         this.inventorySize = inventorySize;
+        this.setUnitsToMax = setUnitsToMax;
     }
 
     /**
@@ -48,10 +52,18 @@ public class DataGenerator {
         }
 
         LOG.info("Repository too small. Generate {} new entries.", inventorySize);
+        if (setUnitsToMax) {
+            LOG.info("Option 'setUnitsToMax' is enabled. All items will be available {} times.", Integer.MAX_VALUE);
+        }
 
         for (int i = (int) repository.count(); i < inventorySize; i++) {
             String name = PRODUCT_NAMES[i];
-            int units = random.nextInt(500) + 42;
+            int units;
+            if (!setUnitsToMax) {
+                units = random.nextInt(500) + 42;
+            } else {
+                units = Integer.MAX_VALUE;
+            }
             double price = random.nextInt(10) + random.nextDouble();
             String description = "very nice " + PRODUCT_NAMES[i] + " tea";
 
@@ -67,15 +79,20 @@ public class DataGenerator {
      */
     @Transactional
     public void restockProducts() {
-        int maxUnits = Integer.MAX_VALUE; // maybe make this a parameter later ???
         List<InventoryItem> items = repository.findAll();
 
         for (InventoryItem item : items) {
-            item.setUnits(maxUnits);
+            int units;
+            if (!setUnitsToMax) {
+                units = random.nextInt(500) + 42;
+            } else {
+                units = Integer.MAX_VALUE;
+            }
+            item.setUnits(units);
         }
 
         repository.saveAll(items);
-        LOG.info("Restocked all products to {}", maxUnits);
+        LOG.info("Restocked all products.");
     }
 
     // Predefined products from original tea store and some more generated with ChatGPT
