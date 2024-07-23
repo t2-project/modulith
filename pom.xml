@@ -2,26 +2,45 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.4</version>
+		<version>3.2.8</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>de.unistuttgart.t2</groupId>
 	<artifactId>modulith</artifactId>
+	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>T2-Modulith</name>
 	<description>Modulith variant of the T2-Project</description>
-	<packaging>war</packaging>
+	<url>https://t2-documentation.readthedocs.io</url>
+
 	<properties>
-		<java.version>17</java.version>
-		<spring-modulith.version>1.1.3</spring-modulith.version>
-		<flapdoodle-mongodb.version>4.12.2</flapdoodle-mongodb.version>
-		<springdoc-openapi.version>2.4.0</springdoc-openapi.version>
+		<!-- Java version -->
+        <java.version>17</java.version>
+
+		<!-- Dependencies versioning -->
+		<spring-modulith.version>1.1.7</spring-modulith.version>
+		<flapdoodle-mongodb.version>4.16.1</flapdoodle-mongodb.version>
+		<springdoc-openapi.version>2.5.0</springdoc-openapi.version>
 		<resilience4j.version>2.2.0</resilience4j.version>
-		<micrometer.version>1.12.4</micrometer.version>
+		<micrometer.version>1.13.2</micrometer.version>
+
+        <!-- Build dependencies -->
+        <spring-boot-maven-plugin.version>3.3.2</spring-boot-maven-plugin.version>
+
+		<!-- Other properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
+    <scm>
+        <connection>scm:git:https://github.com/t2-project/modulith.git</connection>
+        <developerConnection>scm:git:git@github.com:t2-project/modulith.git</developerConnection>
+        <url>https://github.com/t2-project/modulith.git</url>
+    </scm>
 
 	<dependencyManagement>
 		<dependencies>
@@ -71,6 +90,7 @@
 		</dependency>
 
 		<!-- UI dependencies -->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
@@ -174,6 +194,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot-maven-plugin.version}</version>
 			</plugin>
 		</plugins>
 	</build>
