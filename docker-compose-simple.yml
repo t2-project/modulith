@@ -1,5 +1,4 @@
 # Simple → Run without credit institute, payment is disabled
-version: "3"
 services:
   modulith:
     container_name: t2-modulith

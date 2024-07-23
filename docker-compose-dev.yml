@@ -1,5 +1,4 @@
 # Dev → Run dependencies only, Modulith is started by IDE
-version: '3'
 services:
 
   mongo:
