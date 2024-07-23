@@ -22,7 +22,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: prometheus, health
+        include: health
   health:
     livenessState:
       enabled: true
@@ -30,6 +30,7 @@ management:
       enabled: true
   endpoint:
     health:
+      enabled: true
       probes:
         enabled: true
       show-details: always

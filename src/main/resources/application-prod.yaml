@@ -12,7 +12,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: prometheus, health
+        include: prometheus, health, metrics
   metrics:
     tags:
       application: modulith-backend
@@ -25,7 +25,12 @@ management:
     readinessState:
       enabled: true
   endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
     health:
+      enabled: true
       probes:
         enabled: true
       show-details: always
