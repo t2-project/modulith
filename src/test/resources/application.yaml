@@ -2,7 +2,7 @@ de:
   flapdoodle:
     mongodb:
       embedded:
-        version: 7.0.2
+        version: 7.0.12
 
 spring:
   data:
