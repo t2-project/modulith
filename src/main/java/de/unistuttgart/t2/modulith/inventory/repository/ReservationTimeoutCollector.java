@@ -43,7 +43,6 @@ public class ReservationTimeoutCollector {
      * @param repository     the repository that handles the reservation data
      * @param itemRepository the repository that handles the item data
      */
-    @Autowired
     public ReservationTimeoutCollector(@Value("${t2.inventory.TTL:0}") final long TTL,
                                        @Value("${t2.inventory.taskRate:0}") final int taskRate,
                                        @Autowired final ThreadPoolTaskScheduler taskScheduler,

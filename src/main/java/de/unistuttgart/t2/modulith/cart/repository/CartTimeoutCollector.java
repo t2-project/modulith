@@ -42,7 +42,6 @@ public class CartTimeoutCollector {
      * @param TTL      the cart entries' time to live in seconds
      * @param taskRate rate at which the collector checks the repo in milliseconds
      */
-    @Autowired
     public CartTimeoutCollector(@Autowired CartRepository repository,
                                 @Autowired ThreadPoolTaskScheduler taskScheduler,
                                 @Value("${t2.cart.TTL:0}") long TTL,
