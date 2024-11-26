@@ -16,9 +16,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Optional;
 
 import static de.unistuttgart.t2.modulith.TestData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -83,6 +85,19 @@ public class UIBackendServiceTests {
 
         // assert
         assertEquals(2, result.size());
+    }
+
+    @Test
+    public void getSingleProduct() {
+
+        // setup
+        when(inventoryService.getSingleProduct(productId)).thenReturn(inventoryResponse());
+
+        // execute
+        Optional<Product> result = service.getProduct(productId);
+
+        // assert
+        assertTrue(result.isPresent());
     }
 
     @Test

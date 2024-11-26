@@ -39,9 +39,9 @@ public class UIBackendService {
 
     @Autowired
     public UIBackendService(CartService cartService,
-                            InventoryService inventoryService,
-                            OrderService orderService,
-                            @Value("${t2.computation-simulator.enabled}") boolean enableComputeIntensiveSimulation) {
+            InventoryService inventoryService,
+            OrderService orderService,
+            @Value("${t2.computation-simulator.enabled}") boolean enableComputeIntensiveSimulation) {
         this.cartService = cartService;
         this.inventoryService = inventoryService;
         this.orderService = orderService;
@@ -75,15 +75,26 @@ public class UIBackendService {
     }
 
     /**
+     * Gets a product by its ID.
+     *
+     * @return product
+     */
+    public Optional<Product> getProduct(String productId) {
+        return inventoryService.getSingleProduct(productId);
+    }
+
+    /**
      * Add the given number units of product to a users cart.
      * <p>
-     * If the product is already in the cart, the units of that product will be updated.
+     * If the product is already in the cart, the units of that product will be
+     * updated.
      *
      * @param sessionId identifies the cart to add to
      * @param productId id of product to be added
      * @param units     number of units to be added (must not be negative)
      * @return successfully added item
-     * @throws ReservationFailedException if there is an error making reservations for the product
+     * @throws ReservationFailedException if there is an error making reservations
+     *                                    for the product
      */
     public Product addItemToCart(String sessionId, String productId, int units) throws ReservationFailedException {
         // contact inventory first, cause i'd rather have a dangling reservation than a
@@ -94,8 +105,8 @@ public class UIBackendService {
             addedProduct.setUnits(units);
         } catch (InsufficientUnitsAvailableException e) {
             throw new ReservationFailedException(String.format(
-                "Adding item %s with %s units to cart of session %s failed. Reason: %s",
-                productId, units, sessionId, e.getMessage()));
+                    "Adding item %s with %s units to cart of session %s failed. Reason: %s",
+                    productId, units, sessionId, e.getMessage()));
         }
         cartService.addItemToCart(sessionId, productId, units);
         return addedProduct;
@@ -104,7 +115,8 @@ public class UIBackendService {
     /**
      * Delete the given number units of product from a users cart.
      * <p>
-     * If the number of units in the cart decrease to zero or less, the product is remove from the cart. If the no such
+     * If the number of units in the cart decrease to zero or less, the product is
+     * remove from the cart. If the no such
      * product is in cart, do nothing.
      *
      * @param sessionId identifies the cart to delete from
@@ -149,8 +161,10 @@ public class UIBackendService {
     }
 
     /**
-     * Posts a request to start a transaction to the orchestrator. Attempts to delete the cart of the given sessionId
-     * once the orchestrator accepted the request. Nothing happens if the deletion of a cart fails, as the cart service
+     * Posts a request to start a transaction to the orchestrator. Attempts to
+     * delete the cart of the given sessionId
+     * once the orchestrator accepted the request. Nothing happens if the deletion
+     * of a cart fails, as the cart service
      * supposed to periodically remove out dated cart entries anyway.
      *
      * @param sessionId  identifies the session
@@ -158,7 +172,8 @@ public class UIBackendService {
      * @param cardOwner  part of payment details
      * @param checksum   part of payment details
      */
-    public void confirmOrder(String sessionId, String cardNumber, String cardOwner, String checksum) throws OrderNotPlacedException {
+    public void confirmOrder(String sessionId, String cardNumber, String cardOwner, String checksum)
+            throws OrderNotPlacedException {
         try {
             orderService.confirmOrder(sessionId, cardNumber, cardOwner, checksum);
         } catch (Exception e) {
@@ -178,6 +193,7 @@ public class UIBackendService {
         LOG.info("Start simulation of an intensive computation task ... Session: {}", sessionId);
         // Returns the duration in milliseconds that the calculation took
         Double duration = computationSimulatorService.doCompute();
-        LOG.info("Finished simulation of an intensive computation task. Duration: {} ms, Session: {}", duration, sessionId);
+        LOG.info("Finished simulation of an intensive computation task. Duration: {} ms, Session: {}", duration,
+                sessionId);
     }
 }
